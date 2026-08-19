@@ -1,0 +1,192 @@
+.TH EMOJI-PICKER 1 "2026-05-05" "sway dotfiles" "User Commands"
+.SH NAME
+emoji-picker \- tabbed emoji picker for sway with keyword aliases
+.SH SYNOPSIS
+.B emoji-picker
+.PP
+Bound to
+.B $mod+period
+in the default sway mode. Accepts no arguments.
+.SH DESCRIPTION
+A rofi-based emoji picker built on top of
+.BR bemoji (1)
+data and
+.BR wl-ime-type (1)
+for input. Eleven category tabs are switched with
+.B Right
+and
+.BR Left :
+.IR Recent ", " Kaomoji ", " Faces ", " People ", " Animals ", " Food ", "
+.IR Travel ", " Activities ", " Objects ", " Symbols ", " Flags .
+On
+.BR Enter ,
+the focused entry is typed into whichever Wayland window had focus before
+the picker opened.
+.PP
+The
+.I Recent
+tab merges history (most-recent first) with the full emoji set (excluding
+kaomoji) so a single view can be searched after warming up. History is
+appended to
+.I ~/.local/state/bemoji-history.txt
+on each successful selection; the last
+.B 50
+entries are surfaced.
+.SH KEYBINDING
+.TP
+.B $mod+period
+Launch the picker. Defined in
+.IR ~/.config/sway/modes/default ,
+dispatched via
+.B $emoji_picker
+to
+.IR ~/.config/sway/scripts/emoji-picker .
+.SH SEARCH METADATA
+Each emoji can be tagged with extra search keywords that the rofi filter
+matches but never displays. Typing
+.B surprised
+surfaces every face flagged as such, typing
+.B poker
+surfaces the playing-card suits and the slot machine, typing
+.B yeehaw
+surfaces the cowboy face, and so on.
+.PP
+Two source files contribute to the same emoji \(rA keywords map; both are
+TAB-separated and use
+.B #
+followed by whitespace as comment marker.
+.B emoji-modi-handler
+re-reads them on every picker launch, so edits take effect immediately
+\(em no sway reload required.
+.SS Cluster aliases
+.I ~/.config/sway/scripts/emoji-aliases.txt
+\(em one cluster per line, keyword first:
+.PP
+.RS
+.EX
+keyword<TAB>emoji emoji emoji ...
+.EE
+.RE
+.PP
+Use this when one keyword should surface many emojis (e.g.
+.BR lol " \(rA " "all laughing faces" ).
+.SS Per-emoji keywords
+.I ~/.config/sway/scripts/emoji-keywords.txt
+\(em one emoji per line, synonyms after:
+.PP
+.RS
+.EX
+<emoji><TAB>keyword keyword keyword ...
+.EE
+.RE
+.PP
+Use this when one emoji needs broader search vocabulary (e.g.
+.BR \(lq lmao \(rq " \(rA " 😂).
+The file ships with ~545 entries auto-generated from
+.I /usr/share/oh-my-zsh/plugins/emoji/gemoji_db.json
+(CLDR aliases + tags), ~890 hand-curated additions, and a 2026-08-01
+bilingual enrichment pass giving all 1748 emojis 3\(en6 further Spanish
+and English terms (10,142 keywords). Every emoji in the data set is
+covered. Accented Spanish keywords are stored alongside an ASCII twin
+.RB ( corazón " + " corazon )
+because rofi runs with
+.B \-i
+but without
+.BR \-normalize\-match ,
+so typing unaccented still matches. The same emoji may appear on
+multiple lines \(em the handler merges all occurrences.
+.SS Injection mechanism
+The handler emits each row through the rofi script-mode
+.B meta
+field (see
+.BR rofi-script (5)),
+appended as
+.PP
+.RS
+.EX
+<display>\\0meta\\x1f<merged keywords>
+.EE
+.RE
+.PP
+The display column is unchanged; extra keywords are invisible to the eye
+but participate in the fuzzy match.
+.SH SCRIPT
+.B emoji-picker
+launches rofi with one mode per category, each mode delegated to
+.B emoji-modi-handler
+in script mode.
+.nr step 1 1
+.IP \n[step]. 3
+On
+.B ROFI_RETV=0
+(initial render of a tab),
+.B emoji-modi-handler
+emits the category file \(em or, for
+.IR Recent ,
+a deduplicated merge of history and the full set \(em piped through
+.BR inject_meta ,
+which appends the
+.B meta
+column to each row from the merged cluster + per-emoji map.
+.IP \n+[step].
+On
+.B ROFI_RETV=1
+or
+.B 2
+(user selected an entry), the handler writes the selected display text to
+.I /tmp/emoji-picker-selection
+and exits, closing rofi.
+.IP \n+[step].
+After rofi exits,
+.B emoji-picker
+reads the selection file, extracts the leading emoji glyph, and pipes it
+to
+.BR wl-ime-type (1)
+to be typed into the previously focused Wayland surface. The full line is
+appended to the history file for the
+.I Recent
+tab.
+.SH FILES
+.TP
+.I ~/.config/sway/scripts/emoji-picker
+Entry point. Builds the rofi command, runs it, and types the selection.
+.TP
+.I ~/.config/sway/scripts/emoji-modi-handler
+Per-tab script-mode handler. Loads aliases, emits emoji rows with meta.
+.TP
+.I ~/.config/sway/scripts/emoji-aliases.txt
+Cluster aliases (one keyword \(rA many emojis). User-editable.
+.TP
+.I ~/.config/sway/scripts/emoji-keywords.txt
+Per-emoji search synonyms (one emoji \(rA many keywords). User-editable.
+.TP
+.I ~/.config/sway/scripts/rofi-emoji-picker
+Wrapper around the compact rofi theme for ad-hoc invocations (not used by
+the tabbed picker).
+.TP
+.I ~/.config/rofi/themes/emoji-picker.rasi
+Compact rofi theme: 600 px wide, accent-bordered, tabbed.
+.TP
+.I ~/.local/share/bemoji/categories/*.txt
+Emoji data (faces, people, animals, food, travel, activities, objects,
+symbols, flags, kaomoji). Provided by the
+.BR bemoji (1)
+package.
+.TP
+.I ~/.local/state/bemoji-history.txt
+Selection history. The
+.I Recent
+tab reads the last 50 entries.
+.TP
+.I /tmp/emoji-picker-selection
+Single-shot file used to pass the selection from the handler back to
+.BR emoji-picker .
+.SH DEPENDENCIES
+.BR bemoji (1),
+.BR rofi (1),
+.BR wl-ime-type (1)
+.SH SEE ALSO
+.BR bemoji (1),
+.BR rofi (1),
+.BR rofi-script (5),
+.BR wl-ime-type (1)

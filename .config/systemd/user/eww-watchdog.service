@@ -1,0 +1,11 @@
+[Unit]
+Description=Restart eww.service if its IPC socket has stopped responding or a rogue daemon stole it
+# Two failure modes leave popups stuck on screen while the unit stays "active":
+#   - zombie: the daemon's socket rejects/ignores commands (bloat, hang)
+#   - rogue:  an `eww open` CLI auto-forked a duplicate daemon that stole the
+#             IPC socket; the real daemon keeps its windows but is unreachable.
+# The probe lives in ~/.scripts/eww-watchdog.sh (`--check` = dry run). Doc: man eww-guard.
+
+[Service]
+Type=oneshot
+ExecStart=%h/.scripts/eww-watchdog.sh

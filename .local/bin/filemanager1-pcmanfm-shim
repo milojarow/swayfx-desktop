@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""
+Minimal org.freedesktop.FileManager1 implementation that delegates to pcmanfm.
+DBus-activated; exits after idle timeout. Lets Firefox / Thunderbird / etc.
+"Show in Folder" work even when the default file manager (pcmanfm) doesn't
+implement the FileManager1 interface natively.
+"""
+import os
+import subprocess
+from urllib.parse import urlparse, unquote
+
+import dbus
+import dbus.service
+import dbus.mainloop.glib
+from gi.repository import GLib
+
+IDLE_TIMEOUT_SEC = 30
+
+
+class FileManager1(dbus.service.Object):
+    def __init__(self, bus, loop):
+        super().__init__(bus, "/org/freedesktop/FileManager1")
+        self._loop = loop
+        self._idle_id = None
+        self._reset_idle()
+
+    def _reset_idle(self):
+        if self._idle_id:
+            GLib.source_remove(self._idle_id)
+        self._idle_id = GLib.timeout_add_seconds(IDLE_TIMEOUT_SEC, self._loop.quit)
+
+    def _open(self, uris, want_parent):
+        for uri in uris:
+            path = unquote(urlparse(uri).path)
+            if want_parent and os.path.isfile(path):
+                path = os.path.dirname(path)
+            if not os.path.exists(path):
+                continue
+            subprocess.Popen(
+                ["pcmanfm", path],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                close_fds=True,
+                start_new_session=True,
+            )
+        self._surface()
+
+    @staticmethod
+    def _surface():
+        # pcmanfm is single-instance: if its window sits in sway's scratchpad,
+        # the spawn above only navigates it there, invisibly. Focusing by
+        # criteria pulls it out of the scratchpad and shows it.
+        try:
+            subprocess.run(
+                ["swaymsg", '[app_id="pcmanfm"] focus'],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=5,
+            )
+            subprocess.run(  # refresh waybar scratchpad indicator
+                ["pkill", "-RTMIN+7", "waybar"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=5,
+            )
+        except Exception:
+            pass
+
+    @dbus.service.method("org.freedesktop.FileManager1", in_signature="ass", out_signature="")
+    def ShowItems(self, uris, startup_id):
+        self._reset_idle()
+        self._open(uris, want_parent=True)
+
+    @dbus.service.method("org.freedesktop.FileManager1", in_signature="ass", out_signature="")
+    def ShowFolders(self, uris, startup_id):
+        self._reset_idle()
+        self._open(uris, want_parent=False)
+
+    @dbus.service.method("org.freedesktop.FileManager1", in_signature="ass", out_signature="")
+    def ShowItemProperties(self, uris, startup_id):
+        self._reset_idle()
+        self._open(uris, want_parent=True)
+
+
+def main():
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+    bus = dbus.SessionBus()
+    dbus.service.BusName("org.freedesktop.FileManager1", bus, do_not_queue=True)
+    loop = GLib.MainLoop()
+    FileManager1(bus, loop)
+    loop.run()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,46 @@
+// feature: wallpaper-cycle
+// role:    style
+@import "./theme";
+
+// ── Wallpaper cycle widget ────────────────────────────────────────────────────
+// Hand-drawn-ish look: thin strokes, soft color, no fills.
+
+.wp-cycle {
+  padding: 4px 0;
+}
+
+.wp-cycle-stack {
+  min-width: 56px;
+}
+
+.wp-arrow,
+.wp-dot {
+  all: unset;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  box-shadow: none;
+}
+
+.wp-arrow label,
+.wp-dot label {
+  font-family: "Caveat", "Comic Sans MS", "Roboto", sans-serif;
+  font-size: 38px;
+  color: rgba(216, 222, 233, 0.75);
+}
+
+.wp-arrow:hover label,
+.wp-dot:hover label {
+  // transition lives here, not on the base selector — base-selector
+  // animations repaint on every unrelated re-render (known amplifier)
+  transition: color 120ms ease, text-shadow 120ms ease;
+  color: rgba(255, 255, 255, 1.0);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.wp-name {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 14px;
+  color: rgba(216, 222, 233, 0.75);
+  margin-left: 8px;
+}

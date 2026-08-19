@@ -1,0 +1,488 @@
+// =============================================================================
+//
+// Waybar configuration
+//
+// Configuration reference: https://github.com/Alexays/Waybar/wiki/Configuration
+//
+// =============================================================================
+{
+    // -------------------------------------------------------------------------
+    // Global configuration
+    // -------------------------------------------------------------------------
+    "layer": "top",
+    // If height property would be not present, it'd be calculated dynamically
+    "height": 30,
+    "position": "top",
+    "modules-left": [
+        "custom/menu",
+        "sway/workspaces",
+        "custom/scratchpad"
+    ],
+    "modules-center": [
+        "custom/wf-recorder",
+        "sway/mode",
+        "custom/window-title"
+    ],
+    // Order replicates the eww-bar: read right→left the core modules match
+    // exactly (clock · tray · gamma · volume · dnd · no-idle · wifi · clipboard
+    // · meeting · mem · battery). Waybar-only extras sit to the left of the core.
+    "modules-right": [
+        // ── extras (left of the eww core) ──
+        // security
+        "privacy",
+        // informational
+        "custom/github",
+        "custom/pacman",
+        "custom/weather",
+        "cpu",
+        "custom/usb",
+        // system
+        "custom/theme",
+        "custom/adaptive-light",
+        "bluetooth",
+        // ── eww core (eww-bar order) ──
+        "battery",
+        "custom/mem-pressure",
+        "custom/meeting-notes",
+        "custom/clipboard",
+        "network",
+        "idle_inhibitor",
+        "custom/dnd",
+        "custom/audio",
+        "custom/sunset",
+        // ── right edge: tray + clock (same as eww) ──
+        "tray",
+        "clock"
+    ],
+    // -------------------------------------------------------------------------
+    // Modules
+    // -------------------------------------------------------------------------
+    // battery → matches eww: bolt while charging/plugged/full, %% on battery.
+    // Per-level icons kept for future use — to show a level glyph instead, set
+    //   "format": "{icon} {capacity}%"  and restore the array below:
+    //   "format-icons": ["󱃍","󰁺","󰁼","󰁽","󰁾","󰁿","󰂀","󰂁","󰂂","󰁹"]
+    "battery": {
+        "interval": 30,
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{capacity}%",
+        "format-charging": "\uf0e7",
+        "format-plugged": "\uf0e7",
+        "format-full": "\uf0e7",
+        "format-not charging": "\uf0e7",
+        "tooltip-format": "{capacity}% — {timeTo}"
+    },
+    "clock": {
+        "interval": 60,
+        "format": "{:%a %e %b %Y %H:%M}",
+        "tooltip": true,
+        "tooltip-format": "<big>{:%B %Y}</big>\n<tt>{calendar}</tt>",
+        "on-click": "swaymsg exec \\$calendar"
+    },
+    "cpu": {
+        "interval": 10,
+        "format": "󰘚",
+        "states": {
+            "warning": 70,
+            "critical": 90
+        },
+        "on-click": "swaymsg exec \\$task_manager",
+        "tooltip": true
+    },
+    "memory": {
+        "interval": 10,
+        "format": "󰍛",
+        "states": {
+            "warning": 70,
+            "critical": 90
+        },
+        "on-click": "swaymsg exec \\$task_manager",
+        "tooltip": true
+    },
+    "network": {
+        "interval": 5,
+        "format": "󰈀",
+        "format-wifi": "{icon}",
+        "format-ethernet": "󰈀",
+        "format-linked": "󰖪",
+        "format-disconnected": "󰖪",
+        "format-disabled": "󰀝",
+        "format-icons": [
+            "󰤯",
+            "󰤟",
+            "󰤢",
+            "󰤥",
+            "󰤨"
+        ],
+        "tooltip-format": "{icon} {ifname}: {ipaddr}",
+        "tooltip-format-ethernet": "{icon} {ifname}: {ipaddr}",
+        "tooltip-format-wifi": "{icon} {ifname} ({essid}): {ipaddr}",
+        "tooltip-format-linked": "{icon} {ifname} (No IP)",
+        "tooltip-format-disconnected": "{icon} disconnected",
+        "tooltip-format-disabled": "{icon} disabled",
+        "on-click": "~/.config/eww/scripts/wifi-toggle-popup.sh"
+    },
+    "sway/workspaces": {
+        // Show workspaces 1-9 persistently (even when empty).
+        // Workspace 10 is intentionally excluded — stays hidden when not in use.
+        // The flicker that used to plague the empty buttons (the .empty↔non-empty
+        // GTK theme transition firing on every bar re-layout, upstream issue
+        // Alexays/Waybar#3865) is killed by `transition: none` on .empty buttons
+        // in style.css — not by removing persistent workspaces.
+        "persistent-workspaces": {
+            "1": [], "2": [], "3": [], "4": [], "5": [],
+            "6": [], "7": [], "8": [], "9": []
+        },
+        // {windows} renders the app icons of every window in the workspace.
+        // Empty workspaces show a blank button (styled via .empty CSS class).
+        // Note: shows ALL windows' icons, not only the focused one.
+        "format": "{icon} {windows}",
+        // {icon} = workspace number as the eww-style subscript glyph (U+F0B3A..U+F0B42).
+        "format-icons": {
+            "1": "\udb82\udf3a",
+            "2": "\udb82\udf3b",
+            "3": "\udb82\udf3c",
+            "4": "\udb82\udf3d",
+            "5": "\udb82\udf3e",
+            "6": "\udb82\udf3f",
+            "7": "\udb82\udf40",
+            "8": "\udb82\udf41",
+            "9": "\udb82\udf42"
+        },
+        // Fallback icon for apps not in window-rewrite (matches eww ICON_UNKNOWN U+EBF2).
+        "window-rewrite-default": "\uebf2",
+        // Regex keys use class<> prefix to match app_id (Wayland) / WM_CLASS (X11).
+        // Dots in reverse-DNS names are escaped (\. = literal dot in regex).
+        // Multiple apps sharing an icon are grouped with | alternation.
+        "window-rewrite": {
+            // projects-wui dashboard (brave --app). Needs its own rule: the
+            // brave rule below is class<brave-browser|brave>, whose alternation
+            // makes the second branch require the id to END at "brave".
+            "class<brave-127\\.0\\.0\\.1__-Default>": "\ueb03",
+            // Terminals
+            "class<foot>":                                          "\uf489",
+            "class<kitty|alacritty|wezterm>":                      "\uea85",
+            "class<com\\.mitchellh\\.ghostty|ghostty>":            "\ue007",
+            // Browsers
+            "class<firefox|librewolf>":                            "\ue745",
+            "class<brave-browser|brave>":                          "\uf268",
+            // Messaging
+            "class<altus>":                                        "\uf232",
+            "class<org\\.telegram\\.desktop|telegramdesktop>":     "\uf2c6",
+            "class<vesktop>":                                      "\uf1ff",
+            // P2P / downloads
+            "class<org\\.amule\\.aMule>":                          "\uf019",
+            // File managers
+            "class<nemo|nautilus|thunar|pcmanfm>":                 "\uf4d3",
+            // Email
+            "class<(eu\\.betterbird\\.Betterbird|betterbird|thunderbird)>": "\uf0e0",
+            // Editors / IDEs  (U+F1A7C — surrogate pair)
+            "class<code|vscodium|vscodium-url-handler|gedit|kate>": "\uDB86\uDE7C",
+            // PDF viewers  (U+F0226 — surrogate pair)
+            "class<org\\.pwmt\\.zathura|evince|okular>":           "\uDB80\uDE26",
+            // Ebook reader  (U+F05DA — surrogate pair)
+            "class<(com\\.github\\.johnfactotum\\.Foliate|foliate)>": "\uDB81\uDDDA",
+            // Obsidian
+            "class<obsidian>":                                     "\ue2a6",
+            // Claude desktop  (U+F09D1 — surrogate pair)
+            "class<claude>":                                       "\uDB82\uDDD1",
+            // VLC  (U+F057C — surrogate pair)
+            "class<vlc>":                                          "\uDB81\uDD7C",
+            // pessoa  (U+F0B5F — surrogate pair)
+            "class<Pessoa-[^>]*>":                                    "\uDB80\uDC09"
+        }
+    },
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>",
+        "tooltip": false
+    },
+    "backlight": {
+        "format": "{icon} {percent}%",
+        "format-icons": [
+            "󰃞",
+            "󰃟",
+            "󰃠"
+        ],
+        "on-scroll-up": "swaymsg exec \\$brightness_up",
+        "on-scroll-down": "swaymsg exec \\$brightness_down"
+    },
+    "custom/audio": {
+        "exec": "$HOME/.local/bin/waybar-audio",
+        "return-type": "json",
+        "interval": 1,
+        "signal": 3,
+        "on-click": "pavucontrol",
+        "on-click-middle": "swaymsg exec \\$volume_mute",
+        "on-scroll-up": "swaymsg exec \\$volume_up",
+        "on-scroll-down": "swaymsg exec \\$volume_down"
+    },
+    "temperature": {
+        "critical-threshold": 90,
+        "interval": 5,
+        "format": "{icon}",
+        "tooltip-format": "{temperatureC}°C",
+        "format-icons": [
+            "",
+            "",
+            ""
+        ],
+        "tooltip": true,
+        "on-click": "swaymsg exec \"\\$once \\$term_float watch sensors\""
+    },
+    "tray": {
+        "icon-size": 21,
+        "spacing": 5
+    },
+    "custom/pacman": {
+        "format": "󰀼 {}",
+        "return-type": "json",
+        "exec-if": "~/.config/sway/scripts/checkupdates.sh check",
+        "exec": "~/.config/sway/scripts/checkupdates.sh status",
+        "on-click": "~/.config/sway/scripts/checkupdates.sh check && swaymsg exec \\$update_manager",
+        "on-click-middle": "waybar-signal pacman",
+        "signal": 14
+    },
+    "custom/menu": {
+        "format": "",
+        "on-click": "swaymsg exec \\$menu",
+        "tooltip": false
+    },
+    "bluetooth": {
+        "format": "󰂯",
+        "format-disabled": "󰂲",
+        "on-click": "swaymsg exec \\$bluetooth",
+        "on-click-right": "rfkill toggle bluetooth",
+        "tooltip-format": "{}"
+    },
+    "custom/keyboard-layout": {
+        "format": "󰌓 {}",
+        "interval": "once",
+        "exec": "localectl status | grep 'X11 Layout' | sed 's/.*: //'",
+        "tooltip": true,
+        "tooltip-format": "Keyboard Layout\nSource: ~/.config/sway/scripts/keyboard.sh"
+    },
+    "custom/scratchpad": {
+        "interval": "once",
+        "return-type": "json",
+        "format": "{icon}",
+        "format-icons": {
+            "one": "󰖯",
+            "many": "󰖲"
+        },
+        "exec": "/bin/sh ~/.config/sway/scripts/scratchpad.sh",
+        "on-click": "swaymsg 'scratchpad show'",
+        "signal": 7
+    },
+    // custom/sunset → gamma correction. click = auto schedule on/off,
+    // right-click = forced warm (max warmth). Mirrors the eww gamma module.
+    "custom/sunset": {
+        "interval": "once",
+        "tooltip": true,
+        "return-type": "json",
+        "format": "{icon}",
+        "format-icons": {
+            "off": "󰌶",
+            "auto": "󰌵",
+            "warm": "󱩌"
+        },
+        "exec": "~/.config/sway/scripts/sunset.sh status",
+        "on-click": "~/.config/sway/scripts/sunset.sh toggle; pkill -RTMIN+6 waybar",
+        "on-click-right": "~/.config/sway/scripts/sunset.sh force-warm; pkill -RTMIN+6 waybar",
+        "exec-if": "~/.config/sway/scripts/sunset.sh check",
+        "signal": 6
+    },
+    // custom/theme: palette light/dark toggle — see man palette-theming
+    "custom/theme": {
+        "format": "{icon}",
+        "interval": 300,
+        "tooltip": true,
+        "format-icons": {
+            "light": "",
+            "dark": "",
+            "auto_light": "󱩷",
+            "auto_dark": "󱩸"
+        },
+        "return-type": "json",
+        "exec-if": "~/.config/sway/scripts/theme-toggle.sh check",
+        "exec": "~/.config/sway/scripts/theme-toggle.sh status",
+        "on-click": "~/.config/sway/scripts/theme-toggle.sh toggle",
+        "on-click-right": "~/.config/sway/scripts/theme-toggle.sh auto-toggle",
+        "signal": 17
+    },
+    "custom/wf-recorder": {
+        "interval": "once",
+        "return-type": "json",
+        "format": "{}",
+        "exec": "echo '{\"class\": \"recording\",\"text\":\"󰑊\",\"tooltip\":\"press $mod+Esc to stop recording\"}'",
+        "exec-if": "pgrep wf-recorder",
+        "on-click": "pkill -SIGINT wf-recorder && waybar-signal recorder",
+        "signal": 8
+    },
+    "custom/github": {
+        "interval": 300,
+        "tooltip": false,
+        "return-type": "json",
+        "format": " {}",
+        "exec": "gh api '/notifications' -q '{ text: length }' | cat -",
+        "exec-if": "[ -x \"$(command -v gh)\" ] && gh auth status 2>&1 | grep -q -m 1 'Logged in' && test $(gh api '/notifications' -q 'length') -ne 0",
+        "on-click": "test $(gh api '/notifications' -q 'length') -ne 0 && xdg-open https://github.com/notifications && sleep 30 && waybar-signal github",
+        "signal": 4
+    },
+    "custom/playerctl": {
+        "interval": "once",
+        "tooltip": true,
+        "return-type": "json",
+        "format": "{icon}",
+        "format-icons": {
+            "Playing": "󰏦",
+            "Paused": "󰐍"
+        },
+        "exec": "playerctl metadata --format '{\"alt\": \"{{status}}\", \"tooltip\": \"{{playerName}}:  {{markup_escape(title)}} - {{markup_escape(artist)}}\" }'",
+        "on-click": "playerctl play-pause",
+        "on-click-right": "playerctl next",
+        "on-scroll-up": "playerctl position 10+",
+        "on-scroll-down": "playerctl position 10-",
+        "signal": 5
+    },
+    // [Clipboard Functionality] — requires: cliphist, waybar-signal (signal 9)
+    "custom/clipboard": {
+        "format": "󰨸",
+        "interval": "once",
+        "return-type": "json",
+        "on-click": "swaymsg -q exec '$clipboard'",
+        "on-click-right": "swaymsg -q exec '$clipboard-del'; waybar-signal clipboard",
+        "on-click-middle": "rm -f ~/.cache/cliphist/db; waybar-signal clipboard",
+        "exec": "printf '{\"tooltip\":\"%s\"}' $(cliphist list | wc -l)' item(s) in the clipboard\r(Mid click to clear)'",
+        "signal": 9
+    },
+    // [USB Management] — requires: lsblk, udisksctl, udisks2, signal RTMIN+15
+    "custom/usb": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 5,
+        "exec": "$HOME/.config/sway/scripts/usb-monitor-wrapper.sh",
+        "tooltip": true,
+        "signal": 15,
+        "menu": "on-click-right",
+        "menu-file": "~/.config/waybar/usb-menu.xml",
+        "menu-actions": {
+            "open": "~/.config/sway/scripts/usb-action-open.sh",
+            "unmount": "~/.config/sway/scripts/usb-action-unmount.sh",
+            "eject": "~/.config/sway/scripts/usb-action-eject.sh",
+            "mount": "~/.config/sway/scripts/usb-action-mount.sh",
+            "refresh": "~/.config/sway/scripts/usb-action-refresh.sh"
+        }
+    },
+    "custom/weather": {
+        "format": "{}",
+        "tooltip": true,
+        "interval": 3600,
+        // accepts -c/--city <city> -t/--temperature <C/F> -d/--distance <km/miles>
+        "exec": "~/.config/sway/scripts/weather.py",
+        "return-type": "json",
+        "on-click": "xdg-open \"https://wttr.in/$(curl -s https://manjaro-sway.download/geoip | jq -r '.city')\"",
+        "on-click-right": "waybar-signal weather",
+        "signal": 16
+    },
+    // [Window Title]
+    // [Method 3] window-title-stream.py — persistent-socket IPC stream (no /proc,
+    // no cache, no signal round-trip). on-click-right = custom name (rename.py).
+    "custom/window-title": {
+        "return-type": "json",
+        "format": "{}",
+        "exec": "~/.config/sway/scripts/window-title-stream.py",
+        "on-click-right": "~/.config/sway/scripts/window-title-rename.py",
+        "tooltip": true,
+        "max-length": 70
+    },
+    "custom/dnd": {
+        "interval": "once",
+        "return-type": "json",
+        "format": "{}{icon}",
+        "format-icons": {
+            "default": "󰚢",
+            "dnd": "󰚣"
+        },
+        "on-click": "~/.config/sway/scripts/dnd.sh toggle; waybar-signal dnd",
+        "on-click-right": "~/.config/sway/scripts/dnd.sh restore",
+        "exec": "~/.config/sway/scripts/dnd.sh status",
+        "signal": 11
+    },
+    // custom/meeting-notes → meeting AUDIO recorder (sink + mic). Streamed JSON
+    // with a live timer, from the same script the eww bar used. on-click toggles
+    // via the named pipe /tmp/eww-meeting-notes. NOT the screen recorder.
+    "custom/meeting-notes": {
+        "return-type": "json",
+        "format": "{}",
+        "exec": "~/.config/eww/scripts/meeting-notes-subscribe.sh",
+        "on-click": "echo toggle > /tmp/eww-meeting-notes",
+        "on-click-right": "xdg-open $HOME/recordings/meetings"
+    },
+    // custom/mem-pressure → PSI memory-pressure indicator. Hidden unless under
+    // pressure (the script emits empty text when idle). Streamed JSON.
+    "custom/mem-pressure": {
+        "return-type": "json",
+        "format": "{}",
+        "exec": "~/.config/eww/scripts/mem-pressure-watch.py",
+        "tooltip": true
+    },
+    "custom/adaptive-light": {
+        "interval": "once",
+        "tooltip": true,
+        "return-type": "json",
+        "format": "{icon}",
+        "format-icons": {
+            "on": "󰃡",
+            "off": "󰃠"
+        },
+        "exec": "~/.config/sway/scripts/wluma.sh",
+        "on-click": "~/.config/sway/scripts/wluma.sh toggle",
+        "exec-if": "~/.config/sway/scripts/wluma.sh check",
+        "signal": 12
+    },
+    "custom/valent": {
+        "format": "{icon}",
+        "tooltip": true,
+        "interval": 60,
+        "exec": "~/.config/sway/scripts/valent.py",
+        "exec-if": "[ -x \"$(command -v valent)\" ]",
+        "return-type": "json",
+        "format-icons": {
+            "no-devices": "",
+            "dangerously-empty": "󰂃",
+            "no-signal": "󰞃",
+            "connected": "",
+            "disconnected": ""
+        },
+        "on-click": "valent",
+        "on-click-middle": "waybar-signal valent",
+        "signal": 13
+    },
+    // [Lock Screen & Idle]
+    "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+        "activated": "󰒳",
+        "deactivated": "󰒲"
+    },
+    "tooltip": true,
+    "tooltip-format-activated": "Idle inhibitor active - system will not go idle",
+    "tooltip-format-deactivated": "Idle inhibitor inactive - system will go idle after timeout",
+    "on-click-right": "~/.config/sway/scripts/idle-timeout.sh"
+    },
+    "privacy": {
+    "icon-spacing": 4,
+    "icon-size": 18,
+    "transition-duration": 250,
+    "modules": [
+        {"type": "screenshare"},
+        {"type": "audio-in"},
+        {"type": "audio-out"}
+    ],
+    "tooltip": true,
+    "tooltip-icon-size": 24
+}
+}
+

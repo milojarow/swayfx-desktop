@@ -1,0 +1,44 @@
+#!/bin/bash
+# Bluetooth A2DP audio watchdog
+# Monitors WirePlumber logs for transport failures and auto-recovers
+#
+# IMPORTANT: Do NOT restart WirePlumber as recovery - it triggers a
+# double-free crash in BlueZ 5.85 (a2dp_select_capabilities) which
+# kills the bluetooth controller entirely.
+
+DEVICE_MAC="44:1D:B1:4B:0B:A0"
+CARD_NAME="bluez_card.${DEVICE_MAC//:/_}"
+COOLDOWN=15
+MAX_RETRIES=3
+
+recover_audio() {
+    local attempt=1
+
+    logger -t bt-watchdog "A2DP transport error detected, recovering..."
+
+    while [ $attempt -le $MAX_RETRIES ]; do
+        logger -t bt-watchdog "Recovery attempt $attempt/$MAX_RETRIES"
+
+        pactl set-card-profile "$CARD_NAME" off 2>/dev/null
+        sleep $((attempt + 1))
+        if pactl set-card-profile "$CARD_NAME" a2dp-sink 2>/dev/null; then
+            logger -t bt-watchdog "A2DP restored on attempt $attempt"
+            notify-send -t 3000 "Bluetooth Audio" "A2DP recovered (attempt $attempt)" 2>/dev/null
+            return
+        fi
+
+        attempt=$((attempt + 1))
+    done
+
+    logger -t bt-watchdog "All recovery attempts failed"
+    notify-send -t 5000 "Bluetooth Audio" "Auto-recovery failed. Run: bt-audio-fix" 2>/dev/null
+}
+
+logger -t bt-watchdog "Starting bluetooth audio watchdog"
+
+journalctl --user -u wireplumber -f -o cat --no-pager | while read -r line; do
+    if echo "$line" | grep -q "spa.bluez5.sink.media.*error"; then
+        recover_audio
+        sleep "$COOLDOWN"
+    fi
+done

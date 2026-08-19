@@ -1,0 +1,61 @@
+# Window Swap Mode
+# Navigate with arrows, Enter to mark target, then select second window
+
+set $mode_swap_select "<span foreground='#8be9fd'>🔀</span>  \
+<span foreground='#ff79c6'><b>Swap Mode</b></span> <span foreground='#8be9fd'>(<b>↑ ↓ ← →</b> navigate)</span> \
+<span foreground='#ff79c6'><b>Mark Target</b></span> <span foreground='#8be9fd'>(<b>Enter</b> or <b>Click</b>)</span>"
+
+set $mode_swap_target "<span foreground='#f1fa8c'>🎯</span>  \
+<span foreground='#50fa7b'><b>Target Marked!</b></span> \
+<span foreground='#ff79c6'><b>Select Second Window</b></span> <span foreground='#8be9fd'>(<b>↑ ↓ ← →</b> navigate, <b>Enter</b> or <b>Click</b>)</span>"
+
+mode --pango_markup $mode_swap_select {
+    # Navigation with arrow keys
+    $bindsym Left focus left
+    $bindsym Down focus down
+    $bindsym Up focus up
+    $bindsym Right focus right
+
+    # Navigation with vim keys
+    $bindsym h focus left
+    $bindsym j focus down
+    $bindsym k focus up
+    $bindsym l focus right
+
+    # Mark target window with Enter
+    $bindsym Return exec ~/.config/sway/scripts/swap-mark-target.sh
+
+    # Mark target window with left click
+    $bindsym --whole-window button1 exec ~/.config/sway/scripts/swap-mark-target.sh
+
+    # Exit mode
+    $bindsym Escape mode "default"; exec ~/.config/sway/scripts/swap-cleanup.sh
+}
+
+# Mode after target is marked
+mode --pango_markup $mode_swap_target {
+    # Navigation with arrow keys
+    $bindsym Left focus left
+    $bindsym Down focus down
+    $bindsym Up focus up
+    $bindsym Right focus right
+
+    # Navigation with vim keys
+    $bindsym h focus left
+    $bindsym j focus down
+    $bindsym k focus up
+    $bindsym l focus right
+
+    # Execute swap with Enter
+    $bindsym Return mode "default"; exec ~/.config/sway/scripts/swap-execute.sh
+
+    # Execute swap with left click
+    $bindsym --whole-window button1 mode "default"; exec ~/.config/sway/scripts/swap-execute.sh
+
+    # Exit mode
+    $bindsym Escape mode "default"; exec ~/.config/sway/scripts/swap-cleanup.sh
+}
+
+# Binding to enter swap mode
+## Launch // Window Swap Mode ##
+$bindsym $mod+Ctrl+w mode $mode_swap_select

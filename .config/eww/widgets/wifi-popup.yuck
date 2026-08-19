@@ -1,0 +1,250 @@
+; feature: wifi
+; role:    window
+; ── Wifi manager state ────────────────────────────────────────────────────────
+(defvar wifi-connecting "")   ; SSID currently being connected — empty = idle
+(defvar wifi-error "")        ; Error message string — empty = no error
+(defvar wifi-popup-open 0)    ; Popup visibility state — 0 = closed, 1 = open
+(defvar wifi-public-ip "—")   ; Public IP — refreshed on popup open / rescan / connection change
+(defvar wifi-password "")     ; Connected PSK; empty = hidden, lazy via eye toggle
+(defvar wifi-pw-ssid "")      ; Password prompt target SSID
+(defvar wifi-pw-bssid "")     ; Password prompt target BSSID
+(defvar wifi-pw-security "")  ; Password prompt target security
+(defvar wifi-pw-mode "connect") ; Password prompt mode: "connect" (new net) | "edit" (change saved PSK)
+(defvar wifi-qr-ssid "")        ; SSID for the QR share window label (PSK never stored here)
+
+; ── Wifi state (moved here from bar.yuck during the waybar migration) ──────────
+; The popup needs `wifi` to survive after the eww bar is deprecated. waybar shows
+; the signal icon natively (network module); this deflisten only feeds the popup.
+(deflisten wifi
+  :initial "{\"icon\": \"\", \"ssid\": \"\", \"signal\": 0, \"ip\": \"\", \"freq\": \"\", \"security\": \"\", \"class\": \"disconnected\", \"connected\": false}"
+  `~/.config/eww/scripts/wifi-subscribe.py`)
+
+; ── Wifi manager data ─────────────────────────────────────────────────────────
+(defpoll wifi-networks :interval "30s"
+  :initial "[]"
+  `~/.config/eww/scripts/wifi-scan.py`)
+
+; ── Wifi manager widget ────────────────────────────────────────────────────────
+(defwidget wifi-manager-widget []
+  (box :orientation "v"
+       :class "wifi-manager"
+       :space-evenly false
+    ; ── Header: icon + title + ssid + rescan button ───────────────────────────
+    (box :orientation "h"
+         :class "wifi-manager-header"
+         :space-evenly false
+         :spacing 10
+         :valign "center"
+      (label :class "wifi-manager-icon ${wifi.class}"
+             :valign "center"
+             :text {wifi.icon})
+      (box :orientation "v"
+           :space-evenly false
+           :hexpand true
+           :valign "center"
+        (label :class "wifi-manager-title"
+               :halign "start"
+               :text "Wi-Fi")
+        (label :class "wifi-manager-ssid"
+               :halign "start"
+               :truncate true
+               :text {wifi.connected ? wifi.ssid : "Not connected"}))
+      (button :class "wifi-manager-rescan"
+              :valign "center"
+              :onclick "swaymsg -q exec '~/.config/eww/scripts/wifi-rescan.sh'"
+              :tooltip "Rescan networks"
+        (label :text "↻"))
+      (button :class "wifi-close-btn"
+              :valign "center"
+              :onclick "swaymsg -q exec '~/.config/eww/scripts/wifi-close-popup.sh'"
+              :tooltip "Close"
+        (label :text "×")))
+    ; ── Current connection details (only when connected) ──────────────────────
+    (box :orientation "v"
+         :class "wifi-manager-details"
+         :space-evenly false
+         :spacing 4
+         :visible {wifi.connected}
+      (box :orientation "h" :space-evenly false :spacing 6
+        (label :class "wifi-detail-label" :xalign 0.0 :text "Signal")
+        (label :class "wifi-detail-value" :text "${wifi.signal}%"))
+      (box :orientation "h" :space-evenly false :spacing 6
+        (label :class "wifi-detail-label" :xalign 0.0 :text "IP")
+        (label :class "wifi-detail-value" :text {wifi.ip}))
+      (box :orientation "h" :space-evenly false :spacing 6
+        (label :class "wifi-detail-label" :xalign 0.0 :text "Public IP")
+        (label :class "wifi-detail-value" :text wifi-public-ip)
+        (button :class "wifi-copy-btn"
+                :tooltip "Copy public IP"
+                :onclick "printf %s '${wifi-public-ip}' | wl-copy"
+          (label :text "󰆏")))
+      (box :orientation "h" :space-evenly false :spacing 6
+        (label :class "wifi-detail-label" :xalign 0.0 :text "Freq")
+        (label :class "wifi-detail-value" :text {wifi.freq}))
+      (box :orientation "h" :space-evenly false :spacing 6
+        (label :class "wifi-detail-label" :xalign 0.0 :text "Security")
+        (label :class "wifi-detail-value" :text {wifi.security}))
+      (box :orientation "h" :space-evenly false :spacing 6
+           :visible {wifi.connected && wifi.security != ""}
+        (label :class "wifi-detail-label" :xalign 0.0 :text "Password")
+        (label :class "wifi-detail-value" :text {wifi-password != "" ? wifi-password : "••••••••"})
+        (button :class "wifi-copy-btn"
+                :tooltip {wifi-password != "" ? "Hide password" : "Show password"}
+                :onclick "~/.config/eww/scripts/wifi-password-toggle.sh"
+          (label :text {wifi-password != "" ? "󰈉" : "󰈈"}))
+        (button :class "wifi-copy-btn"
+                :tooltip "Mostrar QR"
+                :onclick "~/.config/eww/scripts/wifi-qr-show.sh"
+          (label :text "󰐲"))
+        (button :class "wifi-copy-btn"
+                :tooltip "Copy password"
+                :onclick "~/.config/eww/scripts/wifi-password-copy.sh"
+          (label :text "󰆏"))))
+    ; ── Connection status feedback ──────────────────────────────────────────
+    (revealer :reveal {wifi-connecting != "" || wifi-error != ""}
+              :transition "slidedown"
+              :duration "200ms"
+      (box :class {wifi-error != "" ? "wifi-status-bar error" : "wifi-status-bar connecting"}
+           :orientation "h"
+           :space-evenly false
+           :spacing 8
+        (label :class "wifi-status-icon"
+               :text {wifi-error != "" ? "✗" : "⟳"})
+        (label :class "wifi-status-text"
+               :text {wifi-error != ""
+                       ? wifi-error
+                       : "Connecting to ${wifi-connecting}..."}
+               :wrap true
+               :hexpand true)))
+    ; ── Network list section ──────────────────────────────────────────────────
+    (label :class "wifi-section-label"
+           :halign "start"
+           :text "Networks")
+    (scroll :vscroll true
+            :hscroll false
+            :class "wifi-net-scroll"
+            :height 320
+      (box :orientation "v"
+           :space-evenly false
+        (for net in {wifi-networks.networks}
+          (box :orientation "h"
+               :class {net.in_use ? "wifi-net-row active" : "wifi-net-row"}
+               :space-evenly false
+               :spacing 8
+               :valign "center"
+            ; Signal / saved icon
+            (label :class {net.available ? "wifi-net-icon" : "wifi-net-icon saved"}
+                   :valign "center"
+                   :text {net.icon})
+            ; SSID + security + band
+            (box :orientation "v"
+                 :space-evenly false
+                 :hexpand true
+                 :valign "center"
+              (label :class "wifi-net-ssid"
+                     :halign "start"
+                     :truncate true
+                     :text {net.ssid})
+              (box :orientation "h"
+                   :space-evenly false
+                   :spacing 6
+                   :halign "start"
+                (label :class "wifi-net-security"
+                       :visible {strlength(net.security) > 0}
+                       :text {net.security})
+                (label :class "wifi-net-band"
+                       :visible {strlength(net.band) > 0}
+                       :text {net.band})))
+            ; Action buttons
+            (button :class {wifi-connecting == net.ssid
+                             ? "wifi-action-btn op-pending-btn"
+                             : "wifi-action-btn connect-btn"}
+                    :visible {!net.in_use}
+                    :onclick "swaymsg -q exec '~/.config/eww/scripts/wifi-connect.sh \"${net.ssid}\" ${net.known} \"${net.security}\" \"${net.bssid}\"'"
+              (label :text {wifi-connecting == net.ssid ? "connecting..." : "connect"}))
+            (button :class "wifi-action-btn disconnect-btn"
+                    :visible {net.in_use}
+                    :onclick "~/.config/eww/scripts/wifi-disconnect.sh"
+              (label :text "disconnect"))
+            (button :class "wifi-action-btn edit-btn"
+                    :visible {net.known}
+                    :onclick "swaymsg -q exec '~/.config/eww/scripts/wifi-edit.sh \"${net.ssid}\" \"${net.security}\" \"${net.bssid}\"'"
+              (label :text "edit"))
+            (button :class "wifi-action-btn forget-btn"
+                    :visible {net.known}
+                    :onclick "swaymsg -q exec '~/.config/eww/scripts/wifi-forget.sh \"${net.ssid}\"'"
+              (label :text "forget"))))))))
+
+; ── Wifi manager window ────────────────────────────────────────────────────────
+(defwindow wifi-popup
+  :monitor 0
+  :geometry (geometry :x "28px"
+                      :y "38px"
+                      :width "380px"
+                      :anchor "top right")
+  :stacking "fg"
+  :focusable false
+  (wifi-manager-widget))
+
+; ----- Wifi password prompt (new secured network) -----------------------------
+(defwidget wifi-password-prompt-widget []
+  (box :orientation "v"
+       :class "wifi-pw-prompt"
+       :space-evenly false
+       :spacing 12
+    (label :class "wifi-pw-title"
+           :halign "start"
+           :truncate true
+           :text {wifi-pw-mode == "edit" ? "Edit password for ${wifi-pw-ssid}" : "Password for ${wifi-pw-ssid}"})
+    (input :class "wifi-pw-input"
+           :password true
+           :onaccept "~/.config/eww/scripts/wifi-pw-submit.sh '{}'")
+    (box :orientation "h"
+         :space-evenly false
+         :spacing 8
+      (label :class "wifi-pw-hint"
+             :halign "start"
+             :hexpand true
+             :text "Enter to connect")
+      (button :class "wifi-pw-cancel"
+              :onclick "${EWW_CMD} close wifi-password-prompt && ${EWW_CMD} update wifi-pw-mode=connect"
+        (label :text "Cancel")))))
+
+(defwindow wifi-password-prompt
+  :monitor 0
+  :geometry (geometry :anchor "center"
+                      :width "380px")
+  :stacking "overlay"
+  :focusable "ondemand"
+  (wifi-password-prompt-widget))
+
+; ----- Wifi share QR (centered window) ----------------------------------------
+(defwidget wifi-qr-widget []
+  (box :orientation "v"
+       :class "wifi-qr-frame"
+       :space-evenly false
+       :halign "center"
+    (box :class "wifi-qr-card"
+         :halign "center"
+      (image :path "/run/user/1000/wifi-qr.png"
+             :image-width 240
+             :image-height 240))
+    (label :class "wifi-qr-ssid"
+           :halign "center"
+           :truncate true
+           :text "Escanea para unirte a ${wifi-qr-ssid}")
+    (label :class "wifi-qr-hint"
+           :halign "center"
+           :text "Android · iOS — apunta la cámara")
+    (button :class "wifi-qr-close"
+            :halign "center"
+            :onclick "${EWW_CMD} close wifi-qr"
+      (label :text "Cerrar"))))
+
+(defwindow wifi-qr
+  :monitor 0
+  :geometry (geometry :anchor "center"
+                      :width "300px")
+  :stacking "overlay"
+  :focusable false
+  (wifi-qr-widget))

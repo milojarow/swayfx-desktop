@@ -1,0 +1,127 @@
+.TH SHUTDOWN 1 "2026-03-15" "sway dotfiles" "User Commands"
+.SH NAME
+shutdown \- power menu mode for sway (lock, logout, reboot, suspend, shutdown)
+.SH DESCRIPTION
+The shutdown mode presents a power menu with five system actions.
+It is entered via keyboard shortcut or the hardware power button, and exits
+immediately after an action is executed or on
+.BR Escape .
+.PP
+The sway bar displays a pango-markup label showing a power icon followed by:
+.BR "(l)" lock,
+.BR "(e)" logout,
+.BR "(r)" reboot,
+.BR "(u)" suspend,
+and
+.BR "(s)" shutdown.
+The label colors come from
+.I $color5
+and
+.I $color10
+of the active palette theme.
+.SH KEYBINDINGS
+The mode can be entered in two ways:
+.TP
+.B $mod+Shift+e
+Keyboard shortcut (defined in
+.IR ~/.config/sway/modes/shutdown ).
+.TP
+.B XF86PowerOff
+Hardware power button (defined in
+.IR ~/.config/sway/modes/default ).
+.PP
+Inside the mode:
+.TP
+.B l
+Lock the screen. Executes
+.I $locking
+(defined in
+.IR ~/.config/sway/config.d/01-definitions.conf ).
+See
+.BR lock-screen (1).
+.TP
+.B e
+Log out of sway. Executes
+.BR "swaymsg exit" .
+.TP
+.B r
+Reboot the system. Executes
+.BR "systemctl reboot" .
+.TP
+.B u
+Secure suspend: locks the screen first, then suspends. Executes
+.IR secure-suspend.sh .
+See
+.BR lock-screen (1).
+.TP
+.B s
+Shut down the system. Executes
+.BR "systemctl poweroff" .
+.TP
+.B Escape
+Cancel and return to default mode without taking any action.
+.SH NOTES
+Clipboard history is intentionally preserved across logout and shutdown.
+An optional purge on logout can be enabled by setting
+.B $purge_cliphist_logout
+to
+.B 'true'
+in
+.I ~/.config/sway/config.d/01-definitions.conf
+and uncommenting the corresponding line in the mode file.
+.PP
+The pango markup uses
+.I $color5
+and
+.I $color10
+from the active palette theme.
+These variables are defined in
+.IR ~/.config/sway/themes/<name>/theme.conf
+and symlinked at runtime to
+.I ~/.config/sway/definitions.d/theme.conf
+(generated \(em not tracked in git).
+See
+.BR palette-theming (1).
+.SH FILES
+.TP
+.I ~/.config/sway/modes/shutdown
+Mode definition: pango label, all keybindings, and the
+.B $mod+Shift+e
+entry binding.
+.TP
+.I ~/.config/sway/modes/default
+Defines the
+.B XF86PowerOff
+entry binding.
+.TP
+.I ~/.config/sway/config.d/01-definitions.conf
+Defines the
+.I $locking
+variable used by the
+.B l
+binding.
+.TP
+.I ~/.config/sway/scripts/secure-suspend.sh
+Lock-then-suspend script invoked by the
+.B u
+binding.
+See
+.BR lock-screen (1)
+for full documentation.
+.TP
+.I ~/.config/sway/themes/<name>/theme.conf
+Defines
+.I $color5
+and
+.I $color10
+for the pango mode label.
+Active theme symlinked at runtime; see
+.BR palette-theming (1).
+.SH PROGRAMS
+.BR swaymsg (1),
+.BR systemctl (1)
+.SH SEE ALSO
+.BR swaymsg (1),
+.BR systemctl (1),
+.BR lock-screen (1),
+.BR palette-theming (1)

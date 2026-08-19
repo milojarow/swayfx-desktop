@@ -1,0 +1,28 @@
+; feature: screenshot-mode
+; role:    window
+; deps:    scripts/screenshot-mode-subscribe.sh, scripts/screenshot-mode-toggle.sh,
+;          styles/screenshot-mode.scss
+
+(deflisten screenshot-mode
+  :initial `{"mode":"traditional","icon":""}`
+  "~/.config/eww/scripts/screenshot-mode-subscribe.sh")
+
+; --- Circle toggle widget (BT-circle style) ---
+(defwidget screenshot-mode-trigger []
+  (button :class {screenshot-mode.mode == "aggressive" ? "screenshot-mode-circle aggressive" : "screenshot-mode-circle"}
+          :tooltip {screenshot-mode.mode == "aggressive"
+                    ? "Captura AGGRESSIVE: Print → área → clipboard"
+                    : "Captura tradicional: Print → menú (p/o) → swappy"}
+          :onclick "~/.config/eww/scripts/screenshot-mode-toggle.sh"
+    (label :class {screenshot-mode.mode == "aggressive" ? "screenshot-mode-icon aggressive" : "screenshot-mode-icon"}
+           :text {screenshot-mode.icon})))
+
+; --- Toggle window (always open on desktop, left of bt-widget) ---
+(defwindow screenshot-mode-widget
+  :monitor 0
+  :geometry (geometry :x "1100px"
+                      :y "910px"
+                      :anchor "bottom left")
+  :stacking "bottom"
+  :focusable false
+  (screenshot-mode-trigger))

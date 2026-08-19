@@ -1,0 +1,85 @@
+# Emoji Aliases — keyword<TAB>emoji emoji emoji ...
+#
+# Each line maps a keyword to a list of related emojis. The keyword is
+# attached to each emoji as invisible rofi metadata: typing it in the
+# picker surfaces all emojis in the cluster without changing their
+# visible CLDR names.
+#
+# Format
+#   keyword<TAB>emoji<SPACE>emoji<SPACE>...
+#
+# Notes
+#   - One keyword per line, separated from the emoji list by a TAB.
+#   - Comments start with #. Blank lines are ignored.
+#   - The same emoji can appear in multiple clusters; all keywords merge.
+#   - Add your own clusters anywhere — castellano, jergas, abreviaciones, lo que sea.
+#   - Read by ~/.config/sway/scripts/emoji-modi-handler on every picker launch.
+
+# --- Emotion / face clusters ---
+surprised	😮 😯 😲 😳 🫨 🤯 😱 🥹 😦 😧 😨
+shock	😱 🫨 🤯 😨 😳
+lol	🤣 😂 😆 😅 😄 😃 😁 😀
+laugh	🤣 😂 😆 😅 😄 😃 😁
+happy	🙂 😊 😇 ☺️ 😌 😀 😃 😄 😁 🥰
+sad	😢 😭 ☹️ 🙁 😞 😔 😟 😩 😫 🥺 😣 😖 😓
+cry	😢 😭 🥺 😿 😥
+angry	😠 😡 🤬 👿 😈 👹 👺
+love	😍 🥰 😘 😻 ❤️ 💕 💖 💝 💞 💗 💌
+think	🤔 🧐 🤨 🫥 😶
+sleep	😴 😪 🥱 💤
+sick	🤒 🤕 🤧 😷 🤢 🤮 🥴
+wink	😉 😜 😋 🤪
+kiss	😘 😗 ☺️ 😚 😙 💋 💏
+cool	😎 🤓
+embarrassed	😳 😖 🥺 😰
+nervous	😰 😨 😥 😓
+
+# --- Concept clusters ---
+number	0️⃣ 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 6️⃣ 7️⃣ 8️⃣ 9️⃣ 🔟 #️⃣ *️⃣
+math	➕ ➖ ➗ ✖️ 🟰 ♾️ 💯
+money	💰 💵 💴 💶 💷 💸 💳 🪙 🧾 🤑 💱 💲
+time	⏰ ⏱️ ⏲️ 🕰️ ⌚ ⌛ ⏳
+weather	☀️ 🌤️ ⛅ ☁️ 🌧️ ⛈️ 🌩️ ❄️ 🌨️ 🌪️ 🌈 🌫️ ⚡ ☃️ ⛄
+fire	🔥 ❤️‍🔥 🧨 🎆 🎇
+water	💧 🌊 ☔ 🚿 🛁
+heart	❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 🩷 🩵 🩶 💖 💗 💓 💞 💕 💟 💔 ❣️ 💌 💘 💝 ❤️‍🔥 ❤️‍🩹
+
+# --- Theme clusters ---
+poker	🃏 ♠️ ♥️ ♦️ ♣️ 🎰 🀄 🎴
+sport	⚽ ⚾ 🥎 🏀 🏐 🏈 🏉 🎾 🥏 🎳 🏏 🏑 🏒 🥍 🏓 🏸 🥊 🥋 🥅 ⛳ ⛸️ 🎯 🏆 🥇 🥈 🥉 🎿 🛷 🥌
+party	🥳 🎉 🎊 🎈 🪅 🎆 🎇 ✨ 🎂 🎁 🧧 🎀
+music	🎵 🎶 🎼 🎤 🎧 🎷 🎺 🎸 🎻 🪕 🥁 🎹 🪗 📻 🪘 🪈
+code	💻 🖥️ 🖱️ ⌨️ 🖨️ 💾 💿 📀 🐛 🪲 🐞 ⚙️
+tool	🔧 🔨 🪛 🪚 🔩 ⚙️ ⛏️ ⚒️ 🛠️ 🧰 🗜️ 🔪
+magic	🪄 🔮 🧙 🧚 🧛 🧝 🧞 🧌 ✨ 🧿
+food	🍕 🍔 🍟 🌭 🥪 🌮 🌯 🍜 🍝 🍣 🍱 🍛 🍲 🍳 🥗 🍰 🎂 🍩
+drink	☕ 🫖 🍵 🍶 🍾 🍷 🍸 🍹 🍺 🍻 🥂 🥃 🥤 🧋 🧃 🧉 🥛
+coffee	☕
+beer	🍺 🍻
+
+# --- Animals ---
+cat	🐱 🐈 🐈‍⬛ 🦁 🐯 🐅 😺 😸 😹 😻 😼 😽 🙀 😿 😾
+dog	🐶 🐕 🦮 🐕‍🦺 🐩
+bird	🐦 🐤 🐥 🐣 🐔 🦆 🦅 🦉 🦜 🐧 🕊️ 🐓 🦃 🦢 🦤 🦩 🦚 🐦‍⬛ 🪿 🐦‍🔥
+fish	🐟 🐠 🐡 🦈 🐳 🐋 🐬 🫍 🦭 🐙
+
+# --- Plants ---
+flower	💐 🌸 💮 🪷 🏵️ 🌹 🥀 🌺 🌻 🌼 🌷 🪻
+tree	🌲 🌳 🌴 🪾 🎄
+
+# --- Hand / decision ---
+hand	👋 🤚 🖐️ ✋ 🖖 🫱 🫲 🫳 🫴 👌 🤌 🤏 ✌️ 🤞 🤟 🤘 🤙 👏 🙌 👐 🤲 🤝 🙏
+point	👈 👉 👆 👇 ☝️ 🫵
+wave	👋
+ok	👌 🙆‍♂️ 🆗 ✅
+yes	✅ ☑️ ✔️ 👍 👌 🆗
+no	❌ ❎ 🚫 ⛔ 👎 🙅‍♂️
+
+# --- Alert / signal clusters ---
+alert	⚠️ 🚨 🆘 ❗ ⛔ 🛑
+danger	⚠️ ☠️ ☢️ ☣️ ⛔ 🚫 🛑 🚨
+warning	⚠️ ⛔ 🚸 🚧 ❗ 🛑
+emergency	🚨 🆘 🚑 🚒 🚓 ⛑️
+siren	🚨 🚑 🚒 🚓
+notification	🔔 📢 📣 💬 🚨
+caution	⚠️ 🚸 🚧 🛑

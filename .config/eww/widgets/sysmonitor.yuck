@@ -1,0 +1,56 @@
+; feature: sysmonitor
+; role:    window
+(deflisten sysmon-brightness :initial "50"
+  "~/.config/eww/scripts/brightness-subscribe.sh")
+
+(defvar gauge-offset -0.5)
+
+(defwidget stat-item [icon color value]
+  (box :class "stat-row"
+       :orientation "h"
+       :hexpand true
+       :space-evenly false
+       :valign "center"
+    (label :class "stat-icon"
+           :valign "center"
+           :style "color: ${color};"
+           :text icon)
+    (progress :class "bar-track"
+              :hexpand true
+              :valign "center"
+              :value value
+              :style "color: ${color}; margin-top: ${gauge-offset}px;")))
+
+(defwidget sysmonitor []
+  (box :class "sysmonitor"
+       :orientation "v"
+       :hexpand true
+       :space-evenly false
+    (box :class "sysmon-header")
+    (box :class "sysmon-body"
+         :orientation "v"
+         :spacing 12
+         :space-evenly false
+         :hexpand true
+      (stat-item :icon ""
+                 :color "#BF616A"
+                 :value {round(EWW_CPU.avg, 0)})
+      (stat-item :icon ""
+                 :color "#A3BE8C"
+                 :value {round(EWW_DISK["/"].used_perc, 0)})
+      (stat-item :icon ""
+                 :color "#EBCB8B"
+                 :value sysmon-brightness)
+      (stat-item :icon ""
+                 :color "#88C0D0"
+                 :value {EWW_BATTERY["BAT0"].capacity}))))
+
+(defwindow sysmonitor-window
+  :monitor 0
+  :geometry (geometry :x "210px"
+                      :y "560px"
+                      :width "350px"
+                      :anchor "bottom left")
+  :stacking "bottom"
+  :focusable false
+  (sysmonitor))

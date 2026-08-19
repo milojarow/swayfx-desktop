@@ -1,0 +1,458 @@
+.TH PEEK 1 "2026-08-01" "1.2" "User Commands"
+.SH NAME
+peek \- paste an image, video or audio path and see or hear it, or run a command
+.SH SYNOPSIS
+.B peek
+.PP
+.B peek --paste
+.I TEXT
+.PP
+.B peek --view
+.I PATH
+.RB [ -s
+.IR SLOT ]
+.RB [ -n
+.IR TOTAL ]
+.PP
+.B peek --audio
+.IR PATH ...
+.RB [ -s
+.IR SLOT ]
+.RB [ -n
+.IR TOTAL ]
+.SH DESCRIPTION
+A bare rectangle in the middle of the screen with a
+.B >
+and a field. It exists because a path printed in a terminal is not a picture:
+the fastest way to look at something is to paste where it lives and have it
+appear.
+.PP
+The prompt wears
+.B no border
+\[em] it is a plain dark slab, square-cornered. The picture and video windows
+do keep a thin cyan frame, which is what separates them from the desktop
+behind.
+.PP
+.B Audio is the one thing that does not get a window each.
+Two pictures can share a screen; two songs cannot share a room. Every audio
+file pasted at once lands in a
+.B single player
+\[em] a list of the file names with a cursor, and one transport bar under it.
+Move the cursor with the arrows or
+.BR j / k ,
+press
+.B space
+to play what is selected, space again to pause. A lone audio file starts
+playing by itself; a list waits, because a menu that picks for you is not a
+menu.
+.PP
+There is no Enter. The field resolves on every pause in typing, so a pasted path
+shows itself: an image opens as a floating window, a video opens playing and
+looping, both resizable like any floating window. Paste several paths at once
+and each one opens as its own window, laid out on a grid sized to the workspace
+so none covers another and none falls off the screen. Every window is sized to
+its own aspect ratio inside its cell and centred there, so a portrait phone
+video is not mostly black bars.
+.PP
+.B Escape closes every peek window at once
+\[em] the prompt, the pictures and the videos \[em] not just the one in front of
+you.
+.PP
+Enter runs whatever else was typed, which is what the second placeholder
+promises. The prompt alternates between
+.RI \[lq] "pega la ruta de una imagen o un video" \[rq]
+and
+.RI \[lq] "corre cualquier comando" \[rq],
+fading between them, and both are true.
+.PP
+.B One prompt at a time.
+The keybinding takes a lock before it loads anything heavy, so pressing
+.B $mod+i
+again while a prompt is already coming up costs a few milliseconds and dies
+quietly instead of opening a second rectangle.
+.SH THE OTHER DIRECTION
+Paste a picture instead of a path and the prompt runs in reverse: the image is
+written to
+.IR /tmp/peek-<timestamp>.png ,
+opened in its own window, and its location is left both in the field and on the
+clipboard \[em] ready to hand to whoever asked for it.
+.PP
+This closes the loop with the screenshot binding in its clipboard-only mode:
+capture an area, press
+.BR $mod+i ,
+paste, and the shot has a path.
+.SH KEYBINDINGS
+.TP
+.B $mod+i
+Open the prompt. Pressing it again while one is open does nothing.
+.TP
+.B Escape
+Close every peek window.
+.TP
+.B Ctrl+V
+Paste. A picture on the clipboard is saved to
+.I /tmp
+and its path returned; anything else pastes as text.
+.TP
+.B Enter
+Run the typed text as a command, unless it is already a media path.
+.TP
+.B "space " "(player)"
+Play what the cursor is on; press again to pause it.
+.TP
+.BR "Up / Down" ", " "j / k" " (player)"
+Move the cursor. Home and End jump to the ends. Moving the cursor never starts
+or stops anything on its own.
+.TP
+.B "Enter " "(player)"
+Play the selected file from the start, whatever was playing before.
+.TP
+.B $mod + right-drag
+Resize a window, as with any floating window in sway.
+.SH USAGE
+.TP
+.B peek
+Open the prompt. This is what the keybinding does.
+.TP
+.BI "peek --view " PATH
+Show one image or play one video directly, with no prompt. Bypasses the
+single-prompt lock, so any number of these can be open at once.
+.TP
+.BI "peek --view " "PATH " "-s " I " -n " N
+Show one file as slot
+.I I
+of
+.I N
+on the grid. The prompt spawns one of these per path when several are pasted;
+each window places itself, so nothing has to coordinate them.
+.TP
+.BI "peek --audio " "PATH ..." " [-s " I "] [-n " N "]"
+Open one player holding every listed audio file, in slot
+.I I
+of the grid. The prompt spawns exactly one of these however many audio files
+were pasted.
+.TP
+.BI "peek --paste " TEXT
+Open the prompt with the field prefilled. This is the testable seam: it exercises
+the whole resolve-and-grow path without synthesising a single keystroke.
+.TP
+.B PEEK_DEBUG=1 peek
+Print what the field resolved to, on every pause, to standard error.
+.SH WHAT COUNTS AS A PATH
+Plain paths, paths with
+.BR ~ ,
+.I file://
+URIs, quoted paths, and several of any of those at once separated by spaces or
+newlines. Trailing sentence punctuation is trimmed, so a path pasted out of
+prose \[em] ending in a full stop or a comma \[em] still resolves.
+.PP
+A path is accepted only when the file exists
+.B and
+its extension is one of:
+.TP
+.B images
+png, jpg, jpeg, webp, gif, bmp, svg, avif, tif, tiff, ico
+.TP
+.B video
+mp4, webm, mkv, mov, avi, m4v, ogv, mpg, mpeg, wmv, flv, ts, m2ts, 3gp
+.TP
+.B audio
+mp3, m4a, aac, flac, wav, ogg, oga, opus, wma, aiff, aif, alac, mka, ape
+.IP
+.I .ogg
+counts as audio, not video: in the wild it is nearly always Vorbis. Theora
+video keeps
+.IR .ogv .
+.PP
+Anything else is left alone for Enter to run as a command.
+.SH FILES
+.TP
+.I $HOME/.scripts/peek
+The whole program: Python 3 and GTK 4, one file, no build step.
+.TP
+.I $HOME/.config/sway/modes/default
+Holds the
+.B $mod+i
+binding. The binding sets
+.B LD_PRELOAD
+itself \[em] see
+.BR GOTCHAS .
+.TP
+.I $HOME/.config/sway/config.d/98-application-defaults.conf
+Holds the window rule (floating, no border) and the
+.B layer_effects "peek"
+block that squares the prompt's corners. It deliberately does
+.B not
+set
+.BR corner_radius " \[em] see " GOTCHAS .
+.TP
+.I $XDG_RUNTIME_DIR/peek-prompt.lock
+Flock held for the life of the prompt. Its only job is to make a second
+.B $mod+i
+a no-op.
+.SH PIPELINE
+.nf
+$mod+i  (LD_PRELOAD=libgtk4-layer-shell.so)
+  \[->] peek                       take the lock, or exit
+      \[->] prompt, centred, 720 wide, height from the font
+          \[->] every pause in typing  parse the field
+              \[->] pictures/videos    spawn peek --view per path,
+                                       each placing itself on the grid
+                  \[->] image          Gtk.Picture
+                  \[->] video          Gtk.Video, autoplay + loop
+              \[->] every audio path   ONE peek --audio for all of them
+                                       list + cursor + transport,
+                                       driven by GStreamer playbin
+              \[->] anything else      Enter runs it, Escape closes everything
+.fi
+.SH DEPENDENCIES
+.B python-gobject
+and
+.B gtk4
+(the program),
+.B gtk4-layer-shell
+(the prompt's square-cornered surface),
+.B swayfx
+for
+.BR swaymsg ,
+which is what positions and closes the windows, and
+.BR gstreamer ", " gst-plugins-good ", " gst-plugins-bad " and " gst-libav
+for video and audio. Video goes through GTK's own
+.B GtkGstMediaFileBuiltin
+backend; audio does
+.B not
+\[em] see
+.BR GOTCHAS .
+.SH GOTCHAS
+.TP
+.B "A square CSS border inside a rounded window loses all four corners"
+These are ordinary windows, so SwayFX clips the surface to the global
+.BR "corner_radius 15" .
+A 1px border drawn at the very edge of that surface has its corners eaten by
+the clip and reads as four disconnected lines \[em] which is exactly how the
+operator described it. The border must carry the same
+.B border-radius: 15px
+so it follows the window. It cannot be fixed the other way round:
+.B corner_radius
+in a
+.B for_window
+rule is a GLOBAL setting, so squaring these windows squares every window on
+the machine.
+.IP
+.B And a rectangular child paints straight over that arc.
+A
+.B Gtk.Picture
+or
+.B Gtk.Video
+fills its parent's box and erases the border curve, so the frame needs
+.B set_overflow(Gtk.Overflow.HIDDEN)
+to clip children to its own rounded shape. The audio player hid the problem:
+labels never reach the corners, so only the media windows showed it.
+.TP
+.B "Gtk.MediaFile kills the whole process on an mp3 \[em] audio must bypass GTK"
+.B GtkMediaFile
+drives
+.BR GstPlay ,
+which forces
+.B playbin3
+and
+.BR decodebin3 ,
+and on this machine that combination aborts:
+.IP
+.nf
+gstdecodebin3.c:3381: mq_slot_handle_stream_start:
+assertion failed: (collection)   ->   Bail out!
+.fi
+.IP
+It is a GLib abort, so there is nothing to catch \[em] peek would simply die
+mid-paste, taking any other window in the same process with it. Plain
+.B playbin
+decodes the same file without complaint, so audio is driven straight from
+GStreamer and never touches
+.BR Gtk.MediaFile .
+Verified again on gstreamer 1.28.5, 2026-08-01. Video is unaffected and still
+uses
+.BR Gtk.Video .
+.IP
+Import
+.B Gst
+lazily, inside the audio path only: the prompt must not pay for a GStreamer
+init it will never use.
+.TP
+.B "The theme owns `progress` too \[em] that is three widget nodes now"
+Every selector tried \[em]
+.BR "progress" ", " "> trough > progress" ", " "background-image: none"
+\[em] rendered the fill at (153, 209, 219), which is Catppuccin Frappe
+.IR sky ,
+and
+.B min-height
+was ignored outright. Same story as
+.B .frame
+and the
+.B entry
+box. The transport bar is two cairo rectangles in a
+.B Gtk.DrawingArea
+instead, which answers to nobody. The rule: when a GTK widget's internal node
+resists app CSS for the second time, stop writing selectors and draw it.
+.TP
+.B Gtk.Application costs about 400ms before your first line of UI code runs
+Measured, interleaved A/B: registering a
+.B Gtk.Application
+put the prompt on screen in ~857ms; the same program on a bare
+.BR Gtk.init "\ +\ " GLib.MainLoop
+does it in ~386ms, and every millisecond of that is between the keypress and
+anything appearing. Without a GApplication the Wayland
+.I app_id
+comes from the program name, so
+.B GLib.set_prgname("dev.milo.peek")
+is load-bearing: the window rule and
+.RB \[lq] "[app_id=...] kill" \[rq]
+both hang off it.
+.TP
+.B .frame is a class the GTK theme already owns
+Styling
+.B .frame
+loses the cascade to the theme, silently: the border rendered a dull grey
+instead of the intended cyan and nothing anywhere reported a problem. Renaming
+the identical rule to
+.B .peek-frame
+fixed it. Prefix every class in an app stylesheet.
+.TP
+.B GTK ignores padding, min-height and colour set on the entry node
+.BR entry.path ", " .path " and plain " entry
+all parse without error and all do nothing;
+only the inner
+.B text
+node answers. So text properties are addressed to
+.RB \[lq] ".path text" \[rq]
+and the vertical rhythm lives on the row that
+.I contains
+the entry, not the entry.
+.TP
+.B Pinning the prompt's height squeezes the text against the top edge
+A vertical
+.B Gtk.Box
+packs its children at the top; forcing the box to 56px while its content
+measured 24px left the text glued under the top edge with 32px of dead space
+below it. The height now comes from padding, so the row is centred by
+construction.
+.TP
+.B "\[lq]The top of the text is cut off\[rq] was never clipping \[em] it is GTK's AUTOMATIC font rendering"
+GTK 4.16 defaults
+.B gtk-font-rendering
+to
+.BR AUTOMATIC ,
+and in that mode it rasterises softly: stems land between pixel columns at half
+intensity and the flat top of every digit rounds away. It reads as the tops
+being sliced off. Nothing is clipped \[em] the glyphs are drawn that way.
+.B peek
+sets
+.B MANUAL
+with
+.B hintfull
+on its own
+.BR Gtk.Settings ,
+which reproduces the PangoCairo rendering exactly. Per process; nothing else on
+the machine changes.
+.IP
+.B A Gtk.Label is the control that tells you whether your widget is clipping.
+A label has no height constraint of any kind, so if it renders a string the
+same way your entry does, nothing is being cut. Running label, plain entry,
+entry with
+.BR min-height ,
+entry with
+.BR padding-top ,
+and a bare
+.B Gtk.Text
+side by side produced five byte-identical renders \[em] which killed the
+clipping theory outright.
+.IP
+.B Compare against an independent renderer, never against your own render.
+Two rounds were lost to a screenshot that matched the operator's pixel for
+pixel; both had gone through the same widget. Ground truth means drawing the
+string straight through
+.B PangoCairo
+with no widget involved.
+.IP
+.B Use digits as the test string.
+Round and irregular letters hide a flattened top; digits share one flat cap
+height, so the defect reads as a chop across the whole line. The operator
+worked this out and typed
+.I 11112222233333344444
+\[em] that screenshot is what finally made it visible.
+.IP
+.B And measure the fix the same way you measured the bug.
+A
+.B min-height
+on the text node was shipped as the fix on the strength of a
+before/after built with mismatched thresholds. An A/B of the two builds in one
+session showed them byte-identical. It was reverted.
+.TP
+.B Take the single-instance lock before importing gi
+The point of the lock is that the second keypress is cheap. Claimed before
+.B import gi
+it costs ~60ms and exits; claimed after, it would pay the entire GTK startup
+first.
+.TP
+.B corner_radius in a for_window rule is GLOBAL, not per-window
+SwayFX documents it as \[lq]set corner radius for new windows\[rq]: it is a
+setting, not a window property. Putting it in a
+.B for_window
+rule does not scope it \[em] it runs the global command every time a matching
+window appears, so every window created afterwards came out square. The only
+per-surface corner radius SwayFX has is
+.B layer_effects
+.IR "<namespace>" ,
+which applies to layer-shell surfaces, not to ordinary windows.
+.TP
+.B Never position by [con_id=__focused__]
+The window being open is not the window being focused, so a launcher that moves
+\[lq]the focused window\[rq] will eventually resize somebody else's. Each peek
+window titles itself
+.I peek:<pid>
+and moves only that title.
+.TP
+.B move position is relative to the workspace, not the output
+The workspace rect already starts below the bar. Adding its origin on top pushed
+the bottom row of the grid off the screen \[em] the tell was a window asking for
+y=563 and landing at y=603, exactly the bar's 40px.
+.TP
+.B Lay the grid out on the workspace rect, not the output rect
+The output includes the bar; using it makes the last row hang past the bottom.
+.TP
+.B A video's size is not known until its stream is prepared
+.B Gtk.Video
+has no intrinsic width at construction. The window is placed on its cell first
+and reshaped from
+.B notify::prepared
+when the real dimensions arrive.
+.TP
+.B The window having focus is not the entry having it
+Without an explicit
+.B grab_focus
+on the field, keystrokes go nowhere and the prompt looks broken.
+.TP
+.B GTK cannot fade its built-in placeholder
+The alternating hint is a label of its own in a
+.BR Gtk.Overlay ,
+shown only while the field is empty, with its opacity tweened by hand.
+.TP
+.B Do not test this by synthesising keystrokes
+.B wtype
+types into whatever holds focus, and this window takes focus. Typing into it
+while the operator is using the keyboard interleaves both streams: the path
+arrives corrupted and it looks like the tool dropped characters. Use
+.B --paste
+instead, which needs no keyboard at all, or the nested headless sway harness.
+.TP
+.B Escape closes all of them on purpose
+It kills by
+.IR app_id ,
+so one Escape ends the whole session of windows. That is the intent, not a
+side effect.
+.SH SEE ALSO
+.BR sway (5),
+.BR swaymsg (1),
+.BR swayimg (1),
+.BR projects (1),
+.BR screenshots (1)

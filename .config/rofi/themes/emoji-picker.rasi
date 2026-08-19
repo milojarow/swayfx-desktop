@@ -1,0 +1,110 @@
+/* Compact emoji picker theme */
+* {
+    /* Colors from main config */
+    background-color: #141a1b;
+    text-color: #f8f8f2;
+    accent-color: #bd93f9;
+    selected-bg: #283637;
+    selected-text: #bd93f9;
+
+    spacing: 0;
+}
+
+window {
+    width: 600px;
+    transparency: "real";
+    border: 2px;
+    border-color: @accent-color;
+    border-radius: 6px;
+    background-color: @background-color;
+    padding: 8px;
+}
+
+mainbox {
+    padding: 0;
+    spacing: 6px;
+    children: [inputbar, mode-switcher, listview];
+}
+
+/* Tab bar for emoji categories */
+mode-switcher {
+    background-color: transparent;
+    spacing: 2px;
+    padding: 2px 0px;
+}
+
+button {
+    padding: 4px 6px;
+    border-radius: 4px;
+    background-color: transparent;
+    text-color: rgba(248, 248, 242, 0.6);
+    cursor: pointer;
+}
+
+button selected {
+    background-color: @selected-bg;
+    text-color: @accent-color;
+    border: 0px 0px 2px 0px;
+    border-color: @accent-color;
+}
+
+inputbar {
+    padding: 6px 8px;
+    border: 1px;
+    border-color: @accent-color;
+    border-radius: 4px;
+    background-color: #1c2526;
+    children: [entry];
+    spacing: 6px;
+}
+
+entry {
+    padding: 0px;
+    text-color: @text-color;
+    placeholder: "Search...";
+    placeholder-color: rgba(248, 248, 242, 0.5);
+}
+
+listview {
+    lines: 12;
+    scrollbar: true;
+    border: 0px;
+    padding: 2px 0px;
+    spacing: 1px;
+    fixed-height: true;
+    fixed-columns: true;
+}
+
+scrollbar {
+    handle-width: 4px;
+    handle-color: @accent-color;
+    border-radius: 8px;
+    background-color: #1c2526;
+}
+
+element {
+    padding: 4px 8px;
+    border-radius: 3px;
+    spacing: 8px;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color: @text-color;
+}
+
+element selected.normal {
+    background-color: @selected-bg;
+    text-color: @selected-text;
+}
+
+element alternate.normal {
+    background-color: transparent;
+    text-color: @text-color;
+}
+
+element-text {
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+    text-color: inherit;
+}

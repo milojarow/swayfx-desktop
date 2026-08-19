@@ -1,0 +1,290 @@
+.TH SCREENSHARING 1 "2026-08-15" "1.0" "sway dotfiles"
+.SH NAME
+screensharing \- share a single window, or a whole screen, from sway
+.SH DESCRIPTION
+When an application asks to capture the screen \[em] a video call, a browser
+calling
+.IR getDisplayMedia() ,
+Vesktop going live \[em] it does not talk to sway. It talks to
+.B xdg-desktop-portal
+over D-Bus, which routes the request to the wlroots backend
+.RB ( xdg-desktop-portal-wlr ,
+"xdpw"), which asks a helper program \[em] the
+.I chooser
+\[em] what to capture, and finally hands the application a
+.B PipeWire
+node carrying the frames.
+.PP
+sway 1.12 added capture of individual windows, and xdpw 0.8.2 already knew how
+to request one. The piece that was missing on this machine was the chooser: the
+default is
+.BR slurp (1),
+which selects a rectangle on screen and therefore can only ever name an
+.IR output .
+The capability was present and unreachable \[em] nothing was broken, nothing was
+missing, and sharing a single window did not work.
+.PP
+This system replaces that chooser with a
+.I dmenu-style
+one. In that mode xdpw hands the candidate list to the chooser on standard
+input, so windows can be listed, picked, and named back.
+.SH KEYBINDINGS
+.TP
+.B (none)
+There is no key to press. The flow is driven entirely by the requesting
+application; the chooser appears when an application asks to capture.
+.SH USAGE
+.nr step 1 1
+.IP \n[step]. 3
+Start a screen share in the application (Vesktop "Go Live", a browser's share
+button, a meeting client).
+.IP \n+[step].
+A
+.BR rofi (1)
+list appears, with one entry per candidate:
+.RS
+.PP
+.nf
+[pantalla]  eDP-1 Sharp Corporation 0x1453 (eDP-1)
+[ventana]   Inbox \- Betterbird
+[ventana]   ~/projects/example
+.fi
+.RE
+.IP \n+[step].
+Pick one and the share starts. Press
+.I Escape
+to decline \[em] the application is told the user cancelled.
+.PP
+Whether windows appear at all is the requesting application's choice: they are
+listed only when it asks for window sources. An application that asks for
+screens only gets the screen list, unchanged.
+.SH FILES
+.SS Configuration
+.TP
+.I $HOME/.config/xdg-desktop-portal-wlr/config
+The xdpw backend config. Sets
+.I chooser_type=dmenu
+so xdpw feeds the candidate list on stdin, and points
+.I chooser_cmd
+at the chooser below. Read once at xdpw startup.
+.TP
+.I $HOME/.config/xdg-desktop-portal-wlr/chooser.sh
+The chooser. Reads the list on stdin, renders a cleaned-up label per line in
+.BR rofi (1),
+and prints the chosen line back to stdout verbatim.
+.SS "Package-shipped routing"
+.TP
+.I /usr/share/xdg-desktop-portal/portals/wlr.portal
+Declares that the wlr backend implements the
+.I Screenshot
+and
+.I ScreenCast
+interfaces, and that it is used in desktops named
+.IR sway ,
+among others.
+.TP
+.I /usr/share/xdg-desktop-portal/sway-portals.conf
+Routing under a sway session: everything defaults to the GTK backend, except
+.I ScreenCast
+and
+.I Screenshot
+which go to wlr. This is why screen capture reaches xdpw with no user config at
+all.
+.SS Units
+.TP
+.I xdg-desktop-portal-wlr.service
+The backend, a
+.I static
+systemd user unit. Not enabled and not meant to be: it is started on demand
+through its D-Bus name.
+.TP
+.I /usr/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service
+The D-Bus activation entry that starts the backend the first time something
+asks to capture.
+.SH FLOW
+.nr step 1 1
+.IP \n[step]. 3
+The application calls
+.IR CreateSession ", " SelectSources ", " Start
+on
+.I org.freedesktop.portal.ScreenCast
+over the session bus.
+.IP \n+[step].
+.B xdg-desktop-portal
+routes those calls to the wlr backend, per
+.IR sway-portals.conf .
+.IP \n+[step].
+xdpw builds the candidate list. Outputs always; toplevels only if the
+application asked for window sources.
+.IP \n+[step].
+xdpw runs
+.I chooser.sh
+with that list on stdin, one candidate per line:
+.RS
+.PP
+.nf
+Monitor: eDP-1 Sharp Corporation 0x1453 (eDP-1)
+Window: <window title> (<ext-foreign-toplevel-list-v1 id>)
+.fi
+.RE
+.IP \n+[step].
+The chooser shows readable labels in rofi and asks it for the
+.I index
+of the selection, then prints the original line \[em] ids intact \[em] on
+stdout.
+.IP \n+[step].
+xdpw creates a capture source: an output source, or a foreign-toplevel source
+via
+.IR ext_foreign_toplevel_image_capture_source_manager_v1 .
+.IP \n+[step].
+The frames are published as a
+.B PipeWire
+node whose id is returned to the application, tagged
+.I source_type
+1 for a screen or 2 for a window.
+.SH PROGRAMS
+.BR rofi (1),
+.BR slurp (1),
+.BR systemctl (1),
+.BR gdbus (1)
+.SH DEPENDENCIES
+.TP
+.B xdg-desktop-portal
+The portal frontend on D-Bus. Applications only ever talk to this.
+.TP
+.B xdg-desktop-portal-wlr
+The wlroots backend that implements ScreenCast and Screenshot, runs the chooser
+and talks the capture protocols to the compositor. Per-window capture needs
+0.8.2 or newer.
+.TP
+.B swayfx
+The compositor. Per-window capture needs a sway 1.12 base or newer, which
+SwayFX 0.6 provides.
+.TP
+.B rofi
+Renders the chooser list. Any dmenu-compatible program works; this one is used
+with
+.I -format i
+so the selection comes back as an index.
+.TP
+.B pipewire
+Carries the captured frames from the compositor to the application.
+.TP
+.B xdg-desktop-portal-gtk
+Handles every other portal interface under this session; unrelated to capture,
+but removing it breaks file pickers.
+.SH GOTCHAS
+.IP \[bu] 2
+.B The capability was never switched off.
+Before any of this config existed, the portal already advertised window capture
+to every application on the system:
+.RS
+.PP
+.nf
+gdbus call --session --dest org.freedesktop.portal.Desktop \\
+  --object-path /org/freedesktop/portal/desktop \\
+  --method org.freedesktop.DBus.Properties.Get \\
+  org.freedesktop.portal.ScreenCast AvailableSourceTypes
+\[->] (<uint32 3>,)      # 1 = screen, 2 = window, so 3 = both
+.fi
+.PP
+Only the chooser could not name a window. Check this property first before
+believing that window capture is unsupported.
+.RE
+.IP \[bu] 2
+.B slurp can never answer with a window.
+It selects a rectangle, and a rectangle has no identity. Any chooser that
+selects geometry is structurally incapable of naming a toplevel, no matter what
+the compositor supports.
+.IP \[bu] 2
+.B chooser_type decides what the chooser is given.
+With
+.IR simple ", "
+the chooser is run with nothing on stdin and must produce a
+.I "Monitor: "
+or
+.I "Window: <id>"
+line on its own \[em] which means discovering toplevel ids itself, via
+.BR lswt (1),
+which is not installed here. With
+.IR dmenu ", "
+xdpw supplies the list, ids included. That is the practical route to windows.
+.IP \[bu] 2
+.B The answer must be byte-identical to a line that was offered.
+Anything else is read as "declined". This is why the chooser displays a
+prettified label but asks rofi for the
+.I index
+.RI ( -format " i)"
+and echoes the untouched original line \[em] rewriting the text to look nicer
+would silently cancel every share.
+.IP \[bu] 2
+.B Empty stdout means the user declined; exit code 127 is reserved.
+xdpw uses 127 internally to signal "no such command" and throws away everything
+such a chooser printed. A chooser must never exit 127.
+.IP \[bu] 2
+.B Windows are offered only when the application asks for them.
+Measured: a request for source type 1 gets one screen line and zero window
+lines; a request for type 3 gets the screen plus every capturable toplevel.
+Applications that only ever wanted a monitor behave exactly as they did before.
+.IP \[bu] 2
+.B The config is read once, at backend startup.
+Editing it changes nothing until the backend restarts:
+.RS
+.PP
+.nf
+systemctl --user restart xdg-desktop-portal-wlr.service
+.fi
+.PP
+The unit is
+.I static
+and D-Bus activated \[em] there is nothing to
+.IR enable .
+.RE
+.IP \[bu] 2
+.B "A file named after the desktop outranks config."
+xdpw searches
+.IR $XDG_CONFIG_HOME/xdg-desktop-portal-wlr/$XDG_CURRENT_DESKTOP
+before
+.IR .../config .
+The backend process runs with
+.I XDG_CURRENT_DESKTOP=sway
+even though the compositor's own value is
+.IR sway:wlroots:swayfx ,
+so a file literally named
+.I sway
+in that directory would win and this config would be ignored without a word.
+.IP \[bu] 2
+.B A window stream is the window, not a crop of the screen.
+Captured through the portal, a 603x990 window on a 1920x1080 output arrives as a
+603x990 stream \[em] no wallpaper, no neighbouring windows, no titlebar. Moving
+or covering the window does not change what the viewer sees.
+.IP \[bu] 2
+.B A still window produces no frames.
+Capture is damage-driven: an idle window emits nothing until it redraws. A
+consumer waiting for a fixed number of frames will appear to hang on a static
+window. That is the compositor being efficient, not the capture failing.
+.IP \[bu] 2
+.B Sharing a browser tab does not exercise this path.
+Chromium and its derivatives capture their own tabs internally, without the
+portal. To test the portal chain, share a window or an entire screen.
+.SH NOTES
+.IP \[bu] 2
+Nothing here starts at login. The backend is activated by D-Bus the first time
+an application asks to capture, and it reads the config at that moment.
+.IP \[bu] 2
+Both files are tracked in the dotfiles repository; a fresh machine gets this
+behaviour as soon as they are checked out and rofi is installed.
+.IP \[bu] 2
+Distinct from its siblings:
+.BR screenshots (1)
+captures a still image to disk or clipboard, and
+.BR recording (1)
+records the screen to a file. This page is about handing live frames to another
+application.
+.SH "SEE ALSO"
+.BR screenshots (1),
+.BR recording (1),
+.BR sway (5),
+.BR rofi (1),
+.BR slurp (1),
+.BR xdg-desktop-portal-wlr (5)

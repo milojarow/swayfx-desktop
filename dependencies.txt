@@ -1,0 +1,100 @@
+# Packages this configuration expects, for Arch / CachyOS.
+#
+#   paru -S --needed $(grep -vE '^#|^$' dependencies.txt | tr '\n' ' ')
+#
+# This is the set from a machine where the whole thing works, minus everything
+# whose config is not in this repo. It is a reference list, not a minimal one.
+# eww is NOT here — it is built from source, see README.
+
+# ── Compositor ───────────────────────────────────────────────────────────────
+# swayfx, NOT sway: this config uses corner_radius, layer_effects and
+# animation_duration_ms, which vanilla sway rejects at load time.
+swayfx
+swaybg
+swayidle
+swaylock
+swayr
+swayimg
+xdg-desktop-portal-wlr
+
+# ── Bar, launcher, notifications, terminal ───────────────────────────────────
+waybar
+rofi
+foot
+mako
+wob
+nwg-wrapper
+
+# ── eww runtime libraries (read off the linked binary, not guessed) ──────────
+gtk3
+gtk-layer-shell
+libdbusmenu-gtk3
+# peek (image prompt, $mod+i) preloads this one
+gtk4-layer-shell
+# to build eww itself
+rustup
+
+# ── Screenshot & recording ───────────────────────────────────────────────────
+grim
+slurp
+grimshot
+swappy
+wf-recorder
+
+# ── Clipboard ────────────────────────────────────────────────────────────────
+wl-clipboard
+cliphist
+wl-clip-persist
+
+# ── Emoji picker ($mod+period) ───────────────────────────────────────────────
+bemoji
+wl-ime-type-git
+
+# ── Audio / brightness / media keys ──────────────────────────────────────────
+pulseaudio
+pulsemixer
+playerctl
+brightnessctl
+
+# ── Network (eww wifi widget, waybar network module) ─────────────────────────
+networkmanager
+network-manager-applet
+
+# ── Bluetooth (eww bt widget, $mod-bound bluetuith) ──────────────────────────
+bluez
+bluez-utils
+
+# ── Session bits sway autostarts ─────────────────────────────────────────────
+polkit-gnome
+gnome-keyring
+autotiling
+xdg-user-dirs
+glib2
+
+# ── Widget data sources ──────────────────────────────────────────────────────
+lm_sensors          # eww cpu-gauge reads `sensors -j`
+pacman-contrib      # waybar update count reads `checkupdates`
+python-cairo        # eww sysmonitor gauges render through pycairo
+
+# ── Scripting ────────────────────────────────────────────────────────────────
+python
+python-i3ipc
+python-requests
+python-dbus
+jq
+curl
+imagemagick
+inotify-tools
+libnotify
+unzip
+
+# ── Apps the keybindings launch ──────────────────────────────────────────────
+btop                # Ctrl+Alt+Delete
+calcurse            # calendar
+bluetuith           # bluetooth TUI
+pcmanfm-gtk3        # target of the FileManager1 D-Bus shim
+
+# ── Fonts (the bar and cheatsheet are full of Nerd Font glyphs) ──────────────
+ttf-jetbrains-mono-nerd
+ttf-font-awesome
+otf-font-awesome

@@ -1,0 +1,16 @@
+# ── Screenshots ───────────────────────────────────────────────────────────────
+# Role:     Systemd unit — runs screenshot-notify.sh; notifies on PNG save to ~/Screenshots
+# ─────────────────────────────────────────────────────────────────────────────
+[Unit]
+Description=Screenshot save notification daemon
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/rm -f /tmp/screenshot-notify.lock
+ExecStart=%h/.config/sway/scripts/screenshot-notify.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=sway-session.target

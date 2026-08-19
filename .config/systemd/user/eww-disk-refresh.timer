@@ -1,0 +1,10 @@
+[Unit]
+Description=Periodic refresh of eww disk usage cache
+
+[Timer]
+OnBootSec=90
+OnUnitActiveSec=10min
+RandomizedDelaySec=30
+
+[Install]
+WantedBy=timers.target

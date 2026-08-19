@@ -1,0 +1,9 @@
+[screencast]
+# Window capture needs a chooser that can answer "Window: <id>". The default
+# chooser is slurp, which selects a rectangle on screen and therefore can only
+# ever name an output — so "share a window" silently degraded to "share a
+# screen" even though sway 1.12 and xdpw 0.8.2 both support per-window capture.
+# dmenu mode makes xdpw feed the list (monitors + windows) on stdin instead.
+# Apps that request monitors only still get a monitor-only list.
+chooser_type=dmenu
+chooser_cmd=__HOME__/.config/xdg-desktop-portal-wlr/chooser.sh

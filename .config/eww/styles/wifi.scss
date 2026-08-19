@@ -1,0 +1,353 @@
+// feature: wifi
+// role:    style
+@import "./theme";
+
+// ── Bar wifi button ────────────────────────────────────────────────────────────
+.bar-wifi {
+  padding: 0 8px;
+  font-size: 16px;
+  border-radius: 6px;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.bar-wifi.connected {
+  color: $theme-fg;
+}
+
+.bar-wifi.disconnected {
+  color: mix($theme-fg, $theme-bg, 35%);
+}
+
+.bar-wifi:hover {
+  background-color: $theme-selection;
+  color: $theme-accent;
+}
+
+// ── Wifi manager popup ─────────────────────────────────────────────────────────
+.wifi-manager {
+  background-color: rgba($theme-bg, 0.97);
+  border: 1px solid $theme-selection;
+  border-radius: 10px;
+  padding: 14px 16px;
+  min-width: 340px;
+}
+
+// Header
+.wifi-manager-header {
+  margin-bottom: 10px;
+}
+
+.wifi-manager-icon {
+  font-size: 26px;
+  min-width: 32px;
+}
+
+.wifi-manager-icon.connected {
+  color: $theme-accent;
+}
+
+.wifi-manager-icon.disconnected {
+  color: mix($theme-fg, $theme-bg, 40%);
+}
+
+.wifi-manager-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: $theme-fg;
+}
+
+.wifi-manager-ssid {
+  font-size: 11px;
+  color: mix($theme-fg, $theme-bg, 60%);
+}
+
+.wifi-manager-rescan {
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: mix($theme-fg, $theme-bg, 50%);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.wifi-manager-rescan:hover {
+  background-color: $theme-selection;
+  color: $theme-accent;
+}
+
+.wifi-close-btn {
+  font-size: 18px;
+  padding: 0 6px;
+  border-radius: 6px;
+  color: mix($theme-fg, $theme-bg, 35%);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.wifi-close-btn:hover {
+  background-color: $theme-selection;
+  color: #BF616A;
+}
+
+// Connected details
+.wifi-manager-details {
+  padding: 8px 0 10px;
+  border-top: 1px solid $theme-selection;
+  border-bottom: 1px solid $theme-selection;
+  margin-bottom: 8px;
+}
+
+.wifi-detail-label {
+  font-size: 11px;
+  color: mix($theme-fg, $theme-bg, 55%);
+  min-width: 60px;
+}
+
+.wifi-detail-value {
+  font-size: 11px;
+  color: $theme-fg;
+  font-family: "JetBrainsMono NF", "Roboto Mono", monospace;
+}
+
+.wifi-copy-btn {
+  font-size: 12px;
+  padding: 0 4px;
+  margin-left: 4px;
+  border-radius: 4px;
+  color: mix($theme-fg, $theme-bg, 50%);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.wifi-copy-btn:hover {
+  background-color: $theme-selection;
+  color: $theme-accent;
+}
+
+// Section heading
+.wifi-section-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: mix($theme-fg, $theme-bg, 50%);
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+// Scroll container for network list — height set via :height in yuck
+.wifi-net-scroll {}
+
+// Individual network row
+.wifi-net-row {
+  padding: 5px 4px;
+  border-radius: 6px;
+  transition: background-color 120ms ease;
+}
+
+.wifi-net-row:hover {
+  background-color: $theme-selection;
+}
+
+.wifi-net-row.active {
+  background-color: mix($theme-accent, $theme-bg, 12%);
+  border-left: 2px solid $theme-accent;
+  padding-left: 6px;
+}
+
+.wifi-net-icon {
+  font-size: 17px;
+  min-width: 26px;
+  color: $theme-fg;
+}
+
+.wifi-net-icon.saved {
+  color: mix($theme-fg, $theme-bg, 35%);
+}
+
+.wifi-net-ssid {
+  font-size: 13px;
+  color: $theme-fg;
+}
+
+.wifi-net-security {
+  font-size: 10px;
+  color: mix($theme-fg, $theme-bg, 45%);
+}
+
+.wifi-net-band {
+  font-size: 9px;
+  font-weight: bold;
+  color: mix($theme-accent, $theme-fg, 60%);
+  padding: 0 4px;
+  border-radius: 3px;
+  background-color: mix($theme-accent, $theme-bg, 12%);
+}
+
+// Action buttons
+.wifi-action-btn {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  min-width: 0;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.connect-btn {
+  color: $theme-accent;
+  border: 1px solid mix($theme-accent, $theme-bg, 40%);
+}
+
+.connect-btn:hover {
+  background-color: mix($theme-accent, $theme-bg, 20%);
+}
+
+.disconnect-btn {
+  color: mix($theme-fg, $theme-bg, 60%);
+  border: 1px solid $theme-selection;
+}
+
+.disconnect-btn:hover {
+  color: #cc241d;
+  border-color: #cc241d;
+}
+
+.edit-btn {
+  color: mix($theme-fg, $theme-bg, 55%);
+  border: 1px solid transparent;
+  margin-left: 2px;
+}
+
+.edit-btn:hover {
+  color: $theme-accent;
+  background-color: mix($theme-accent, $theme-bg, 15%);
+}
+
+.forget-btn {
+  color: mix($theme-fg, $theme-bg, 40%);
+  border: 1px solid transparent;
+  margin-left: 2px;
+}
+
+.forget-btn:hover {
+  color: mix($theme-fg, $theme-bg, 70%);
+  background-color: $theme-selection;
+}
+
+// Connection status bar (revealer)
+.wifi-status-bar {
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.wifi-status-bar.connecting {
+  background-color: mix($theme-accent, $theme-bg, 15%);
+  color: $theme-accent;
+}
+
+.wifi-status-bar.error {
+  background-color: rgba(#f7768e, 0.12);
+  color: #f7768e;
+}
+
+.wifi-status-icon {
+  font-size: 13px;
+  min-width: 16px;
+}
+
+.wifi-status-text {
+  font-size: 11px;
+}
+
+// Pending operation button (connecting...)
+.op-pending-btn {
+  color: mix($theme-fg, $theme-bg, 50%);
+  border: 1px solid $theme-selection;
+}
+
+// ── Wifi password prompt (new secured network) ─────────────────────────────────
+.wifi-pw-prompt {
+  background-color: rgba($theme-bg, 0.98);
+  border: 1px solid $theme-selection;
+  border-radius: 10px;
+  padding: 18px 20px;
+  min-width: 340px;
+}
+
+.wifi-pw-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: $theme-fg;
+}
+
+.wifi-pw-input {
+  font-size: 13px;
+  color: $theme-fg;
+  font-family: "JetBrainsMono NF", "Roboto Mono", monospace;
+  background-color: mix($theme-fg, $theme-bg, 8%);
+  border: 1px solid $theme-selection;
+  border-radius: 6px;
+  padding: 8px 12px;
+  min-width: 300px;
+}
+
+.wifi-pw-input:focus {
+  border-color: $theme-accent;
+}
+
+.wifi-pw-hint {
+  font-size: 10px;
+  color: mix($theme-fg, $theme-bg, 50%);
+}
+
+.wifi-pw-cancel {
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 5px;
+  color: mix($theme-fg, $theme-bg, 60%);
+  border: 1px solid $theme-selection;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.wifi-pw-cancel:hover {
+  color: #BF616A;
+  border-color: #BF616A;
+}
+
+// ── Wifi share QR (centered window) ────────────────────────────────────────────
+.wifi-qr-frame {
+  background-color: rgba($theme-bg, 0.98);
+  border: 1px solid $theme-selection;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.wifi-qr-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.wifi-qr-ssid {
+  font-size: 13px;
+  font-weight: bold;
+  color: $theme-fg;
+  margin-top: 14px;
+}
+
+.wifi-qr-hint {
+  font-size: 10px;
+  color: mix($theme-fg, $theme-bg, 50%);
+  margin-top: 2px;
+}
+
+.wifi-qr-close {
+  font-size: 11px;
+  padding: 4px 14px;
+  border-radius: 5px;
+  color: mix($theme-fg, $theme-bg, 60%);
+  border: 1px solid $theme-selection;
+  margin-top: 16px;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.wifi-qr-close:hover {
+  background-color: $theme-selection;
+  color: $theme-accent;
+}

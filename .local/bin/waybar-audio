@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# waybar-audio: outputs JSON for the custom/audio waybar module.
+# Shows current volume with icon, mic-mute indicator, and a tooltip
+# listing the last 3 apps that played audio.
+
+STATE_FILE="$HOME/.cache/audio-tracker"
+
+# --- Volume ---
+vol_raw=$(pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null)
+volume=$(echo "$vol_raw" | grep -oP '\d+(?=%)' | head -1)
+volume=${volume:-0}
+
+# --- Mute states ---
+sink_muted=$(pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null | grep -c "yes")
+src_muted=$(pactl get-source-mute @DEFAULT_SOURCE@ 2>/dev/null | grep -c "yes")
+
+# --- Icon ---
+if [[ "$sink_muted" -gt 0 ]]; then
+    icon="󰖁"
+elif [[ "$volume" -lt 34 ]]; then
+    icon="󰕿"
+elif [[ "$volume" -lt 67 ]]; then
+    icon="󰖀"
+else
+    icon="󰕾"
+fi
+
+# --- Text (replicates format + format-source-muted) ---
+if [[ "$sink_muted" -gt 0 ]]; then
+    text="$icon"
+else
+    text="$icon $volume%"
+fi
+[[ "$src_muted" -gt 0 ]] && text+=" 󰍭"
+
+# --- CSS class ---
+css_class=""
+[[ "$sink_muted" -gt 0 ]] && css_class="muted"
+
+# --- Tooltip: volume line + recent apps ---
+tooltip_vol="$icon  $volume%"
+[[ "$src_muted" -gt 0 ]] && tooltip_vol+=" 󰍭"
+
+mapfile -t apps < <(cat "$STATE_FILE" 2>/dev/null)
+
+if [[ "${#apps[@]}" -gt 0 ]]; then
+    tooltip_apps="Recent audio:"
+    for app in "${apps[@]}"; do
+        tooltip_apps+="\n• $app"
+    done
+    tooltip="$tooltip_vol\n\n$tooltip_apps"
+else
+    tooltip="$tooltip_vol\n\nNo recent audio activity"
+fi
+
+# Output JSON
+printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' \
+    "$text" "$tooltip" "$css_class"

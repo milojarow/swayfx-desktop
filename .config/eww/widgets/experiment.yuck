@@ -1,0 +1,84 @@
+; feature: experiment
+; role:    window
+; ============================================================
+; EXPERIMENT WIDGETS — layout technique comparison
+; Open: eww open-many exp-q1 exp-q2 exp-q3 exp-q4
+; ============================================================
+
+; ---- TECHNIQUE 1: different :spacing per row ---------------
+; Row A tight (spacing 2), Row B far (spacing 50)
+(defwidget exp-widget-1 []
+  (box :class "exp-bg" :orientation "v" :spacing 10 :space-evenly false
+    (label :class "exp-title" :text "T1: :spacing")
+    (box :orientation "h" :spacing 2 :space-evenly false
+      (box :class "exp-icon exp-a" :width 28 :height 28)
+      (box :class "exp-gauge exp-a" :width 90 :height 28))
+    (box :orientation "h" :spacing 50 :space-evenly false
+      (box :class "exp-icon exp-b" :width 28 :height 28)
+      (box :class "exp-gauge exp-b" :width 90 :height 28))))
+
+(defwindow exp-q1
+  :monitor 0
+  :geometry (geometry :x "20px" :y "20px" :width "220px" :anchor "top right")
+  :stacking "bottom"
+  :focusable false
+  (exp-widget-1))
+
+; ---- TECHNIQUE 2: (box :hexpand true) spacer ---------------
+; Row A tight (no spacer), Row B far (empty hexpand box between icon and gauge)
+(defwidget exp-widget-2 []
+  (box :class "exp-bg" :orientation "v" :spacing 10 :space-evenly false
+    (label :class "exp-title" :text "T2: hexpand spacer")
+    (box :orientation "h" :space-evenly false
+      (box :class "exp-icon exp-a" :width 28 :height 28)
+      (box :class "exp-gauge exp-a" :width 90 :height 28))
+    (box :orientation "h" :space-evenly false
+      (box :class "exp-icon exp-b" :width 28 :height 28)
+      (box :hexpand true)
+      (box :class "exp-gauge exp-b" :width 90 :height 28))))
+
+(defwindow exp-q2
+  :monitor 0
+  :geometry (geometry :x "20px" :y "20px" :width "220px" :anchor "top left")
+  :stacking "bottom"
+  :focusable false
+  (exp-widget-2))
+
+; ---- TECHNIQUE 3: :halign + :hexpand on the gauge ----------
+; Row A packed to start, Row B: gauge pushed to end via :hexpand + :halign "end"
+(defwidget exp-widget-3 []
+  (box :class "exp-bg" :orientation "v" :spacing 10 :space-evenly false
+    (label :class "exp-title" :text "T3: :halign + :hexpand")
+    (box :hexpand true :orientation "h" :space-evenly false
+      (box :class "exp-icon exp-a" :width 28 :height 28 :halign "start")
+      (box :class "exp-gauge exp-a" :width 90 :height 28 :halign "start"))
+    (box :hexpand true :orientation "h" :space-evenly false
+      (box :class "exp-icon exp-b" :width 28 :height 28 :halign "start")
+      (box :class "exp-gauge exp-b" :width 90 :height 28 :hexpand true :halign "end"))))
+
+(defwindow exp-q3
+  :monitor 0
+  :geometry (geometry :x "20px" :y "20px" :width "220px" :anchor "bottom left")
+  :stacking "bottom"
+  :focusable false
+  (exp-widget-3))
+
+; ---- TECHNIQUE 4: inline :style margin-left ----------------
+; Row A no margin, Row B gauge with explicit margin-left
+(defwidget exp-widget-4 []
+  (box :class "exp-bg" :orientation "v" :spacing 10 :space-evenly false
+    (label :class "exp-title" :text "T4: :style margin")
+    (box :orientation "h" :space-evenly false
+      (box :class "exp-icon exp-a" :width 28 :height 28)
+      (box :class "exp-gauge exp-a" :width 90 :height 28))
+    (box :orientation "h" :space-evenly false
+      (box :class "exp-icon exp-b" :width 28 :height 28)
+      (box :class "exp-gauge exp-b" :width 90 :height 28
+           :style "margin-left: 44px;"))))
+
+(defwindow exp-q4
+  :monitor 0
+  :geometry (geometry :x "20px" :y "20px" :width "220px" :anchor "bottom right")
+  :stacking "bottom"
+  :focusable false
+  (exp-widget-4))

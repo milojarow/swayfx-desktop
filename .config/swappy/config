@@ -1,0 +1,25 @@
+# ── Screenshots ───────────────────────────────────────────────────────────────
+# Role:     swappy editor settings (save dir, filename format, painting defaults)
+# Used by:  $swappy in 01-definitions.conf (receives screenshot PNG via stdin)
+# ─────────────────────────────────────────────────────────────────────────────
+[Default]
+# Save to the same directory as your other screenshots
+save_dir=$HOME/Screenshots
+# Use a filename format that matches your existing pattern but differentiates swappy edits
+save_filename_format=%Y-%m-%d-%H%M%S_swappy.png
+# Show the paint panel by default
+show_panel=true
+# Exit after saving or copying
+early_exit=true
+# Set reasonable defaults for tools
+line_size=5
+text_size=20
+text_font=sans-serif
+# Start with brush tool active
+paint_mode=brush
+# Don't fill shapes by default (you can toggle with 'f' key)
+fill_shape=false
+# Don't auto-save on exit since we're using early_exit
+auto_save=false
+# Default custom color - a nice orange shade
+custom_color=rgba(255,145,0,1)

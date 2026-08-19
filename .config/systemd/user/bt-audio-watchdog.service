@@ -1,0 +1,12 @@
+[Unit]
+Description=Bluetooth A2DP audio watchdog
+After=wireplumber.service
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/bt-audio-watchdog
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

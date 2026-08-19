@@ -1,0 +1,192 @@
+.TH USB\-MANAGEMENT 1 "2026\-03\-01" "dotfiles" "USB Management Manual"
+.SH NAME
+usb\-management \- USB storage device management system for sway/waybar
+.SH DESCRIPTION
+The USB management system provides interactive mount, unmount, eject, and
+file manager integration for USB storage devices in a sway/Wayland environment.
+.PP
+The waybar module polls device status every 5 seconds and displays an icon
+that brightens when a USB device is detected.
+A right\-click context menu provides access to all actions.
+When multiple devices are connected, a rofi picker appears for selection;
+single\-device operations execute automatically without prompting.
+.SH USAGE
+.TP
+.B Waybar right\-click
+Opens the GTK context menu
+.RI ( usb\-menu.xml )
+with the following options:
+.RS
+.TP
+.B Open in File Manager
+Calls
+.B usb\-action\-open.sh
+\(em opens the mount point in the default file manager.
+.TP
+.B Unmount
+Calls
+.B usb\-action\-unmount.sh
+\(em unmounts the selected partition.
+.TP
+.B Eject
+Calls
+.B usb\-action\-eject.sh
+\(em unmounts all partitions and powers off the physical disk.
+.TP
+.B Mount
+Calls
+.B usb\-action\-mount.sh
+\(em mounts the selected unmounted partition.
+.TP
+.B Refresh
+Calls
+.B usb\-action\-refresh.sh
+\(em forces the waybar module to re\-poll device status.
+.RE
+.PP
+Scripts can also be invoked directly from the command line for scripting or
+debugging purposes.
+.SH FILES
+.TP
+.I ~/.config/sway/scripts/usb\-monitor.sh
+Core detection script.
+Uses
+.BR lsblk (8)
+to enumerate removable USB storage devices and outputs JSON
+(text, icon glyph, CSS class, tooltip) consumed by the waybar module.
+.TP
+.I ~/.config/sway/scripts/usb\-monitor\-wrapper.sh
+Thin wrapper around
+.I usb\-monitor.sh
+that suppresses stderr so the waybar module receives clean JSON.
+This is the file configured as the module
+.B exec
+command.
+.TP
+.I ~/.config/sway/scripts/usb\-action\-mount.sh
+Mounts unmounted USB partitions via
+.BR udisksctl (1).
+Auto\-mounts if one device is found; opens a rofi picker for multiple.
+.TP
+.I ~/.config/sway/scripts/usb\-action\-unmount.sh
+Unmounts mounted USB partitions via
+.BR udisksctl (1).
+Shows mount points in the picker menu for clarity.
+.TP
+.I ~/.config/sway/scripts/usb\-action\-eject.sh
+Safely removes USB devices.
+Unlike mount/unmount (which operate on partitions), eject operates on the
+.B physical disk
+\(em it unmounts all its partitions then calls
+.B udisksctl power\-off
+to safely remove the hardware.
+.TP
+.I ~/.config/sway/scripts/usb\-action\-open.sh
+Opens the mount point of a mounted USB partition in the default file manager
+using
+.BR xdg\-open (1).
+.TP
+.I ~/.config/sway/scripts/usb\-action\-refresh.sh
+Sends signal RTMIN+15 to the waybar process to force a module refresh,
+then shows a low\-urgency notification.
+.TP
+.I ~/.config/rofi/themes/usb\-manager.rasi
+Rofi theme (gray/monochrome palette) applied by all action scripts that
+display a device picker.
+.TP
+.I ~/.config/waybar/usb\-menu.xml
+GTK interface definition for the right\-click context menu on the waybar
+.B custom/usb
+module.
+.TP
+.I ~/.config/waybar/config.jsonc
+Waybar module configuration
+.RI ( custom/usb ).
+Polls
+.I usb\-monitor\-wrapper.sh
+every 5 seconds, listens on signal RTMIN+15, and maps menu actions to
+the action scripts via
+.BR menu\-actions .
+.SH PROGRAMS
+The following programs must be installed for this functionality to work:
+.TP
+.B lsblk
+Lists block devices.
+Used by all scripts to enumerate and filter USB storage devices.
+Provided by
+.IR util\-linux .
+.TP
+.B udisksctl
+Performs mount, unmount, and power\-off operations via D\-Bus (UDisks2).
+Provided by
+.IR udisks2 .
+.TP
+.B rofi
+Displays the interactive device picker when multiple devices are present.
+.TP
+.B notify\-send
+Shows desktop notifications for operation results.
+Provided by
+.IR libnotify .
+.TP
+.B xdg\-open
+Opens the mount point in the default file manager.
+Provided by
+.IR xdg\-utils .
+.TP
+.B pkill
+Used by action scripts to send RTMIN+15 to waybar after operations.
+Provided by
+.IR procps .
+.SH WAYBAR INTEGRATION
+The module is defined in
+.I ~/.config/waybar/config.jsonc
+as
+.BR custom/usb :
+.PP
+.RS
+.TP
+.B exec
+.I usb\-monitor\-wrapper.sh
+(polled every 5 seconds)
+.TP
+.B signal
+15 (RTMIN+15 \(em sent by action scripts after operations)
+.TP
+.B menu
+.I usb\-menu.xml
+(right\-click GTK context menu)
+.TP
+.B menu\-actions
+Maps menu item IDs to the five action scripts
+.RE
+.PP
+The icon dims when no USB storage is detected and brightens when a device
+is present, via CSS classes set in the JSON output of
+.IR usb\-monitor.sh .
+.SH NOTES
+Action scripts (mount, unmount, eject, open) use a consistent pattern:
+if exactly one eligible device is found, the operation proceeds automatically
+without opening a picker.
+If multiple devices are found, rofi displays a selection menu using the
+.I usb\-manager.rasi
+theme.
+.PP
+Eject operates on the
+.B physical disk
+(e.g.,
+.IR /dev/sda ),
+not on individual partitions.
+It unmounts every partition on the disk before calling
+.BR "udisksctl power\-off" .
+All other actions operate on individual
+.B partitions
+(e.g.,
+.IR /dev/sda1 ).
+.SH SEE ALSO
+.BR udisksctl (1),
+.BR lsblk (8),
+.BR rofi (1),
+.BR notify\-send (1),
+.BR xdg\-open (1),
+.BR pkill (1)

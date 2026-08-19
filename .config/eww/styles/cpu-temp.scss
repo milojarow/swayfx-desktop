@@ -1,0 +1,65 @@
+// feature: cpu-temp
+// role:    style
+.temp-dashboard {
+  background-color: rgba(30, 30, 30, 0.8);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.temp-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.temp-indicators {
+  padding: 10px;
+}
+
+.temp-indicator-container {
+  margin: 10px;
+}
+
+.thermometer {
+  min-width: 40px;
+  min-height: 180px;
+  background-color: rgba(50, 50, 50, 0.7);
+  border-radius: 20px;
+  border: 2px solid #666666;
+  padding: 3px;
+}
+
+.temp-fill {
+  border-radius: 18px;
+  transition: background-color 500ms linear;  // never 'all': the fill height changes per update
+}
+
+.temp-fill.cool {
+  background: linear-gradient(to top, #3b82f6, #60a5fa);
+}
+
+.temp-fill.normal {
+  background: linear-gradient(to top, #10b981, #34d399);
+}
+
+.temp-fill.warm {
+  background: linear-gradient(to top, #f59e0b, #fbbf24);
+}
+
+.temp-fill.hot {
+  background: linear-gradient(to top, #ef4444, #f87171);
+}
+
+.temp-info {
+  margin-top: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.temp-label {
+  font-size: 12px;
+  color: #aaaaaa;
+  margin-top: 5px;
+}

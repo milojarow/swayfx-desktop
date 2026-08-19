@@ -1,0 +1,238 @@
+.TH GAMMA-CORRECTION 1 "2026-03-15" "sway dotfiles" "User Commands"
+.SH NAME
+gamma-correction \- location-based color temperature adjustment with waybar indicator for sway
+.SH DESCRIPTION
+The gamma correction module controls
+.BR wlsunset (1),
+a Wayland color temperature daemon that shifts the display toward warmer tones at
+night to reduce eye strain.
+.PP
+Two operating modes are supported:
+.TP
+.B Location mode (default)
+Geographic coordinates are fetched automatically via
+.I geoip.sh
+and used to compute sunrise and sunset times.
+.TP
+.B Manual mode
+Fixed
+.I sunrise
+and
+.I sunset
+times are read from
+.IR ~/.config/wlsunset/config .
+.PP
+If
+.I ~/.config/wlsunset/config
+does not exist, built-in defaults apply (see
+.BR CONFIGURATION ).
+.SH WAYBAR MODULE
+The
+.B custom/sunset
+module (signal 6) reflects the current state of
+.BR wlsunset (1).
+.TP
+.B On
+Displays a lit bulb icon. Tooltip: "location-based gamma correction".
+.TP
+.B Off
+Displays an unlit bulb icon. Tooltip: "no gamma correction".
+.PP
+CSS:
+.B #custom-sunset
+shares a padding group (8 px left and right) with other right-side modules.
+No state-specific color rules are defined.
+.PP
+Click bindings:
+.TP
+.B Left click
+Runs
+.BR "sunset.sh toggle" .
+.TP
+.B exec-if
+Runs
+.B "sunset.sh check"
+to hide the module entirely when
+.B wlsunset
+is not installed.
+.SH SCRIPTS
+.SS sunset.sh
+The main control script. Accepts the following subcommands:
+.TP
+.B toggle
+If
+.B wlsunset
+is running, stops it. If not running, calls
+.IR start() .
+Signals waybar (signal 6) in both cases.
+.TP
+.B on
+Unconditionally calls
+.IR start() ,
+then signals waybar.
+.TP
+.B off
+Kills
+.B wlsunset
+.RB ( "pkill -x wlsunset" ),
+then signals waybar.
+.TP
+.B check
+Exits 0 if
+.B wlsunset
+is in PATH, non-zero otherwise. Used by the waybar
+.B exec-if
+field.
+.TP
+.I "(no argument)"
+Reports the current state as JSON for waybar:
+.BR "pkill -x -0 wlsunset"
+determines whether the process is running, then outputs
+.BR "{\(dqalt\(dq:\(dqon|off\(dq,\(dqtooltip\(dq:\(dq...\(dq}" .
+.PP
+The
+.B start()
+function runs as follows:
+.nr step 1 1
+.IP \n[step]. 3
+Sources
+.I ~/.config/wlsunset/config
+if it exists.
+.IP \n+[step].
+Applies defaults for any unset variables:
+.BR "temp_low=4000" ,
+.BR "temp_high=6500" ,
+.BR "duration=900" ,
+.BR "sunrise=07:00" ,
+.BR "sunset=19:00" ,
+.BR "location=on" .
+.IP \n+[step].
+If
+.BR "location=on" :
+calls
+.I geoip.sh
+to resolve coordinates. Falls back to hardcoded values
+.RB ( latitude=50.1 ,
+.BR longitude=8.7 )
+if the geoip response is empty.
+.IP \n+[step].
+Launches
+.BR wlsunset (1)
+in the background:
+.RS
+.TP
+.I Location mode
+.EX
+wlsunset -l LAT -L LON -t TEMP_LOW -T TEMP_HIGH -d DURATION
+.EE
+.TP
+.I Manual mode
+.EX
+wlsunset -t TEMP_LOW -T TEMP_HIGH -d DURATION -S SUNRISE -s SUNSET
+.EE
+.RE
+.SS geoip.sh
+Fetches geographic coordinates from a remote geoip endpoint and caches the result
+to
+.IR ~/.cache/geoip .
+The cache is reused if it was written less than 6 hours ago
+.I and
+after midnight today; otherwise a fresh
+.BR curl (1)
+request is made.
+.PP
+.I sunset.sh
+reads
+.I latitude
+and
+.I longitude
+from the cached JSON via
+.BR jq (1).
+.SH CONFIGURATION
+.I ~/.config/wlsunset/config
+is an optional shell-syntax file sourced by
+.IR sunset.sh .
+If absent, the built-in defaults below are used.
+.TP
+.B temp_low
+Minimum color temperature in Kelvin, applied at night. Default:
+.BR 4000 .
+.TP
+.B temp_high
+Maximum color temperature in Kelvin, applied during the day. Default:
+.BR 6500 .
+.TP
+.B duration
+Transition duration in seconds between warm and cool. Default:
+.BR 900 .
+.TP
+.B sunrise
+Sunrise time in
+.B HH:MM
+format. Used in manual mode only. Default:
+.BR 07:00 .
+.TP
+.B sunset
+Sunset time in
+.B HH:MM
+format. Used in manual mode only. Default:
+.BR 19:00 .
+.TP
+.B location
+Set to
+.B on
+to use geoip-based coordinates (default), or
+.B off
+to use the fixed
+.I sunrise
+and
+.I sunset
+times above.
+.SH NOTES
+.I ~/.cache/geoip
+is a runtime cache file and should not be tracked in git.
+.PP
+.I ~/.config/wlsunset/config
+does not currently exist; the module runs entirely on built-in defaults.
+Create this file to override any of the values listed under
+.BR CONFIGURATION .
+.PP
+The
+.B exec-if
+field in the waybar module hides the indicator entirely when
+.B wlsunset
+is not installed.
+.SH FILES
+.TP
+.I ~/.config/waybar/config.jsonc
+Defines the
+.B custom/sunset
+module: signal 6, format icons, tooltips, exec-if, and on-click binding.
+.TP
+.I ~/.config/waybar/style.css
+CSS for
+.BR #custom-sunset :
+shared padding group with other right-side modules.
+.TP
+.I ~/.config/sway/scripts/sunset.sh
+Main control script: start, stop, toggle, check, and status for
+.BR wlsunset (1).
+.TP
+.I ~/.config/sway/scripts/geoip.sh
+Fetches and caches geographic coordinates used for automatic sunrise/sunset calculation.
+.TP
+.I ~/.config/wlsunset/config
+Optional user configuration. Sourced by
+.I sunset.sh
+at startup if present; not currently tracked in git.
+.TP
+.I ~/.cache/geoip
+Cached geoip JSON response. Runtime file \(em not tracked in git.
+.SH PROGRAMS
+.BR wlsunset (1),
+.BR pkill (1),
+.BR jq (1),
+.BR curl (1)
+.SH SEE ALSO
+.BR wlsunset (1),
+.BR jq (1)

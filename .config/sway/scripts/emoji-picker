@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Tabbed emoji picker using rofi multi-mode + wl-ime-type
+
+HANDLER="$HOME/.config/sway/scripts/emoji-modi-handler"
+SELECTION_FILE="/tmp/emoji-picker-selection"
+HISTORY_FILE="$HOME/.local/state/bemoji-history.txt"
+
+# Clean up any stale selection from a previous run
+rm -f "$SELECTION_FILE"
+
+# Warmup wl-ime-type to establish Wayland IME connection
+if ! pgrep -x "wl-ime-type" > /dev/null 2>&1; then
+    echo -n "" | xargs -n1 wl-ime-type 2>/dev/null || true
+    sleep 0.1
+fi
+
+# Launch rofi with one tab per emoji category
+# Tab icons are emoji-only; default tab is Recent (🕑)
+rofi \
+    -modes "🕑:$HANDLER recent,㊙️:$HANDLER kaomoji,🙂:$HANDLER faces,🧍‍♂️:$HANDLER people,🐝:$HANDLER animals,🍲:$HANDLER food,🛞:$HANDLER travel,🏆:$HANDLER activities,💡:$HANDLER objects,☮️:$HANDLER symbols,🏳️:$HANDLER flags" \
+    -show '🕑' \
+    -theme ~/.config/rofi/themes/emoji-picker.rasi \
+    -i \
+    -kb-mode-next "Right" \
+    -kb-mode-previous "Left" \
+    -kb-move-char-forward "" \
+    -kb-move-char-back ""
+
+# After rofi exits: type the selected emoji
+if [[ -f "$SELECTION_FILE" ]]; then
+    SELECTED=$(cat "$SELECTION_FILE")
+    rm -f "$SELECTION_FILE"
+
+    if [[ -n "$SELECTED" ]]; then
+        # Extract the emoji (everything before the first space)
+        EMOJI="${SELECTED%% *}"
+
+        # Type it into the focused window
+        echo "$EMOJI" | xargs -n1 wl-ime-type
+
+        # Append full line to history for the Recent tab
+        echo "$SELECTED" >> "$HISTORY_FILE"
+    fi
+fi
+
+exit 0

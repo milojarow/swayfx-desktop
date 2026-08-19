@@ -1,0 +1,39 @@
+; feature: cpu-gauge
+; role:    window
+(defwidget cpu-core-gauge [core value]
+  (box :class "gauge-container"
+       :orientation "vertical"
+       :space-evenly false
+       :tooltip "CPU ${core}: ${value}%"
+    (circular-progress :value value
+                       :class "cpu-gauge ${value <= 50 ? 'safe' : value <= 80 ? 'warning' : 'danger'}"
+                       :thickness 15
+                       :start-at 135
+                       :clockwise true
+    (box :class "gauge-label" :orientation "vertical"
+      (label :class "core-label" :text "CPU ${core}")
+      (label :class "value-label" :text "${value}%")))))
+
+(defwidget cpu-gauge []
+  (box :class "dashboard" 
+       :orientation "vertical"
+       :space-evenly true
+    (box :class "title-row" :orientation "horizontal" :space-evenly false
+      (label :class "dashboard-title" :text "CPU PERFORMANCE")
+      (label :class "dashboard-subtitle" :text "(Usage %)"))
+    (box :class "gauges-row" :orientation "horizontal" :space-evenly true
+      (for core in "${EWW_CPU.cores}"
+        (cpu-core-gauge :core "${core.core + 1}" 
+                   :value "${core.usage}")))))
+
+(defwindow cpu-gauge
+  :monitor 0
+  :geometry (geometry :x "-20px"
+                      :y "100px"
+                      :width "400px"
+                      :height "600px"
+                      :anchor "right center")
+  :stacking "bottom"
+  :windowtype "normal"
+  :wm-ignore true
+  (cpu-gauge))

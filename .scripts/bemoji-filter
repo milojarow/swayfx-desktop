@@ -1,0 +1,212 @@
+#!/usr/bin/env python3
+"""
+Filter bemoji emoji database.
+
+Removes:
+- Skin tone variants (all non-default yellow skin tones)
+- Female-gendered emoji variants (except inherently female)
+- ALL gender-neutral person/people emojis
+- Unnatural male variants (man with veil, pregnant man, man feeding baby)
+- Same-sex couple/family compositions
+
+Re-runnable after `bemoji -D emoji` to re-apply filters.
+"""
+
+import re
+import shutil
+import sys
+from pathlib import Path
+
+EMOJI_DIR = Path.home() / ".local/share/bemoji"
+EMOJI_FILE = EMOJI_DIR / "emojis.txt"
+KAOMOJI_FILE = EMOJI_DIR / "kaomoji.txt"
+CATEGORY_DIR = EMOJI_DIR / "categories"
+
+# Inherently female emojis to KEEP (exact description match)
+INHERENTLY_FEMALE = {
+    "pregnant woman",
+    "breast-feeding",
+    "Mrs. Claus",
+    "princess",
+    "mermaid",
+    "woman with veil",
+    "woman feeding baby",
+    "women with bunny ears",
+    "woman fairy",
+    "woman vampire",
+    "woman elf",
+    "woman zombie",
+}
+
+# Same-sex couple/family prefixes to remove
+SAME_SEX_PREFIXES = (
+    "kiss: man, man",
+    "kiss: woman, woman",
+    "couple with heart: man, man",
+    "couple with heart: woman, woman",
+    "family: man, man",
+    "family: woman, woman",
+)
+
+# Unnatural male variants to remove (male versions of inherently female activities)
+UNNATURAL_MALE = {
+    "man with veil",
+    "pregnant man",
+    "man feeding baby",
+    "man genie",
+    "merman",
+}
+
+
+def parse_description(line):
+    """Extract text description from a line (everything after first space)."""
+    parts = line.split(" ", 1)
+    return parts[1] if len(parts) == 2 else ""
+
+
+def is_couple_or_family(desc):
+    """Check if this is a couple/family composition line."""
+    return bool(re.match(r"(kiss|couple with heart|family):", desc))
+
+
+def is_woman_variant(desc):
+    """Check if this is a female-gendered variant (not a couple/family)."""
+    if is_couple_or_family(desc):
+        return False
+
+    if desc == "woman":
+        return True
+    if desc.startswith("woman ") or desc.startswith("woman:"):
+        return True
+    if desc.startswith("women "):
+        return True
+    # "X woman" patterns: old woman, deaf woman, etc.
+    if re.search(r"\bwoman\b", desc):
+        return True
+
+    return False
+
+
+def is_gender_neutral(desc):
+    """Check if this is a gender-neutral person/people emoji."""
+    if is_couple_or_family(desc):
+        return False
+    return bool(re.search(r"\bperson\b|\bpeople\b|^merperson$", desc))
+
+
+# Category boundaries: (name, first_emoji_of_category)
+# Order matters — each category runs from its boundary to the next.
+# First emoji is matched against the START of the line (the emoji field).
+CATEGORY_BOUNDARIES = [
+    ("faces", None),       # Start of file (smileys, hearts, comic symbols)
+    ("people", "👋"),      # waving hand
+    ("animals", "🐵"),     # monkey face
+    ("food", "🍇"),        # grapes
+    ("travel", "🌍"),      # globe showing Europe-Africa
+    ("activities", "🎃"),  # jack-o-lantern
+    ("objects", "👓"),     # glasses
+    ("symbols", "🏧"),     # ATM sign
+    ("flags", "🏁"),       # chequered flag
+]
+
+
+def categorize(filtered_lines):
+    """Split filtered emoji lines into category files."""
+    CATEGORY_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Find line indices for each boundary emoji
+    boundary_indices = [0]  # faces starts at 0
+    for _, emoji in CATEGORY_BOUNDARIES[1:]:
+        found = False
+        for i, line in enumerate(filtered_lines):
+            if line.startswith(emoji):
+                boundary_indices.append(i)
+                found = True
+                break
+        if not found:
+            print(f"Warning: boundary emoji {emoji} not found", file=sys.stderr)
+            boundary_indices.append(len(filtered_lines))
+
+    # Write category files
+    total_categorized = 0
+    for idx, (name, _) in enumerate(CATEGORY_BOUNDARIES):
+        start = boundary_indices[idx]
+        end = boundary_indices[idx + 1] if idx + 1 < len(boundary_indices) else len(filtered_lines)
+        cat_lines = filtered_lines[start:end]
+        (CATEGORY_DIR / f"{name}.txt").write_text("\n".join(cat_lines) + "\n")
+        total_categorized += len(cat_lines)
+        print(f"  {name}: {len(cat_lines)} emojis")
+
+    # Copy kaomoji
+    if KAOMOJI_FILE.exists():
+        shutil.copy2(KAOMOJI_FILE, CATEGORY_DIR / "kaomoji.txt")
+        kao_count = len(KAOMOJI_FILE.read_text().splitlines())
+        print(f"  kaomoji: {kao_count} entries")
+
+    if total_categorized != len(filtered_lines):
+        print(f"Warning: categorized {total_categorized} != filtered {len(filtered_lines)}", file=sys.stderr)
+
+
+def main():
+    if not EMOJI_FILE.exists():
+        print(f"Error: {EMOJI_FILE} not found", file=sys.stderr)
+        sys.exit(1)
+
+    lines = EMOJI_FILE.read_text().splitlines()
+    # Filter out empty lines
+    lines = [l for l in lines if l.strip()]
+    original_count = len(lines)
+
+    # Rule 1: Remove all skin tone variants
+    lines = [l for l in lines if "skin tone" not in parse_description(l)]
+    after_skin = len(lines)
+
+    filtered = []
+    removed_woman = 0
+    removed_neutral = 0
+    removed_samesex = 0
+    removed_unnatural = 0
+
+    for line in lines:
+        desc = parse_description(line)
+
+        # Rule 4: Remove same-sex couples/families
+        if any(desc.startswith(p) for p in SAME_SEX_PREFIXES):
+            removed_samesex += 1
+            continue
+
+        # Rule 2: Remove woman/women variants (except inherently female)
+        if is_woman_variant(desc) and desc not in INHERENTLY_FEMALE:
+            removed_woman += 1
+            continue
+
+        # Rule 3: Remove ALL gender-neutral person/people emojis
+        if is_gender_neutral(desc):
+            removed_neutral += 1
+            continue
+
+        # Rule 5: Remove unnatural male variants
+        if desc in UNNATURAL_MALE:
+            removed_unnatural += 1
+            continue
+
+        filtered.append(line)
+
+    EMOJI_FILE.write_text("\n".join(filtered) + "\n")
+
+    print(f"Original:              {original_count}")
+    print(f"Removed skin tones:    {original_count - after_skin}")
+    print(f"Removed woman/women:   {removed_woman}")
+    print(f"Removed gender-neutral:{removed_neutral}")
+    print(f"Removed unnatural male:{removed_unnatural}")
+    print(f"Removed same-sex:      {removed_samesex}")
+    print(f"Final:                 {len(filtered)}")
+    print(f"Total removed:         {original_count - len(filtered)}")
+
+    # Categorize into separate files for the tabbed picker
+    print("\nCategories:")
+    categorize(filtered)
+
+
+if __name__ == "__main__":
+    main()

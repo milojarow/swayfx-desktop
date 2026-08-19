@@ -1,0 +1,23 @@
+#!/bin/bash
+# Quick fix for bluetooth A2DP audio dropout
+# Usage: bt-audio-fix [device_mac]
+
+DEVICE_MAC="${1:-44:1D:B1:4B:0B:A0}"
+CARD_NAME="bluez_card.${DEVICE_MAC//:/_}"
+
+echo "Resetting A2DP profile for $CARD_NAME..."
+
+# Reset the profile
+pactl set-card-profile "$CARD_NAME" off 2>/dev/null
+sleep 0.5
+pactl set-card-profile "$CARD_NAME" a2dp-sink 2>/dev/null
+
+if [ $? -eq 0 ]; then
+    echo "Audio profile restored successfully"
+    notify-send -t 3000 "Bluetooth Audio" "A2DP profile restored" 2>/dev/null
+else
+    echo "Failed to restore profile, trying full reconnect..."
+    bluetoothctl disconnect "$DEVICE_MAC"
+    sleep 2
+    bluetoothctl connect "$DEVICE_MAC"
+fi

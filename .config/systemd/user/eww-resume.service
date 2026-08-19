@@ -1,0 +1,12 @@
+[Unit]
+Description=Reopen eww windows after resume from suspend/hibernate
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.scripts/eww-resume-watch.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

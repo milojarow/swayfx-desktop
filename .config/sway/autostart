@@ -1,0 +1,44 @@
+# units
+
+set $initialize_swayr_daemon '[ -x "$(command -v swayrd)" ] && systemctl --now --user enable swayrd'
+set $initialize_waybar '[ -x "$(command -v waybar)" ] && (pkill waybar || exit 0) && systemctl --now --user enable waybar && (systemctl --user start waybar || ~/.config/sway/scripts/waybar.sh)'
+set $initialize_ewwbar 'systemctl --user enable --now eww'  # [Bar] bar (active)
+set $initialize_workspace_icons '[ -x "$(command -v sworkstyle)" ] && systemctl --now --user enable sworkstyle'
+set $initialize_poweralert_daemon '[ -x "$(command -v poweralertd)" ] && systemctl --now --user enable poweralertd'
+set $initialize_idle_daemon '[ -x "$(command -v swayidle)" ] && systemctl --now --user enable swayidle'  # [Lock Screen & Idle]
+set $initialize_mounting_daemon '[ -x "$(command -v pcmanfm-qt)" ] || [ -x "$(command -v pcmanfm)" ] && systemctl --now --user enable pcmanfm'
+set $initialize_way_displays '[ -x "$(command -v way-displays)" ] && systemctl --now --user enable way-displays'
+set $initialize_floating_placer 'systemctl --user enable --now floating-placer.service'  # [Floating Placer] auto-position floating windows
+set $initialize_floating_memory 'systemctl --user enable --now floating-memory.service'  # [Floating Memory] remember floating/tiling per tray app
+
+# autostarts
+
+set $autostart_dex '[ -x "$(command -v dex)" ] && gdbus wait --session org.kde.StatusNotifierWatcher && dex -a -e SWAY'
+set $flashfocus '[ -x "$(command -v flashfocus)" ] && flashfocus'
+set $autotiling '[ -x "$(command -v autotiling)" ] && autotiling || [ -x "$(command -v autotiling-rs)" ] && autotiling-rs'
+set $kanshi '[ -x "$(command -v kanshi)" ] && pkill -x kanshi; exec kanshi'
+set $xdg-dirs '[ -x "$(command -v xdg-user-dirs-update)" ] && exec xdg-user-dirs-update'
+
+## apply the keyboard layout from localectl if no keyboard layout has been set via config.d
+set $auto_xdg_keyboard 'grep -q xkb_layout ~/.config/sway/config.d/*.conf || ~/.config/sway/scripts/keyboard.sh'
+set $update_rofi_theme '~/.config/sway/scripts/theme-rofi.sh'
+set $create_rofi_config 'mkdir -p $HOME/.config/rofi/ && cp -n ~/.config/sway/templates/rofi/config.rasi $HOME/.config/rofi/config.rasi'
+set $enable_noisetorch '[ -x "$(command -v noisetorch)" ] && noisetorch -u && noisetorch -i'
+set $disable_nm_applet_autostart '[ -x "$(command -v nm-applet)" ] && [ ! -f $HOME/.config/autostart/nm-applet.desktop ] && cp /etc/xdg/autostart/nm-applet.desktop $HOME/.config/autostart/nm-applet.desktop && echo "Hidden=true" >> $HOME/.config/autostart/nm-applet.desktop'
+set $apply_background swaymsg 'output * bg $background fill'
+
+## daemons
+
+#set $mako '[ -x "$(command -v mako)" ] && pkill -x mako; ~/.config/sway/scripts/mako.sh --font "$term-font" --text-color "$text-color" --border-color "$accent-color" --background-color "$background-color" --border-size 3 --width 400 --height 200 --padding 20 --margin 20 --default-timeout 15000'
+set $swappy_notify 'systemctl --user restart screenshot-notify.service'  # [Screenshots]
+set $screenshot_clipboard_notify 'systemctl --user restart screenshot-clipboard-notify.service'  # [Screenshots]
+set $cliphist_watch '[ -x "$(command -v wl-paste)" ] && [ -x "$(command -v cliphist)" ] && $HOME/.config/sway/scripts/clipboard-watch-daemon.sh'  # [Clipboard Functionality] waybar refresh daemon
+set $cliphist_store '$HOME/.config/sway/scripts/clipboard-store-daemon.sh'  # [Clipboard Functionality] storage daemon via UTF-16 filter
+set $clip-persist '[ -x "$(command -v wl-clip-persist)" ] && pkill -x wl-clip-persist; wl-clip-persist --clipboard regular --all-mime-type-regex "^(text|image|application|audio|video|font|inode|multipart|message)/"'  # [Clipboard Functionality] persistence daemon
+set $calendar_daemon 'calcurse --daemon'
+set $nm_applet '[ -x "$(command -v nm-applet)" ] && pkill -x nm-applet && dbus-launch nm-applet'
+set $watch_playerctl '[ -x "$(command -v playerctl)" ] && pkill -x playerctl; playerctl -a metadata --format \"{{status}} {{title}}\" --follow | while read line; do waybar-signal playerctl; done'
+
+# nwg-wrapper cheatsheet (migrated to eww)
+# set $initialize_cheatsheet 'nwg-wrapper -t $HOME/.config/nwg-wrapper/sway-cheatsheet.pango -c $HOME/.config/nwg-wrapper/cheatsheet.css -p left -a start -ml 20 -mt 20 -i'
+set $initialize_cheatsheet 'true'

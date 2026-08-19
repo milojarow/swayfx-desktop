@@ -1,0 +1,110 @@
+.TH SCRATCHPAD 1 "2026-03-15" "sway dotfiles" "User Commands"
+.SH NAME
+scratchpad \- hidden window storage with waybar indicator for sway
+.SH DESCRIPTION
+The sway scratchpad is a hidden workspace that holds windows out of sight.
+Any focused window can be sent there and retrieved on demand.
+If multiple windows are stored, each retrieval cycles through them in order.
+.PP
+No named sway mode is entered to use the scratchpad; both bindings operate
+from the default mode at all times.
+After each operation, waybar is signaled (
+.BR SIGRTMIN+7 )
+to refresh the scratchpad indicator.
+.SH KEYBINDINGS
+.TP
+.B $mod+Shift+minus
+Send the focused window to the scratchpad.
+.TP
+.B $mod+minus
+Show the next scratchpad window. If multiple windows are stored, repeated
+presses cycle through them in order.
+.SH WAYBAR INDICATOR
+The
+.B custom/scratchpad
+module (signal 7) reflects the current scratchpad state.
+.TP
+.I Empty
+The module is hidden.
+.B scratchpad.sh
+exits 1 when no windows are stored, which suppresses the
+.B exec-if
+check and removes the widget from the bar.
+.TP
+.I One window
+Displays a single-window icon (class
+.BR one ).
+.TP
+.I Two or more windows
+Displays a stack icon (class
+.BR many ).
+.PP
+The tooltip lists one line per stored window in the format
+.IR "app_id | window title" .
+Left-clicking the indicator runs
+.B swaymsg 'scratchpad show'
+(equivalent to pressing
+.BR $mod+minus ).
+.SH SCRIPT
+.B scratchpad.sh
+generates the JSON consumed by the waybar module:
+.nr step 1 1
+.IP \n[step]. 3
+Queries the sway tree for the internal
+.B __i3_scratch
+node via
+.BR "swaymsg -t get_tree" " | " "jq" .
+.IP \n+[step].
+Counts the
+.B floating_nodes
+inside that node to get the number of stored windows.
+.IP \n+[step].
+Exits 1 if the count is 0, hiding the waybar module.
+.IP \n+[step].
+Sets the output class to
+.B one
+(exactly one window) or
+.B many
+(two or more).
+.IP \n+[step].
+Builds the tooltip by joining each window's
+.I app_id
+(or
+.I window_properties.class
+for X11 windows) and its
+.I name
+field.
+.IP \n+[step].
+Outputs a JSON object:
+.PP
+.RS
+.EX
+{"text":"N", "class":"one|many", "alt":"one|many", "tooltip":"..."}
+.EE
+.RE
+.SH FILES
+.TP
+.I ~/.config/sway/modes/scratchpad
+Keybinding definitions: send to scratchpad and show/cycle scratchpad.
+.TP
+.I ~/.config/sway/scripts/scratchpad.sh
+Waybar indicator script: queries the sway tree and outputs JSON.
+.TP
+.I ~/.config/waybar/config.jsonc
+Defines the
+.B custom/scratchpad
+module (signal 7, format-icons for
+.I one
+and
+.IR many ,
+on-click action).
+.TP
+.I ~/.config/waybar/style.css
+CSS for
+.BR #custom-scratchpad .
+.SH PROGRAMS
+.BR swaymsg (1),
+.BR jq (1)
+.SH SEE ALSO
+.BR swaymsg (1),
+.BR jq (1)

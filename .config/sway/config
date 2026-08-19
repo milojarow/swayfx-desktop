@@ -1,0 +1,46 @@
+# Sway configuration – user custom behavior
+# Minimal and validated.  No duplicate bindings, English comments only.
+
+### Output
+# output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+
+### Appearance
+corner_radius 15
+for_window [app_id=".*"] dim_inactive 0.2
+# SwayFX 0.6+: open/close, resize/move and workspace-change animations.
+# Runtime-tunable: swaymsg animation_duration_ms <0-5000>
+#
+# MUST STAY NON-ZERO once any workspace has been faded out. The fade block in
+# arrange_output() is gated on animation_duration_ms > 0, and it is the only
+# code that ever sets a workspace's alpha back to 1. Setting this to 0 freezes
+# every already-faded-out workspace at alpha 0 forever: they go active and
+# render as wallpaper only, windows present in the tree and still clickable.
+#
+# Known bug at 250 (swayfx 0.6, reported as swayfx#569, sibling of #565):
+# switching AWAY from a workspace whose container is fullscreen leaves the
+# destination at alpha 0, because that same block is skipped when either side
+# is fullscreen. Recover with one switch between two non-fullscreen
+# workspaces. Annoying; strictly less bad than the frozen-at-0 state.
+animation_duration_ms 250
+focus_on_window_activation focus
+
+### Other settings --------------------------------------------------------
+# Note: floating_modifier is defined in modes/default, not here
+
+# Note: multimedia keybindings are defined in modes/default to avoid conflicts
+
+include ~/.config/sway/definitions.d/theme.conf  # palette theme: color vars + client.* — see man palette-theming
+include ~/.config/sway/config.d/*
+include ~/.config/sway/modes/*
+include ~/.config/sway/inputs/*
+
+exec_always ~/.config/sway/scripts/random-wallpaper.sh
+
+exec_always --no-startup-id ~/.config/sway/scripts/keyboard.sh
+
+# Start systemd graphical session target
+exec systemctl --user start graphical-session.target
+
+
+exec --no-startup-id /usr/bin/gnome-keyring-daemon --start --components=secrets
+

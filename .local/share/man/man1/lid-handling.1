@@ -1,0 +1,154 @@
+.TH LID-HANDLING 1 "2026-03-01" "sway dotfiles" "User Commands"
+.SH NAME
+lid-handling \- lid open/close event handling for sway on a Dell laptop
+.SH DESCRIPTION
+The Lid Handling functionality intercepts physical lid close and open events
+via sway's
+.B bindswitch
+mechanism. It delegates event processing to two handler scripts, with a
+third script fixing Bluetooth zombie connections after resume.
+.PP
+Requires
+.B HandleLidSwitch=ignore
+in
+.IR /etc/systemd/logind.conf ,
+which prevents systemd from acting on lid events directly and hands full
+control to sway.
+.SH FILES
+.TP
+.I ~/.config/sway/scripts/lid-handler.sh
+Lid close handler. Checks whether a lid-close event woke the system from
+S3 suspend (ACPI interrupt) and immediately re-suspends if so. Otherwise,
+saves keyboard backlight brightness to
+.IR /tmp/kbd-lid-brightness ,
+sets keyboard backlight to 0, and turns off all displays with
+.BR swaymsg (1).
+.TP
+.I ~/.config/sway/scripts/lid-open-handler.sh
+Lid open handler. Turns displays back on, restores keyboard backlight from
+.I /tmp/kbd-lid-brightness
+(falls back to 2 if state file is missing), then calls
+.I lid-bluetooth-reconnect.sh
+to fix any Bluetooth zombie connections.
+.TP
+.I ~/.config/sway/scripts/lid-bluetooth-reconnect.sh
+Waits 3 seconds for system stabilization after resume. Checks whether the
+paired Bluetooth device reports "Connected: yes" in
+.BR bluetoothctl (1)
+but has no active audio sink in
+.BR pactl (1).
+If a zombie connection is detected, disconnects and reconnects the device.
+.TP
+.I ~/.config/sway/config.d/75-lid-switch.conf
+Sway configuration file that maps
+.B bindswitch lid:on
+to
+.I lid-handler.sh
+and
+.B bindswitch lid:off
+to
+.IR lid-open-handler.sh .
+Both bindings use
+.B --locked
+so they fire even when the screen is locked.
+.TP
+.I /etc/systemd/logind.conf
+System file (not tracked in dotfiles). Must contain
+.B HandleLidSwitch=ignore
+to prevent systemd from intercepting lid events before sway can handle them.
+.SH PROGRAMS
+.BR swaymsg (1),
+.BR brightnessctl (1),
+.BR journalctl (1),
+.BR systemctl (1),
+.BR bluetoothctl (1),
+.BR pactl (1)
+.SH FLOW
+.SS Lid close
+.nr step 1 1
+.IP \n[step]. 3
+Sway fires
+.B bindswitch lid:on
+\[->]
+.I lid-handler.sh
+.IP \n+[step].
+Queries
+.BR journalctl (1)
+for the last "System returned from sleep operation" timestamp
+.IP \n+[step].
+If within 5 seconds: ACPI wake-from-S3 detected \[->] calls
+.B "systemctl suspend"
+immediately and exits
+.IP \n+[step].
+If a suspend is already in progress: exits silently
+.IP \n+[step].
+Normal lid close: saves
+.B dell::kbd_backlight
+value to
+.IR /tmp/kbd-lid-brightness ,
+sets backlight to 0, calls
+.B "swaymsg output * power off"
+.SS Lid open
+.nr step 1 1
+.IP \n[step]. 3
+Sway fires
+.B bindswitch lid:off
+\[->]
+.I lid-open-handler.sh
+.IP \n+[step].
+Calls
+.B "swaymsg output * power on"
+.IP \n+[step].
+Reads saved backlight value from
+.IR /tmp/kbd-lid-brightness ;
+restores it (or defaults to 2 if missing); deletes state file
+.IP \n+[step].
+Calls
+.I lid-bluetooth-reconnect.sh
+.IP \n+[step].
+.I lid-bluetooth-reconnect.sh
+sleeps 3 seconds, checks for zombie BT connection, forces reconnect if needed
+.SH NOTES
+.TP
+.B Dell keyboard backlight specificity
+The keyboard backlight device is identified as
+.B dell::kbd_backlight
+via
+.BR brightnessctl (1).
+This is Dell-specific; the save/restore logic in
+.I lid-handler.sh
+and
+.I lid-open-handler.sh
+targets this device explicitly.
+.TP
+.B HandleLidSwitch=ignore requirement
+Without this setting in
+.IR /etc/systemd/logind.conf ,
+systemd-logind intercepts lid events and suspends or locks the system
+independently of sway. This would conflict with the custom handler scripts.
+.TP
+.B Zombie Bluetooth explanation
+After resume from suspend, the Bluetooth stack sometimes reports a device
+as connected (
+.B Connected: yes
+in
+.BR bluetoothctl (1))
+while the audio sink is gone from PulseAudio/PipeWire. The device is
+connected at the HCI level but non-functional. The fix is to force a
+disconnect/reconnect cycle to re-establish the audio profile.
+.SH LOGS
+.TP
+.I ~/.cache/lid-handler.log
+Logged by
+.I lid-handler.sh
+when it detects and handles an S3-interrupt re-suspend event.
+.TP
+.I ~/.local/log/bluetooth-reconnect.log
+Logged by
+.I lid-bluetooth-reconnect.sh
+each time a zombie BT connection is detected and a reconnect is forced.
+.SH SEE ALSO
+.BR brightnessctl (1),
+.BR bluetoothctl (1),
+.BR swaymsg (1),
+.BR journalctl (1)

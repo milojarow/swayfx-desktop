@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Wrapper for rofi that uses compact emoji picker theme
+
+rofi -p 🔍 -i -dmenu -theme ~/.config/rofi/themes/emoji-picker.rasi "$@"

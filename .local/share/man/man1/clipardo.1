@@ -1,0 +1,206 @@
+.TH CLIPARDO 1 "2026\-06\-09" "dotfiles" "Clipardo Manual"
+.SH NAME
+clipardo \- copy file contents to the clipboard wrapped in Markdown code fences
+.SH SYNOPSIS
+.B clipardo
+.RI [ OPTIONS ]
+.RI [ FILE | DIR " ...]"
+.SH DESCRIPTION
+.B clipardo
+reads one or more files (optionally recursing into directories), filters out
+binary and git\-ignored files, and copies everything to the Wayland clipboard
+as a sequence of Markdown blocks. Each file is emitted as its location line
+followed by a fenced code block tagged with the language inferred from the
+file extension:
+.PP
+.RS
+.nf
+/path/to/file.py
+\(ga\(ga\(ga python
+print("hi")
+
+\(ga\(ga\(ga
+.fi
+.RE
+.PP
+The format is designed for pasting source files into LLM chats and Markdown
+documents. With
+.B \-\-content\-only
+the location line is omitted and only the fenced contents are copied.
+.SH OPTIONS
+.TP
+.BR \-h ", " \-\-help
+Show the help message and exit.
+.TP
+.BR \-r ", " \-\-recursive
+Recurse into directories. With no arguments at all,
+.B \-r
+defaults to the current directory.
+.TP
+.BR \-a ", " \-\-all
+Include hidden files (dotfiles). Two behaviors depending on mode: combined
+with
+.B \-r
+it includes hidden files while recursing (without
+.B \-a
+anything starting with a dot is skipped); without
+.B \-r
+it appends the first\-level dotfiles of each input's
+.B parent directory
+\[em] so
+.B "clipardo \-a foo.md"
+copies
+.I foo.md
+plus every dotfile living next to it. Typical use:
+.B "clipardo \-ra ."
+to copy a whole project including
+.IR .gitignore ,
+.IR .env.example ,
+etc.
+.TP
+.BR \-c ", " \-\-content\-only
+Copy only the fenced file contents, omitting the location line above each
+fence. Combinable with the other flags
+.RB ( "clipardo \-rc ." ).
+Added 2026\-06\-09.
+.SH USAGE
+.nf
+clipardo notes.md            # location + fenced content
+clipardo \-c notes.md         # fenced content only, no location
+clipardo \-r src/             # every text file under src/, recursively
+clipardo \-rc .               # whole project, no locations
+clipardo \-ra .               # whole project including dotfiles
+.fi
+.SH FILES
+.SS Scripts
+.TP
+.I $HOME/.scripts/clipardo
+The entire functionality \[em] a single self\-contained bash script. Tracked in
+the dotfiles bare repo as
+.IR .scripts/clipardo .
+.SS Configuration / units / state
+None. The script is stateless: no config file, no systemd unit, no cache. The
+only transient artifact is a
+.BR mktemp (1)
+file removed on exit.
+.SH "DATA PIPELINE"
+.nr step 1 1
+.IP \n[step]. 3
+Parse flags
+.RB ( getopts
+with manual long\-option emulation via
+.BR \-: ).
+.IP \n+[step].
+Collect inputs: plain files directly; directories only when
+.B \-r
+is given, by parsing
+.B ls \-1pR
+output.
+.IP \n+[step].
+With
+.B \-a
+but without
+.BR \-r ,
+first\-level dotfiles of each input's parent directory are appended.
+.IP \n+[step].
+Filter git\-ignored files: inside a git work\-tree via
+.BR "git check\-ignore" ;
+outside one, a
+.I .gitignore
+in the current directory is pattern\-matched manually.
+.IP \n+[step].
+Keep only text\-like files: extension whitelist (ts, tsx, js, jsx, json, css,
+html, md, sh, py, c, cpp, go, rs, java, xml, toml, yaml, ...) first, then
+.B file \-\-mime\-type
+for everything else (accepts text/*, application/json|xml|x\-shellscript).
+.IP \n+[step].
+Failsafe: more than 100 files prompts for confirmation
+.RI ( MAX_FILES ).
+.IP \n+[step].
+Format each file into a temp file \[em] location line (skipped with
+.BR \-c )
++ opening fence with language tag + contents + closing fence \[em] then pipe
+the whole batch into the first available clipboard tool.
+.SH PROGRAMS
+.BR wl\-copy (1)
+(fallback
+.BR xclip (1),
+then
+.BR xsel (1)),
+.BR file (1),
+.BR git (1),
+.BR ls (1),
+.BR mktemp (1)
+.SH DEPENDENCIES
+.TP
+.B wl\-clipboard
+Provides
+.BR wl\-copy ,
+the Wayland clipboard writer actually used on this system.
+.TP
+.B file
+MIME\-type detection for extensions outside the whitelist. Optional: without
+it the script falls back to a binary\-extension blacklist.
+.TP
+.B git
+Optional \[em] only used to honor ignore rules inside a work\-tree.
+.SH GOTCHAS
+.IP \[bu] 2
+A directory argument without
+.B \-r
+is
+.B silently skipped
+\[em] no warning, and if it was the only argument the script exits with
+"No files to copy."
+.IP \[bu] 2
+.B \-a
+without
+.B \-r
+appends first\-level dotfiles from the
+.B parent directory of each input
+.RB ( dirname ),
+which can pull in dotfiles you did not expect when passing files from
+another directory.
+.IP \[bu] 2
+The manual
+.I .gitignore
+matching (used only outside a git work\-tree) is a simplified glob match: no
+negation
+.RB ( ! )
+patterns, no anchoring semantics. Inside a work\-tree the real
+.B git check\-ignore
+runs per file.
+.IP \[bu] 2
+Binary files are dropped
+.B silently
+\[em] a copied batch may contain fewer files than passed.
+.IP \[bu] 2
+Recursion parses
+.B ls \-1pR
+output line by line: spaces in filenames are fine, but a filename containing a
+newline would corrupt the parse.
+.IP \[bu] 2
+The opening fence is written as
+.B "\(ga\(ga\(ga lang"
+(space between backticks and tag); for unknown extensions the tag is empty,
+leaving a trailing space. Each file's contents also gain one trailing newline
+before the closing fence.
+.IP \[bu] 2
+.B \-\-content\-only
+keeps the Markdown fences \[em] it only removes the location line. There is no
+raw (fence\-less) mode.
+.SH NOTES
+.IP \[bu] 2
+Invoked manually from the shell; no keybinding. Listed in the cheatsheet
+overlay (Super+/) right column.
+.IP \[bu] 2
+Found via
+.B PATH
+because
+.I $HOME/.scripts
+precedes the system paths.
+.SH "SEE ALSO"
+.BR clipboard\-functionality (1),
+.BR wl\-copy (1),
+.BR file (1),
+.BR git\-check\-ignore (1)

@@ -1,0 +1,31 @@
+; feature: cheatsheet
+; role:    window
+(defpoll cs-left  :interval "999h" :initial "" "cat ~/.config/eww/cheatsheet/cheatsheet-left.pango")
+(defpoll cs-right :interval "999h" :initial "" "cat ~/.config/eww/cheatsheet/cheatsheet-right.pango")
+
+(defwidget cheatsheet-widget []
+  (box :class "cs-container" :orientation "v" :space-evenly false
+    (box :class "cs-header" :orientation "h" :space-evenly false
+      (label :class "cs-title" :text "󰖬  Sway Cheatsheet")
+      (label :class "cs-hint"  :text "Super+/  ·  scroll con rueda del mouse"))
+    (box :orientation "h" :space-evenly false :vexpand true
+      (scroll :hexpand true :vscroll true :hscroll false :vexpand true
+        (label :class "cs-col cs-col-left" :markup cs-left :xalign 0 :valign "start"))
+      (box :class "cs-divider")
+      (scroll :hexpand true :vscroll true :hscroll false :vexpand true
+        (box :orientation "v" :space-evenly false :valign "start"
+          (box :class "cs-swap-hero" :orientation "v" :halign "center" :space-evenly false
+            (label :class "cs-swap-title" :halign "center" :markup "✨  <b>Swap Windows</b>  ✨")
+            (label :class "cs-swap-sub" :halign "center" :text "keep size & layout")
+            (label :class "cs-swap-key" :halign "center" :markup "<span foreground='#8be9fd'><b>Mod+Ctrl+W</b></span>"))))
+      (box :class "cs-divider")
+      (scroll :hexpand true :vscroll true :hscroll false :vexpand true
+        (label :class "cs-col" :markup cs-right :xalign 0 :valign "start")))))
+
+(defwindow cheatsheet
+  :monitor 0
+  :stacking "overlay"
+  :focusable false
+  :geometry (geometry :x "0" :y "0" :width "100%" :height "100%" :anchor "top left")
+  (eventbox :onclick "eww close cheatsheet" :hexpand true :vexpand true
+    (cheatsheet-widget)))

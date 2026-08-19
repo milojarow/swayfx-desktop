@@ -1,0 +1,14 @@
+[Unit]
+Description=Sway floating window auto-placer
+Documentation=man:sway-ipc(7)
+PartOf=sway-session.target
+After=sway-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.config/sway/scripts/floating-placer.py
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=sway-session.target

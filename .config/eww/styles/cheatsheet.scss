@@ -1,0 +1,34 @@
+// feature: cheatsheet
+// role:    style
+.cheatsheet {
+  &.background { background-color: rgba(15, 15, 20, 0.92); }
+}
+
+.cs-container  { padding: 32px 40px; }
+.cs-header     { margin-bottom: 20px; }
+.cs-title      { font-size: 20px; font-weight: bold; color: #50fa7b; margin-right: 30px; }
+.cs-hint       { font-size: 12px; color: rgba(248, 248, 242, 0.4); }
+.cs-col        { font-size: 13px; color: #f8f8f2; padding-right: 40px; }
+.cs-col-left   { font-size: 11px; }
+.cs-divider    { min-width: 1px; background-color: rgba(255, 255, 255, 0.1); margin: 0 20px; }
+
+// ── Swap-windows hero badge — pinned + glowing so it's always findable ──────
+@keyframes cs-swap-breathe {
+  0%   { opacity: 0.72; }
+  50%  { opacity: 1.0; }
+  100% { opacity: 0.72; }
+}
+
+.cs-swap-hero {
+  margin: 18px 8px 4px 8px;
+  padding: 14px 26px;
+  border-radius: 16px;
+  background-color: rgba(255, 121, 198, 0.13);
+  border: 2px solid rgba(255, 121, 198, 0.85);
+  box-shadow: 0 0 18px rgba(255, 121, 198, 0.55);
+  animation: cs-swap-breathe 1.8s ease-in-out infinite;
+}
+
+.cs-swap-title { font-size: 16px; font-weight: bold; color: #ffd9f0; }
+.cs-swap-sub   { font-size: 12px; color: rgba(255, 217, 240, 0.7); margin: 5px 0 9px 0; }
+.cs-swap-key   { font-size: 15px; font-weight: bold; }

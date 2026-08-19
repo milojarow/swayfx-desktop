@@ -1,0 +1,207 @@
+#!/usr/bin/env bash
+#
+# clipardo – copy file(s) into clipboard wrapped in fenced code blocks
+# Author: milojarow
+# License: MIT
+#
+
+set -euo pipefail
+shopt -s nullglob
+
+MAX_FILES=100
+
+show_help() {
+  cat <<EOF
+Usage: clipardo [OPTIONS] [FILE|DIR...]
+Copy file(s) into the clipboard inside Markdown code fences.
+
+Options:
+  -h, --help          Show this help message and exit
+  -r, --recursive     Recurse into directories
+  -a, --all           Include hidden files
+  -c, --content-only  Copy only file contents (omit file locations)
+EOF
+}
+
+# ─── Parse flags ────────────────────────────────────────────────────────────────
+RECURSIVE=false
+INCLUDE_HIDDEN=false
+CONTENT_ONLY=false
+while getopts ":hrac-:" opt; do
+  case "$opt" in
+    h) show_help; exit 0 ;;
+    r) RECURSIVE=true ;;
+    a) INCLUDE_HIDDEN=true ;;
+    c) CONTENT_ONLY=true ;;
+    -)
+      case "${OPTARG}" in
+        help) show_help; exit 0 ;;
+        recursive) RECURSIVE=true ;;
+        all) INCLUDE_HIDDEN=true ;;
+        content-only) CONTENT_ONLY=true ;;
+        *) echo "Unknown option --${OPTARG}" >&2; exit 1 ;;
+      esac;;
+    \?) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
+  esac
+done
+shift $((OPTIND-1))
+
+# ─── Inputs ────────────────────────────────────────────────────────────────────
+inputs=("$@")
+if [ ${#inputs[@]} -eq 0 ] && [ "$RECURSIVE" = true ]; then
+  inputs=(".")
+elif [ ${#inputs[@]} -eq 0 ]; then
+  echo "Error: No files specified." >&2
+  show_help; exit 1
+fi
+
+# ─── 1) List via ls/ls -R + flags ──────────────────────────────────────────────
+FILES=()
+for path in "${inputs[@]}"; do
+  if [ -d "$path" ]; then
+    if [ "$RECURSIVE" = true ]; then
+      ls_opts=(-1pR)
+      $INCLUDE_HIDDEN && ls_opts+=(-a)
+      cwd="$path"
+      while IFS= read -r line; do
+        [[ "$line" =~ :$ ]] && { cwd="${line%:}"; continue; }
+        [ -z "$line" ] && continue
+        [[ "$line" == */ ]] && continue
+        base="$line"
+        if [ "$INCLUDE_HIDDEN" = false ] && [[ "$base" == .* ]]; then
+          continue
+        fi
+        FILES+=("$cwd/$line")
+      done < <(ls "${ls_opts[@]}" "$path")
+    else
+      continue
+    fi
+
+  elif [ -f "$path" ]; then
+    FILES+=("$path")
+  fi
+done
+
+# ─── 2) No-recursive + -a → dotfiles de primer nivel ───────────────────────────
+if [ "$INCLUDE_HIDDEN" = true ] && [ "$RECURSIVE" = false ]; then
+  declare -A dirs=()
+  for p in "${inputs[@]}"; do dirs["$(dirname "$p")"]=1; done
+  for d in "${!dirs[@]}"; do
+    for f in "$d"/.[!.]*; do
+      [ -f "$f" ] && FILES+=("$f")
+    done
+  done
+fi
+
+# ─── 3) Git support ─────────────────────────────────────────────────────────────
+inside_git=false
+if git rev-parse --is-inside-work-tree &>/dev/null; then
+  inside_git=true
+elif [ -f .gitignore ]; then
+  mapfile -t GITIGNORE_PATTERNS < <(grep -Ev '^\s*#|^\s*$' .gitignore)
+fi
+
+FILTERED=()
+for f in "${FILES[@]}"; do
+  skip=false
+
+  if [ "$inside_git" = true ]; then
+    git check-ignore -q "$f" && skip=true
+
+  elif [ -n "${GITIGNORE_PATTERNS+x}" ]; then
+    rel="${f#"$PWD"/}"
+    for pat in "${GITIGNORE_PATTERNS[@]}"; do
+      case "$rel" in $pat|$pat/*) skip=true; break ;; esac
+    done
+  fi
+
+  $skip || FILTERED+=("$f")
+done
+FILES=("${FILTERED[@]}"); unset FILTERED
+
+# ─── 4) Text-like filter (incluye tsx/jsx/ts) ─────────────────────────────────
+TEXTFILES=()
+for f in "${FILES[@]}"; do
+  ext="${f##*.}"
+  case "$ext" in
+    tsx|ts|jsx|js|json|css|html|htm|md|sh|bash|py|c|cpp|go|rs|java|xml|toml|yaml|yml)
+      TEXTFILES+=("$f"); continue
+      ;;
+  esac
+  if command -v file &>/dev/null; then
+    mime=$(file --mime-type -b "$f")
+    if printf '%s' "$mime" | grep -Eq '^(text/|application/(json|xml|x-shellscript))'; then
+      TEXTFILES+=("$f")
+    fi
+  else
+    case "$ext" in
+      png|jpg|jpeg|gif|bmp|mp4|mp3|wav|ogg|flac|mov|avi|mkv|pdf|svg) ;;
+      *) TEXTFILES+=("$f") ;;
+    esac
+  fi
+done
+FILES=("${TEXTFILES[@]}"); unset TEXTFILES
+
+# ─── 5) Abort if empty & failsafe ──────────────────────────────────────────────
+total=${#FILES[@]}
+[ "$total" -gt 0 ] || { echo "No files to copy." >&2; exit 1; }
+if [ "$total" -gt "$MAX_FILES" ]; then
+  read -rp "You are about to copy $total files, continue? [y/N] " ans
+  case "$ans" in [Yy]) ;; *) echo "Aborted."; exit 1 ;; esac
+fi
+
+# ─── 6) Clipboard tool ─────────────────────────────────────────────────────────
+if command -v wl-copy &>/dev/null; then
+  COPY_CMD="wl-copy"
+elif command -v xclip &>/dev/null; then
+  COPY_CMD="xclip -selection clipboard"
+elif command -v xsel &>/dev/null; then
+  COPY_CMD="xsel --clipboard --input"
+else
+  echo "Error: install wl-clipboard, xclip or xsel." >&2
+  exit 1
+fi
+
+# ─── 7) Format & copy with progress ────────────────────────────────────────────
+tmpfile=$(mktemp)
+trap 'rm -f "$tmpfile"' EXIT
+
+for idx in "${!FILES[@]}"; do
+  file="${FILES[idx]}"
+  num=$((idx+1))
+  printf "Copied [%d/%d]\r" "$num" "$total"
+
+  ext="${file##*.}"
+  case "$ext" in
+    tsx)      lang=typescriptreact ;;
+    ts)       lang=typescript ;;
+    jsx)      lang=javascriptreact ;;
+    js)       lang=javascript ;;
+    json)     lang=json ;;
+    css)      lang=css ;;
+    html|htm) lang=html ;;
+    md)       lang=markdown ;;
+    sh|bash)  lang=bash ;;
+    py)       lang=python ;;
+    c)        lang=c ;;
+    cpp|cc|cxx|hpp) lang=cpp ;;
+    go)       lang=go ;;
+    rs)       lang=rust ;;
+    java)     lang=java ;;
+    xml)      lang=xml ;;
+    toml)     lang=toml ;;
+    yml|yaml) lang=yaml ;;
+    *)        lang="" ;;
+  esac
+
+  {
+    [ "$CONTENT_ONLY" = true ] || printf "%s\n" "$file"
+    printf '``` %s\n' "$lang"
+    cat "$file"
+    printf '\n```\n'
+  } >>"$tmpfile"
+done
+
+echo
+cat "$tmpfile" | eval "$COPY_CMD"
+

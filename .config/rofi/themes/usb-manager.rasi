@@ -1,0 +1,132 @@
+// ── USB Management ────────────────────────────────────────────────────────────
+// Role:     Rofi theme for USB device selection menus (mount/unmount/eject/open)
+// Used by:  usb-action-mount.sh · usb-action-unmount.sh · usb-action-eject.sh
+//           usb-action-open.sh
+// ─────────────────────────────────────────────────────────────────────────────
+
+* {
+    /* Color palette - Gray tones */
+    bg-primary:     #2b2b2b;
+    bg-secondary:   #3a3a3a;
+    bg-selected:    #4a4a4a;
+    fg-primary:     #e0e0e0;
+    fg-secondary:   #b0b0b0;
+    fg-accent:      #909090;
+    border-color:   #5a5a5a;
+    
+    background-color: transparent;
+    text-color: @fg-primary;
+    font: "monospace 11";
+}
+
+window {
+    background-color: @bg-primary;
+    border: 2px solid;
+    border-color: @border-color;
+    border-radius: 8px;
+    padding: 0;
+    width: 600px;
+}
+
+mainbox {
+    background-color: transparent;
+    children: [ message, inputbar, listview ];
+    padding: 12px;
+    spacing: 12px;
+}
+
+message {
+    background-color: @bg-secondary;
+    border: 1px solid;
+    border-color: @border-color;
+    border-radius: 4px;
+    padding: 8px 12px;
+    text-color: @fg-secondary;
+}
+
+textbox {
+    background-color: transparent;
+    text-color: inherit;
+}
+
+inputbar {
+    background-color: @bg-secondary;
+    border: 1px solid;
+    border-color: @border-color;
+    border-radius: 4px;
+    padding: 8px 12px;
+    children: [ prompt, entry ];
+    spacing: 8px;
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @fg-accent;
+    font: "monospace bold 11";
+}
+
+entry {
+    background-color: transparent;
+    text-color: @fg-primary;
+    placeholder: "Type to filter...";
+    placeholder-color: @fg-secondary;
+}
+
+listview {
+    background-color: transparent;
+    lines: 10;
+    scrollbar: true;
+    spacing: 2px;
+    cycle: false;
+    dynamic: true;
+}
+
+scrollbar {
+    background-color: @bg-secondary;
+    handle-color: @fg-accent;
+    handle-width: 6px;
+    border: 0;
+    border-radius: 3px;
+    margin: 0 0 0 4px;
+    padding: 0;
+}
+
+element {
+    background-color: transparent;
+    text-color: @fg-primary;
+    border-radius: 4px;
+    padding: 6px 10px;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color: @fg-primary;
+}
+
+element alternate.normal {
+    background-color: @bg-secondary;
+    text-color: @fg-primary;
+}
+
+element selected.normal {
+    background-color: @bg-selected;
+    text-color: @fg-primary;
+    font: "monospace bold 11";
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    vertical-align: 0.5;
+}
+
+element-icon {
+    background-color: transparent;
+    size: 1em;
+    padding: 0 6px 0 0;
+}
+
+/* Specific styling for USB device headers (lines starting with ╔) */
+element-text {
+    highlight: bold #ffffff;
+}

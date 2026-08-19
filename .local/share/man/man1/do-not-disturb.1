@@ -1,0 +1,205 @@
+.TH DO-NOT-DISTURB 1 "2026-03-15" "sway dotfiles" "User Commands"
+.SH NAME
+do-not-disturb \- notification suppression toggle with waybar indicator for sway
+.SH DESCRIPTION
+The do-not-disturb module toggles
+.BR mako (1)'s
+.B do-not-disturb
+mode, which makes all desktop notifications invisible while active.
+A state file keeps the waybar indicator in sync with mako's actual mode across
+status queries.
+.SH WAYBAR MODULE
+The
+.B custom/dnd
+module uses signal 11 and the format string
+.BR \(dq{}{icon}\(dq :
+the
+.B {}
+placeholder renders the
+.I alt
+field (empty in default mode, the text
+.B dnd
+in DND mode) immediately before the icon, producing a visible label when
+notifications are suppressed.
+.TP
+.B Default mode
+Alt text: (empty). Icon: bell icon. Tooltip: "mode: default".
+.TP
+.B DND active
+Alt text:
+.BR dnd .
+Icon: muted bell icon. Tooltip: "mode: do-not-disturb".
+.PP
+CSS:
+.B #custom-dnd
+is part of a shared padding group with other modules. No state-specific
+color rules are defined.
+.PP
+Click bindings:
+.TP
+.B Left click
+Runs
+.B dnd.sh toggle
+then sends
+.B waybar-signal dnd
+(signal 11) to refresh the indicator.
+.TP
+.B Right click
+Runs
+.BR "dnd.sh restore" ,
+clearing all mako modes and returning to default.
+.SH SCRIPT
+.B dnd.sh
+manages mako's
+.B do-not-disturb
+mode via
+.BR makoctl (1).
+On each invocation, if
+.I ~/.cache/dnd_state
+does not exist it is created by querying
+.BR "makoctl mode" .
+.SS status
+.nr step 1 1
+.IP \n[step]. 3
+Queries
+.B makoctl mode
+for the real current state and checks for the string
+.BR do-not-disturb .
+.IP \n+[step].
+Writes
+.B dnd
+or
+.B default
+to
+.IR ~/.cache/dnd_state .
+.IP \n+[step].
+Reads the state file and outputs JSON for waybar:
+.PP
+.RS
+.EX
+{"alt":"default|dnd","tooltip":"mode: default|do-not-disturb"}
+.EE
+.RE
+.SS toggle
+.nr step 1 1
+.IP \n[step]. 3
+Reads the current state from
+.IR ~/.cache/dnd_state .
+.IP \n+[step].
+If
+.BR dnd :
+runs
+.B makoctl mode -r do-not-disturb
+and writes
+.B default
+to the state file.
+.IP \n+[step].
+If
+.BR default :
+runs
+.B makoctl mode -a do-not-disturb
+and writes
+.B dnd
+to the state file.
+.PP
+The waybar signal (11) is sent by the
+.B on-click
+binding in the waybar module config, not by the script itself.
+.SS restore
+.nr step 1 1
+.IP \n[step]. 3
+Runs
+.BR "makoctl restore" ,
+which clears
+.I all
+active mako modes (not just do-not-disturb) and returns to default.
+.IP \n+[step].
+Writes
+.B default
+to
+.IR ~/.cache/dnd_state .
+.SH MAKO INTEGRATION
+.I ~/.config/mako/config
+defines the mode rule that makes DND effective:
+.PP
+.RS
+.EX
+[mode=do-not-disturb]
+invisible=1
+.EE
+.RE
+.PP
+When mako is in this mode, notifications are fully suppressed \(em they do not
+appear at all, as opposed to merely being silenced.
+.PP
+The same file configures the visual appearance of notifications in default mode:
+.TP
+.B Position
+Bottom-right of the screen.
+.TP
+.B Font
+JetBrainsMono NF 10.
+.TP
+.B Timeout
+None (notifications persist until dismissed by the user).
+.TP
+.B Background
+.B #141a1b90
+(semi-transparent dark).
+.TP
+.B Border
+None. Border radius: 15 px.
+.SH NOTES
+.I ~/.cache/dnd_state
+is a runtime file and should not be tracked in git.
+.PP
+.B makoctl restore
+differs from
+.B "makoctl mode -r do-not-disturb"
+in that it resets
+.I all
+active modes at once, not just the DND mode.
+.PP
+The waybar signal (SIGRTMIN+11) is sent by the
+.B on-click
+entry in
+.I ~/.config/waybar/config.jsonc
+via
+.BR waybar-signal ,
+not from within
+.IR dnd.sh .
+.SH FILES
+.TP
+.I ~/.config/waybar/config.jsonc
+Defines the
+.B custom/dnd
+module: signal 11, format string, format-icons, and click bindings.
+.TP
+.I ~/.config/waybar/style.css
+CSS for
+.BR #custom-dnd :
+shared padding group with other modules.
+.TP
+.I ~/.config/sway/scripts/dnd.sh
+Toggle, status, and restore subcommands. Manages the state file and calls
+.BR makoctl (1).
+.TP
+.I ~/.config/mako/config
+Mako notification daemon configuration. Defines the
+.B [mode=do-not-disturb]
+rule with
+.B invisible=1
+and the default notification appearance.
+.TP
+.I ~/.cache/dnd_state
+Cached mode state
+.RB ( dnd
+or
+.BR default ).
+Runtime file \(em not tracked in git.
+.SH PROGRAMS
+.BR mako (1),
+.BR makoctl (1)
+.SH SEE ALSO
+.BR mako (1),
+.BR makoctl (1)

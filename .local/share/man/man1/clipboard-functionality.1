@@ -1,0 +1,284 @@
+.TH CLIPBOARD\-FUNCTIONALITY 1 "2026\-06\-06" "dotfiles" "Clipboard Functionality Manual"
+.SH NAME
+clipboard\-functionality \- persistent clipboard history system for sway/waybar
+.SH DESCRIPTION
+The clipboard functionality provides a persistent, searchable clipboard history
+manager for a sway/Wayland desktop environment.
+.PP
+Every clipboard change is captured, normalized (UTF\-16 LE is automatically
+converted to UTF\-8 so browser\-copied URLs always appear clean), and stored
+in a local SQLite database.
+A waybar icon reflects the history size and provides click\-based access to the
+history browser.
+.PP
+The history browser is a GTK 3 application
+.RI ( clipboard\-picker.py )
+with native multi\-select (shift/ctrl click, shift+arrows) for batch deletion and
+a per\-row clickable pin. Pinned entries are stored outside the cliphist database,
+so they survive clearing or purging the history, and appear in a "Fijados" section
+at the top of the picker.
+.PP
+The picker uses
+.B gtk\-layer\-shell
+in
+.B EXCLUSIVE
+keyboard mode, so it grabs keyboard focus the instant it maps \(em no extra click
+is needed after opening from the bar or the keybind. Typing, arrow navigation,
+and the Del/Enter actions work immediately.
+Sway intercepts its own keybindings first, so global shortcuts are unaffected.
+.PP
+On open, the most recently copied row (the top of the "Historial" section,
+below any pins) comes up selected and focused \(em Enter copies it with zero
+keystrokes in between, and arrow navigation is ready out of the gate. The search
+entry does
+.B not
+grab focus by default \(em type any printable key and focus is forwarded to it
+automatically (via
+.BR Gtk.SearchEntry.handle_event ),
+starting a live filter. Non\-printable keys (arrows, Enter, Delete) keep
+acting on the list as usual.
+.SH KEYBINDINGS
+.TP
+.B $mod+Shift+p
+Opens the interactive clipboard history browser (GTK picker).
+.RS
+.TP
+.B Type
+Filter the list live. The first visible match is highlighted automatically as
+you type, so pressing
+.B Enter
+from inside the search box copies that match without first stepping into the
+list with
+.BR Down .
+.TP
+.B Click / Shift+Click / Ctrl+Click / Shift+Arrows
+Select one or several rows (multi\-select).
+.TP
+.B Enter / Double\-click
+Copy the activated row back to the clipboard and close. With multiple rows
+selected, copy them all joined by newlines so a single
+.B Ctrl+V
+pastes the whole batch in order.
+.TP
+.B Delete
+Delete all selected rows (batch). With nothing selected, deletes nothing.
+After the rebuild, whatever row now occupies the topmost deleted slot (or the
+new last row if the tail was cut) comes up
+.B selected
+and focused, so navigation continues from the same height instead of jumping
+back to the top, the highlight stays visible, and pressing
+.B Delete
+again keeps deleting down the list instead of doing nothing. Slots are counted
+within the
+.I filtered
+view, so deleting under an active query lands on the next row that still
+matches \(em never on one the filter hides.
+.TP
+.B Click the pin icon
+Pin or unpin that row. Pinned rows move to the "Fijados" section on top.
+.TP
+.B Escape
+Close the picker.
+.RE
+.TP
+.B Waybar left\-click
+Opens the clipboard history browser (GTK picker).
+.TP
+.B Waybar right\-click
+Opens a standalone deletion picker (rofi) for removing individual items.
+.TP
+.B Waybar middle\-click
+Clears the entire cliphist history. Pinned items survive (stored separately).
+.SH FILES
+.TP
+.I ~/.config/sway/scripts/clipboard\-manager.sh
+Thin launcher that execs
+.IR clipboard\-picker.py .
+Kept as the stable entry point so waybar, eww and the keybind need no changes.
+.TP
+.I ~/.config/sway/scripts/clipboard\-picker.py
+GTK 3 history browser \(em the actual picker UI.
+Per\-row clickable pin, native multi\-select delete, and live filter; themes itself
+via embedded CSS and renders as a centered gtk\-layer\-shell overlay.
+.TP
+.I ~/.local/share/clipboard\-pins/
+Pin store: per pin, one content file
+.RB ( <hash> ,
+named by a sha256 prefix of the content) plus a
+.RB ( <hash>.pv )
+preview sidecar.
+Lives outside the cliphist DB, so pins survive history clears.
+.TP
+.I ~/.config/sway/scripts/clipboard\-utf16\-filter.py
+Storage middleware.
+Converts UTF\-16 LE clipboard data (e.g. URLs copied from Brave) to UTF\-8
+before handing off to cliphist store.
+.TP
+.I ~/.config/sway/scripts/clipboard\-store\-daemon.sh
+Daemon launcher for the storage pipeline.
+Kills any existing
+.B wl\-paste \-\-watch clipboard\-utf16\-filter.py
+instance then starts a fresh one.
+Called by
+.B exec_always $cliphist_store
+in
+.IR 99\-autostart\-applications.conf .
+.TP
+.I ~/.config/sway/scripts/clipboard\-watch\-daemon.sh
+Daemon launcher for the waybar refresh signal.
+Kills any existing
+.B wl\-paste \-\-watch waybar\-signal clipboard
+instance then starts a fresh one.
+Called by
+.B exec_always $cliphist_watch
+in
+.IR 99\-autostart\-applications.conf .
+.TP
+.I ~/.config/rofi/themes/coffee\-metal
+Rofi theme for the standalone deletion dialog
+.RB ( $clipboard\-del ,
+the waybar right\-click).
+The GTK picker themes itself via embedded CSS instead.
+.TP
+.I ~/.config/waybar/config.jsonc
+Waybar module definition
+.RI ( custom/clipboard ,
+signal\ 9).
+.TP
+.I ~/.config/sway/autostart
+Daemon variable definitions:
+.BR $cliphist_store ", " $cliphist_watch ", " $clip\-persist .
+.TP
+.I ~/.config/sway/config.d/01\-definitions.conf
+User\-facing variable definitions:
+.BR $clipboard ", " $clipboard\-del .
+.TP
+.I ~/.config/sway/config.d/99\-autostart\-applications.conf
+Launches the three clipboard daemons at sway startup.
+.TP
+.I ~/.config/sway/modes/shutdown
+Purges clipboard history on logout/shutdown/reboot (if configured).
+.TP
+.I ~/.cache/cliphist/db
+SQLite database storing clipboard history (managed by cliphist).
+.SH PROGRAMS
+The following programs must be installed for this functionality to work:
+.TP
+.B cliphist
+Clipboard history backend.
+Stores and retrieves entries from the SQLite database.
+.TP
+.B wl\-paste
+Wayland clipboard reader.
+Used in
+.B \-\-watch
+mode to monitor clipboard changes.
+.TP
+.B wl\-copy
+Wayland clipboard writer.
+Restores a selected history entry to the active clipboard.
+.TP
+.B wl\-clip\-persist
+Keeps clipboard data alive after the source application closes,
+preventing "clipboard lost on window close".
+.TP
+.B waybar\-signal
+IPC utility.
+Sends POSIX signal RTMIN+9 to waybar to refresh the clipboard module.
+.TP
+.B python (PyGObject, GTK 3)
+Runtime for the GTK history picker
+.RB ( clipboard\-picker.py ).
+.TP
+.B gtk\-layer\-shell
+Positions the GTK picker as a centered overlay on the Wayland layer.
+.TP
+.B rofi
+Launcher used by the standalone deletion picker
+.RB ( $clipboard\-del ,
+the waybar right\-click).
+.SH DAEMONS
+Three background processes run continuously,
+all started by
+.I 99\-autostart\-applications.conf
+at sway startup:
+.TP
+.B wl\-paste \-\-watch clipboard\-utf16\-filter.py
+Monitors the Wayland clipboard.
+On each change, pipes the raw data through the UTF\-16 filter to
+.BR "cliphist store" .
+Started via
+.B $cliphist_store
+in autostart.
+.TP
+.B wl\-paste \-\-watch waybar\-signal\ clipboard
+Monitors the Wayland clipboard.
+On each change, signals waybar to refresh the clipboard icon and tooltip.
+Started via
+.B $cliphist_watch
+in autostart.
+.TP
+.B wl\-clip\-persist \-\-clipboard regular ...
+Persists clipboard data after the source application closes.
+Started via
+.B $clip\-persist
+in autostart
+.RI ( exec_always ,
+so it restarts on sway reload).
+.SH STORAGE
+Clipboard history is stored in
+.IR ~/.cache/cliphist/db
+(SQLite format, managed by cliphist).
+.PP
+Maximum items: 750 (cliphist default).
+.PP
+The database is purged automatically on logout, shutdown, and reboot if the
+variable
+.B $purge_cliphist_logout
+is set to
+.I true
+in your sway configuration.
+.PP
+It can also be cleared manually via middle\-click on the waybar clipboard icon,
+or by running:
+.PP
+.RS
+.B rm \-f ~/.cache/cliphist/db
+.RE
+.PP
+Pinned items are stored separately in
+.I ~/.local/share/clipboard\-pins/
+and are
+.B not
+affected by clearing or purging the history.
+.SH CONFIGURATION
+.TP
+.B Max history size
+Pass
+.B \-max\-items <n>
+to
+.B cliphist store
+by editing
+.B $cliphist_store
+in
+.IR ~/.config/sway/autostart .
+.TP
+.B Purge on logout
+Set
+.B $purge_cliphist_logout
+to
+.I true
+in your sway config.
+.TP
+.B Picker appearance
+The GTK picker themes itself via the embedded CSS in
+.IR clipboard\-picker.py .
+The standalone deletion dialog uses
+.IR ~/.config/rofi/themes/coffee\-metal .
+.SH SEE ALSO
+.BR cliphist (1),
+.BR wl\-paste (1),
+.BR wl\-copy (1),
+.BR wl\-clip\-persist (1),
+.BR rofi (1),
+.BR waybar (5)

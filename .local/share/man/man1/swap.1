@@ -1,0 +1,139 @@
+.TH SWAP 1 "2026-03-15" "sway dotfiles" "User Commands"
+.SH NAME
+swap \- two-step window position swap mode for sway
+.SH DESCRIPTION
+Swap mode lets the user exchange the positions of any two tiled windows using
+keyboard navigation and a two-step mark/execute flow.
+.PP
+The mode operates in two phases, each with its own named sub-mode and pango
+label in the sway bar.
+Unlike other modes, the pango labels use hardcoded hex color values rather than
+.I $colorN
+theme variables, so they are independent of the active palette theme.
+.SH KEYBINDINGS
+Enter swap mode by pressing
+.BR $mod+Ctrl+w .
+.SS Phase 1 \(em select target ($mode_swap_select)
+The sway bar displays: a shuffle icon, the label
+.BR "Swap Mode" ,
+the hint
+.BR "(↑ ↓ ← → navigate)" ,
+.BR "Mark Target" ,
+and
+.BR "(Enter or Click)" .
+.PP
+Navigation focuses windows without swapping:
+.TP
+.BR "← ↓ ↑ →"
+Move focus left, down, up, or right.
+.TP
+.BR "h j k l"
+Vim-key equivalents for left, down, up, right.
+.PP
+Actions:
+.TP
+.BR Return " or left click (whole window)"
+Mark the focused window as the swap target.
+Runs
+.I swap-mark-target.sh
+and transitions to phase 2
+.RI ( $mode_swap_target ).
+.TP
+.B Escape
+Cancel swap mode. Runs
+.I swap-cleanup.sh
+and returns to default mode.
+.SS Phase 2 \(em select second window ($mode_swap_target)
+The sway bar displays: a target icon, the label
+.BR "Target Marked!" ,
+.BR "Select Second Window" ,
+and
+.BR "(↑ ↓ ← → navigate, Enter or Click)" .
+.PP
+Navigation is identical to phase 1 (arrow keys and vim keys).
+.PP
+Actions:
+.TP
+.BR Return " or left click (whole window)"
+Execute the swap between the marked target and the currently focused window.
+Runs
+.I swap-execute.sh
+and returns to default mode.
+.TP
+.B Escape
+Cancel and discard the marked target. Runs
+.I swap-cleanup.sh
+and returns to default mode.
+.SH SCRIPTS
+.SS swap-mark-target.sh
+.nr step 1 1
+.IP \n[step]. 3
+Marks the focused window:
+.B "swaymsg mark swap_target"
+.IP \n+[step].
+Transitions to phase 2:
+.B "swaymsg mode '$mode_swap_target'"
+.IP \n+[step].
+Signals waybar (SIGRTMIN+7) to refresh.
+.SS swap-execute.sh
+.nr step 1 1
+.IP \n[step]. 3
+Verifies the mark exists via
+.BR "swaymsg -t get_marks" ;
+exits 1 if
+.B swap_target
+is not found.
+.IP \n+[step].
+Executes the swap:
+.B "swaymsg swap container with mark swap_target"
+.IP \n+[step].
+Removes the mark:
+.B "swaymsg '[con_mark=\(dqswap_target\(dq] unmark'"
+.IP \n+[step].
+Signals waybar (SIGRTMIN+7) to refresh.
+.SS swap-cleanup.sh
+.nr step 1 1
+.IP \n[step]. 3
+Silently removes the mark if present:
+.B "swaymsg '[con_mark=\(dqswap_target\(dq] unmark'"
+(stderr discarded).
+.IP \n+[step].
+Signals waybar (SIGRTMIN+7) to refresh.
+.SH NOTES
+There is no dedicated waybar indicator for swap mode.
+The SIGRTMIN+7 signal sent by all three scripts refreshes the scratchpad module
+(signal 7) as a side effect of the window tree changing.
+.PP
+Both arrow keys and vim keys
+.RB ( h / j / k / l )
+are active in both phases.
+.PP
+The pango markup in this mode uses hardcoded hex color values and does not
+depend on
+.IR ~/.config/sway/themes/<name>/theme.conf .
+.SH FILES
+.TP
+.I ~/.config/sway/modes/swap
+Both sub-mode definitions
+.RI ( $mode_swap_select
+and
+.IR $mode_swap_target )
+and the
+.B $mod+Ctrl+w
+entry binding.
+.TP
+.I ~/.config/sway/scripts/swap-mark-target.sh
+Marks the focused window and transitions to phase 2.
+.TP
+.I ~/.config/sway/scripts/swap-execute.sh
+Validates the mark, executes the swap, and cleans up.
+.TP
+.I ~/.config/sway/scripts/swap-cleanup.sh
+Removes any leftover
+.B swap_target
+mark on cancel or exit.
+.SH PROGRAMS
+.BR swaymsg (1),
+.BR pkill (1)
+.SH SEE ALSO
+.BR swaymsg (1)

@@ -1,0 +1,94 @@
+; feature: usb
+; role:    window
+(defvar panel-open 0)
+(defvar usb-tab 0)
+
+(deflisten usb-data :initial `{"devices":[],"count":0}`
+  "~/.config/eww/scripts/usb-monitor.sh")
+
+(defwidget usb-widget []
+  (box :class "usb-widget"
+       :orientation "h"
+       :space-evenly false
+    (button :class {panel-open == 1 ? "panel-trigger open" : "panel-trigger"}
+            :onclick "eww update panel-open=$((1 - ${panel-open}))"
+      (label :class {usb-data.count > 0 ? "panel-icon usb-active" : "panel-icon"}
+             :text "󱊟"))
+    (revealer :transition "slideright"
+              :reveal {panel-open == 1}
+              :duration "250ms"
+      (box :class "panel-content"
+           :orientation "v"
+           :space-evenly false
+        (box :class "usb-tabs"
+             :orientation "h"
+             :space-evenly true
+             :visible {usb-data.count > 1}
+          (for device in {usb-data.devices}
+            (button :class {usb-tab == device.idx ? "usb-tab active" : "usb-tab"}
+                    :onclick "eww update usb-tab=${device.idx}"
+              (label :text {device.name}))))
+        (label :class "usb-empty"
+               :visible {usb-data.count == 0}
+               :halign "center"
+               :vexpand true
+               :text "No USB connected")
+        (for device in {usb-data.devices}
+          (box :class "usb-device"
+               :orientation "v"
+               :space-evenly false
+               :visible {device.idx == usb-tab}
+            (label :class "usb-device-name"
+                   :halign "start"
+                   :text "${device.name}  ${device.size}")
+            (for part in {device.partitions}
+              (box :class "usb-partition"
+                   :orientation "v"
+                   :space-evenly false
+                (box :class "usb-part-info"
+                     :orientation "h"
+                     :space-evenly false
+                  (label :class "usb-part-name"
+                         :text {part.name})
+                  (label :class "usb-part-label"
+                         :visible {part.label != ""}
+                         :text {" · " + part.label})
+                  (label :class "usb-part-size"
+                         :hexpand true
+                         :halign "end"
+                         :text {part.size}))
+                (box :class "usb-part-status"
+                     :orientation "h"
+                     :space-evenly false
+                  (label :class {part.mounted ? "status-dot mounted" : "status-dot"}
+                         :text "●")
+                  (label :class {part.mounted ? "status-text mounted" : "status-text"}
+                         :text {part.mounted ? "Mounted" : "Not mounted"}))
+                (button :class "usb-mountpoint"
+                        :visible {part.mounted}
+                        :onclick "xdg-open ${part.mountpoint}"
+                  (label :text {part.mountpoint}
+                         :truncate true))
+                (box :class "usb-actions"
+                     :orientation "h"
+                     :space-evenly true
+                  (button :class "action-btn mount-btn"
+                          :visible {!part.mounted}
+                          :onclick "~/.config/eww/scripts/usb-mount.sh ${part.name}"
+                    (label :text "mount"))
+                  (button :class "action-btn umount-btn"
+                          :visible {part.mounted}
+                          :onclick "~/.config/eww/scripts/usb-umount.sh ${part.name}"
+                    (label :text "umount"))
+                  (button :class "action-btn eject-btn"
+                          :onclick "~/.config/eww/scripts/usb-eject.sh ${part.device}"
+                    (label :text "eject")))))))))))
+
+(defwindow usb-widget
+  :monitor 0
+  :geometry (geometry :x "220px"
+                      :y "250px"
+                      :anchor "bottom left")
+  :stacking "bottom"
+  :focusable false
+  (usb-widget))

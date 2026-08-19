@@ -1,0 +1,40 @@
+// feature: meeting-notes
+// role:    style
+@import "./theme";
+
+// ── Bar meeting notes recording button ───────────────────────────────────────
+.bar-meeting-notes {
+  padding: 0 8px;
+  font-size: 18px;
+  border-radius: 6px;
+  color: mix($theme-fg, $theme-bg, 50%);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.bar-meeting-notes:hover {
+  background-color: $theme-selection;
+  color: $theme-fg;
+}
+
+// Active: pulsing red — recording in progress
+.bar-meeting-notes.active {
+  color: #bf616a;
+  background-color: rgba(191, 97, 106, 0.15);
+  animation: meeting-notes-pulse 1.5s ease-in-out infinite alternate;
+}
+
+.bar-meeting-notes.active:hover {
+  background-color: rgba(191, 97, 106, 0.3);
+}
+
+.bar-meeting-notes-timer {
+  font-family: "JetBrainsMono NF", "Roboto Mono", monospace;
+  font-size: 12px;
+  font-weight: bold;
+  color: #bf616a;
+}
+
+@keyframes meeting-notes-pulse {
+  from { opacity: 1.0; }
+  to   { opacity: 0.6; }
+}

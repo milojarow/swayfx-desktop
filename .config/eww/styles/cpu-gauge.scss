@@ -1,0 +1,70 @@
+// feature: cpu-gauge
+// role:    style
+.dashboard {
+  background-color: rgba(30, 30, 30, 0.8);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.dashboard-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.dashboard-subtitle {
+  font-size: 14px;
+  font-style: italic;
+  margin-left: 10px;
+  color: #aaaaaa;
+  margin-top: 5px;
+}
+
+.gauge-container {
+  margin: 10px;
+  padding: 5px;
+}
+
+.cpu-gauge {
+  font-size: 16px;
+  font-weight: bold;
+  min-width: 120px;
+  min-height: 120px;
+  background-color: rgba(40, 40, 40, 0.7);
+  border-radius: 50%;
+}
+
+.cpu-gauge.safe {
+  color: #4ade80; /* Green */
+}
+
+.cpu-gauge.warning {
+  color: #facc15; /* Yellow */
+}
+
+.cpu-gauge.danger {
+  color: #ef4444; /* Red */
+}
+
+.gauge-label {
+  margin: 0;
+  padding: 0;
+}
+
+.core-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #cccccc;
+}
+
+.value-label {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.gauges-row {
+  background-color: rgba(20, 20, 20, 0.5);
+  border-radius: 15px;
+  padding: 15px;
+}

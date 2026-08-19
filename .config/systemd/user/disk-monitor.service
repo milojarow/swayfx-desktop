@@ -1,0 +1,6 @@
+[Unit]
+Description=Disk usage monitor with desktop alerts
+
+[Service]
+Type=oneshot
+ExecStart=%h/.scripts/disk-monitor.sh

@@ -1,0 +1,11 @@
+### Keyboard input configuration
+#
+# You can get the names of your inputs by running: swaymsg -t get_inputs
+# Read `man 5 sway-input` for more information about this section.
+input type:keyboard {
+    # Reduce repeat delay from the default 600ms to 200ms.
+    # The default is far too high compared to the ~250ms TTY kernel default,
+    # causing noticeable lag when holding down any key.
+    repeat_delay 300
+    repeat_rate 35
+}

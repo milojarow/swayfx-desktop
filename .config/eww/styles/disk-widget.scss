@@ -1,0 +1,90 @@
+// feature: disk
+// role:    style
+
+.disk-widget {
+  background-color: rgba(46, 52, 64, 0.99);
+  border-radius: 12px;
+  padding: 8px 4px;
+  min-width: 260px;
+
+  .disk-row {
+    all: unset;
+    background: transparent;
+    border-radius: 0;
+    padding: 6px 12px;
+    margin: 1px 4px;
+
+    box {
+      min-height: 28px;
+    }
+  }
+
+  .disk-folder-icon {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 16px;
+    color: #EBCB8B;
+    margin-right: 10px;
+  }
+
+  .disk-name {
+    font-size: 13px;
+    color: #D8DEE9;
+  }
+
+  .disk-chart-icon {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 14px;
+    color: #88C0D0;
+    margin-right: 6px;
+  }
+
+  .disk-pct {
+    font-size: 12px;
+    color: #A3BE8C;
+    min-width: 42px;
+    margin-right: 2px;
+  }
+
+  .disk-row-other:hover,
+  .disk-row-other.open {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+  }
+}
+
+.disk-other-panel {
+  background-color: rgba(46, 52, 64, 0.99);
+  border: 1px solid #3B4252;
+  border-radius: 0 10px 10px 0;
+  padding: 4px 4px;
+  margin-left: 4px;
+
+  .disk-other-entry {
+    all: unset;
+    padding: 4px 10px;
+    margin: 1px 2px;
+    border-radius: 6px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    box {
+      min-height: 24px;
+    }
+  }
+
+  .disk-other-name {
+    font-size: 12px;
+    color: #D8DEE9;
+    min-width: 100px;
+  }
+
+  .disk-other-size {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: #A3BE8C;
+    min-width: 48px;
+    margin-left: 8px;
+  }
+}

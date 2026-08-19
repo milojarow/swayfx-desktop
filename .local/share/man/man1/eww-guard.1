@@ -1,0 +1,269 @@
+.TH EWW-GUARD 1 "2026-08-16" "1.0" "sway dotfiles"
+.SH NAME
+eww-guard \- keep eww to ONE daemon: client guard, rogue-aware watchdog, single resume owner
+.SH SYNOPSIS
+.B eww
+.I <any client command>
+(transparently guarded \[em]
+.B ~/.cargo/bin/eww
+is a symlink to
+.BR ~/.scripts/eww )
+.br
+.B eww-watchdog.sh
+.RB [ \-\-check ]
+.SH DESCRIPTION
+On this machine the eww daemon is owned by
+.BR eww.service .
+eww 0.6.0's own client, however, auto-forks a
+.B new
+daemon whenever it cannot get a reply from the running one \[em] and before
+forking it deletes the IPC socket file. The result is a
+.IR "rogue duplicate" :
+it steals the socket path, the real daemon keeps its windows but nobody can
+reach it any more, and every popup the orphaned daemon had open is stuck on
+screen for good. Symptom the operator sees: a widget (the Wi-Fi popup, the
+bar in older incidents) that no click, no
+.B eww close
+and no
+.B eww-watchdog
+can remove, while
+.B eww active-windows
+swears nothing is open.
+.PP
+When does the client give up? Two ways, both measured on 2026-08-15:
+.IP \[bu] 2
+.BR "stall" :
+5 pings, each with a 100 ms read timeout, 200 ms apart (\[ti]1.5 s total). If
+the daemon's GTK main thread does not answer any of them (right after resume,
+or with its pages parked in zram under memory pressure) \[->] fork. Seen at
+19:25 after a 3 h suspend: two concurrent
+.I open-windows.sh
+runners, the daemon stalled \[>=]2.5 s, and
+.B "eww open activate-linux"
+forked rogue #1.
+.IP \[bu] 2
+.BR "slow open" :
+the ping succeeds, the
+.B open
+is delivered and executed, but the reply arrives after the client's 100 ms
+timeout \[->] the client reports "Failed to connect" and forks anyway. Now
+.B two
+daemons show the same popup at the same position; the newest owns the socket,
+so only its copy can be closed. Seen at 23:41 and 23:43 with
+.BR wifi-popup :
+the deflisten child started in the old daemon in the same second the new daemon
+was born.
+.PP
+eww-guard closes the door at three layers:
+.IP 1. 3
+.B Prevention.
+Every eww CLI call runs through
+.I ~/.scripts/eww
+which injects
+.BR \-\-no\-daemonize .
+With that flag the fork branch is skipped and a slow/stalled daemon yields a plain
+"Failed to connect to daemon" (exit 1) instead of a rogue.
+.IP 2. 3
+.B Detection + heal.
+.I eww-watchdog.sh
+runs every minute and restarts
+.B eww.service
+if any process other than the unit's MainPID listens on the eww socket path
+(rogue), if the MainPID holds no listener, or if the socket ignores a ping for
+3 s (zombie). ExecStartPre of eww.service pkills every
+.B eww
+daemon, so the restart sweeps rogues too.
+.IP 3. 3
+.B Single resume owner.
+Only
+.B eww-resume.service
+reopens windows after suspend; the swayidle
+.I after-resume
+handler no longer does. Two runners raced each other (each pkills the other's
+in-flight CLIs) and that race is what stalled the daemon into rogue #1.
+.SH FILES
+.SS Guard
+.TP
+.I $HOME/.scripts/eww
+The wrapper. Loops over the arguments: if
+.B \-\-no\-daemonize
+is already present, or the subcommand is
+.B daemon
+(eww.service ExecStart), it execs the real binary untouched; otherwise it execs
+it with
+.B \-\-no\-daemonize
+prepended. Uses
+.B "exec -a \[dq]$0\[dq]"
+so argv[0] stays whatever the caller typed
+(\fI~/.cargo/bin/eww\fR or \fIeww\fR), which keeps every
+.B pkill \-f
+pattern in the units and scripts matching.
+.TP
+.I $HOME/.cargo/bin/eww
+Symlink \[->]
+.IR $HOME/.scripts/eww .
+This is the path hardcoded in eww.service, the eww scripts (EWW=...) and waybar;
+the symlink is what makes the guard reach them all with zero call-site edits.
+.TP
+.I $HOME/.local/lib/eww/eww
+The real eww 0.6.0 binary (2c6523a, built 2025-05-11, sha256 94d14f22...).
+Kept
+.B named eww
+so the kernel's comm field of every daemon stays "eww" and
+.B "pkill \-x eww"
+in eww.service ExecStartPre still finds them.
+.SS Watchdog
+.TP
+.I $HOME/.scripts/eww-watchdog.sh
+The probe + heal.
+.B \-\-check
+prints the verdict ("healthy: main pid N is the only listener on ..." or
+"UNHEALTHY: rogue eww daemon(s) on ... pid(s) ...") and never restarts \[em]
+use it first when a widget looks stuck.
+.TP
+.I $HOME/.config/systemd/user/eww-watchdog.service
+Oneshot, ExecStart=the script above.
+.TP
+.I $HOME/.config/systemd/user/eww-watchdog.timer
+OnBootSec=1min, OnUnitActiveSec=1min.
+.SS Resume
+.TP
+.I $HOME/.scripts/eww-resume-watch.sh
+(eww-resume.service) Listens to logind PrepareForSleep(false) on D-Bus, waits for
+.B eww ping
+(\[<=]20 s), for active outputs and for a stable width, then runs
+.IR open-windows.sh .
+The single owner of "reopen the widgets after suspend".
+.TP
+.I $HOME/.config/sway/scripts/resume-handler.sh
+swayidle after-resume hook. Since 2026-08-16 it only restores the keyboard
+backlight; the
+.I open-windows.sh
+call added on 2026-03-08 (three days before eww-resume.service existed) is gone.
+.TP
+.I $HOME/.config/eww/scripts/open-windows.sh
+Opens the persistent windows. Its entry ping is now patient (retries up to
+30 s, logs how long the daemon took) instead of aborting after one failed
+1.5 s ping. Its
+.B "pkill -f \[dq]^$EWW (open|close|update)\[dq]"
+sweep stays: a rogue daemon keeps the argv of the CLI that forked it
+.RB ( "eww open <window>" ),
+so the pattern kills rogues \[em] belt and braces for the day the guard is
+bypassed.
+.SS Feature scripts touched
+.TP
+.I $HOME/.config/eww/scripts/wifi-toggle-popup.sh
+waybar network module on-click. Decides open vs close from
+.B "eww active-windows"
+(the daemon's truth) instead of the shadow variable
+.IR wifi-popup-open ,
+which can desync from the screen after a failed or slow open.
+.SS Related units
+.TP
+.I $HOME/.config/systemd/user/eww.service
+ExecStartPre pkills every eww daemon (\-x eww and \-f "^~/.cargo/bin/eww "),
+ExecStart runs the daemon (through the guard, with its own \-\-no\-daemonize),
+ExecStartPost pings then runs open-windows.sh. Unchanged by eww-guard, but it is
+the heal that the watchdog triggers.
+.SH DIAGNOSIS
+.nf
+eww-watchdog.sh --check                       # verdict in one line
+ss -xlp | grep eww-server_                    # every LISTENING eww socket + owning pid
+systemctl --user show -p MainPID --value eww.service
+pgrep -a -x eww                               # daemons; a rogue shows argv "eww open <win>"
+readlink -f "$(command -v eww)"               # must end in ~/.scripts/eww
+readlink /proc/$(pgrep -x eww | head -1)/exe  # must be ~/.local/lib/eww/eww
+journalctl -t eww-watchdog                    # heals, with the pid list they swept
+journalctl --user -u waybar.service | grep "Initializing eww daemon"   # a rogue being born
+.fi
+.PP
+More than one pid on the same
+.I eww-server_<hash>
+path, or a MainPID that is not among them, is the disease. Old daemons keep
+listening on an orphaned socket inode that no path points to any more, so they
+show up in
+.B ss
+but are unreachable by any client.
+.SH TESTING
+The guard is proven with an isolated config dir (its own socket path, nothing of
+the real setup involved):
+.nf
+EWW=~/.cargo/bin/eww    # absolute path on purpose: argv[0] must match the pgrep patterns below
+D=$(mktemp -d); printf '(defwidget w [] (label :text "x"))\\n(defwindow small :monitor 0 :geometry (geometry :x "10px" :y "10px" :anchor "bottom left") (w))\\n' > $D/eww.yuck; : > $D/eww.scss
+setsid $EWW -c $D daemon --no-daemonize >$D/log 2>&1 </dev/null &
+until $EWW -c $D ping >/dev/null 2>&1; do sleep 0.1; done
+d1=$(pgrep -f "^$EWW -c $D daemon"); kill -STOP $d1; (sleep 2; kill -CONT $d1) &
+$EWW -c $D open small >$D/cli 2>&1 </dev/null; echo "exit=$?"; sleep 1.5
+pgrep -fc "^$EWW -c $D"          # MUST print 1 (guarded). Unguarded eww prints 2.
+pkill -CONT -f "^$EWW -c $D"; pkill -f "^$EWW -c $D"
+.fi
+Measured 2026-08-16: unguarded 2/2 runs forked a second daemon (exit 0, "Initializing
+eww server"); guarded 2/2 runs stayed at one daemon (exit 1, "Failed to connect to daemon").
+Do not capture the CLI's stdout with $(...) in that test: an unguarded fork inherits the
+pipe and the substitution hangs forever.
+.SH GOTCHAS
+.IP \[bu] 2
+.B "cargo install eww"
+(or any reinstall) overwrites the symlink at
+.I ~/.cargo/bin/eww
+with a real binary and silently disables the guard. Move the new binary to
+.I ~/.local/lib/eww/eww
+and recreate the symlink. If you forget, the watchdog will start logging
+"rogue eww daemon(s)" heals \[em] that log line is your reminder.
+.IP \[bu] 2
+.B EWW_CMD
+(the magic variable available inside yuck) expands to
+.IR /proc/self/exe ,
+i.e. the real binary, so a future
+.B "${EWW_CMD} open ..."
+in yuck would bypass the guard. Today no yuck uses EWW_CMD with open (3 uses,
+all close/update). Prefer the scripts, or add \-\-no\-daemonize by hand there.
+.IP \[bu] 2
+A guarded
+.B "eww open"
+can now exit 1 while the window DID open (the slow-open race). Scripts must not
+treat that exit code as "nothing happened" \[em] check
+.B "eww active-windows"
+if it matters (wifi-toggle-popup.sh does).
+.IP \[bu] 2
+The old watchdog only pinged the socket. A rogue answers pings perfectly, so it
+reported green for 4 h 20 min while the real daemon sat orphaned. "Does the
+socket answer" and "is the daemon I manage the one answering" are different
+questions; the new probe asks the second one.
+.IP \[bu] 2
+.B "eww active-windows"
+talks to whoever owns the socket path. During an incident it lists the newest
+rogue's windows only \[em] an empty list is not "nothing is on screen".
+.IP \[bu] 2
+Rogue daemons forked from waybar's on-click inherit waybar's journal: their
+banner ("Initializing eww daemon") and errors show up as
+.BR waybar[<pid>] ,
+not under eww.service. Rogues forked from a sway session log nowhere.
+.IP \[bu] 2
+Memory pressure is the amplifier: with \[ti]11 GB parked in zram (swappiness 150)
+an idle daemon must fault its pages back in before it can answer, and 100 ms is
+not much. The guard makes that a failed click instead of a rogue; it does not
+make the daemon faster.
+.SH NOTES
+.IP \[bu] 2
+Reload after editing the units:
+.B "systemctl --user daemon-reload"
+(the timer keeps ticking). The wrapper and the scripts need no reload.
+.IP \[bu] 2
+Heal by hand when in doubt:
+.B "systemctl --user restart eww.service"
+\[em] ExecStartPre sweeps every daemon, rogues included; ExecStartPost reopens the
+persistent windows.
+.IP \[bu] 2
+Upstream: eww crates/eww/src/main.rs, branch
+.B "Err(err) if action.can_start_daemon() && !opts.no_daemonize"
+(remove socket file, fork server). client.rs sets a 100 ms read timeout;
+ipc_server.rs waits 100 ms for the app's answer before closing the stream \[em]
+the two timers start microseconds apart, so the client can lose the race under load.
+.SH "SEE ALSO"
+.BR eww (1),
+.BR notes (1),
+.BR idle-inhibitor (1),
+.BR lid-handling (1),
+.BR systemctl (1),
+.BR ss (8)

@@ -1,0 +1,38 @@
+# Mako configuration - Dracula theme with top-left position
+
+# Position
+anchor=top-left
+
+# No timeout - notifications stay until clicked
+default-timeout=0
+
+# Size and spacing
+width=400
+height=200
+padding=20
+margin=20
+
+# Styling - Dracula theme colors with transparency and rounded corners
+font=JetBrainsMono NF 10
+text-color=#f8f8f2
+background-color=#141a1b90
+border-size=0
+border-radius=15
+
+# Do not disturb mode
+[mode=do-not-disturb]
+invisible=1
+
+# Click/tap an Altus notification -> bring Altus to the current workspace
+# (mirrors Telegram). Runs the helper instead of Altus' native "View" action,
+# which does not move it to the focused workspace.
+[app-name="Altus"]
+on-button-left=exec $HOME/.config/sway/scripts/altus-to-current-ws.sh "$id"
+on-touch=exec $HOME/.config/sway/scripts/altus-to-current-ws.sh "$id"
+
+# Click/tap an nchat (WhatsApp) notification -> bring nchat to the current
+# workspace + jump to the unread chat. nchat tags its notifications app-name
+# "nchat" via desktop_notify_command in ~/.config/nchat/ui.conf.
+[app-name="nchat"]
+on-button-left=exec $HOME/.config/sway/scripts/nchat-show.sh "$id"
+on-touch=exec $HOME/.config/sway/scripts/nchat-show.sh "$id"

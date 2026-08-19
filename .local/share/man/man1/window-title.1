@@ -1,0 +1,218 @@
+.TH WINDOW\-TITLE 1 "2026\-05\-27" "dotfiles" "Window Title Manual"
+.SH NAME
+window\-title \- fast window title display for sway/waybar (IPC stream)
+.SH DESCRIPTION
+Displays the focused window's title in a waybar custom module, updated on
+every focus or title change.
+The title comes straight from sway IPC; for terminals like foot the shell
+already encodes
+.I "path: context"
+(plus a
+.I "\ [PID]"
+suffix in some prompts) in the window name, so no
+.BR /proc " / " pstree
+lookups are needed.
+.PP
+For non\-terminal windows the application's own window title is shown
+as\-is (e.g.\& "Inbox \- you@example.com \- Betterbird").
+.SS Architecture (Method 3, current)
+.B window\-title\-stream.py
+talks to sway IPC over a persistent UNIX socket \(em the same engine
+.B workspaces\-subscribe.py
+uses.
+It subscribes to
+.B window
+and
+.B workspace
+events and prints one JSON line to stdout on each relevant change.
+.B waybar
+reads that stream directly via
+.B custom/window\-title
+in stream mode (exec with no interval).
+No cache file, no signal\-to\-waybar round\-trip, no
+.BR swaymsg / jq
+subprocess per event, and no
+.BR /proc " / " pstree
+inspection.
+.PP
+If the focused window has a custom label assigned via right\-click rename
+(see
+.BR "CUSTOM LABELS" )
+the label is shown instead of the live title.
+.SH DISPLAY FORMAT
+The module shows the raw window
+.B .name
+from sway IPC, escaped for pango markup safety.
+Foot encodes
+.I "path: context \- shell [pid]"
+in its title; GUI apps show whatever they report.
+.PP
+.B Truncation:
+titles longer than 70 characters are truncated with a Unicode ellipsis
+.RB ( U+2026 ).
+.SH INTERACTIONS
+.TP
+.B Waybar right\-click
+Opens a rofi text input to assign a custom label to the focused window.
+A non\-empty submission saves the label;
+an empty submission clears it.
+The stream daemon is signalled
+.RB ( SIGUSR1 )
+and re\-emits immediately.
+.TP
+.B Waybar hover (tooltip)
+Shows the application
+.B app_id
+on the first line and the raw window name on the second.
+.SH CUSTOM LABELS
+Right\-clicking the waybar module opens a rofi prompt pre\-filled with
+either the current override (if one exists) or the live title.
+.TP
+.B Assign a label
+Type the desired text and press
+.BR Enter .
+The display becomes that text until cleared or the window closes.
+.TP
+.B Clear a label
+Open the prompt and submit an empty string (delete all text, then
+.BR Enter ).
+The override file is removed and the live title returns.
+.TP
+.B Cancel
+Press
+.B Escape
+or close rofi \(em no change is made.
+.PP
+Custom labels are keyed by the sway window ID and live in
+.I /tmp/waybar\-window\-names\-$USER/<id>.name
+until the window closes.
+The stream daemon removes the file on the window
+.B close
+event, so the entry never outlives the window it labelled.
+.SH FILES
+.TP
+.I ~/.config/sway/scripts/window\-title\-stream.py
+Stream daemon.
+Connects to sway IPC over a persistent UNIX socket, subscribes to
+.B window
+and
+.B workspace
+events, and prints one JSON line per change to stdout for waybar's
+stream\-mode reader.
+Honors per\-window overrides from the names directory.
+Handles
+.B SIGUSR1
+to re\-emit the focused window on demand (used by the rename helper).
+.TP
+.I ~/.config/sway/scripts/window\-title\-rename.py
+Right\-click handler.
+Locates the focused window via
+.BR swaymsg ,
+opens a rofi prompt pre\-filled with the current label or title, writes
+or clears
+.IR /tmp/waybar\-window\-names\-$USER/<id>.name ,
+then sends
+.B SIGUSR1
+to the stream daemon.
+.TP
+.I ~/.config/waybar/config.jsonc
+Waybar module definition
+.RI ( custom/window\-title ).
+Runs the stream script as
+.B exec
+without an interval (stream mode),
+.B return\-type
+.BR json ,
+.B on\-click\-right
+runs the rename script,
+.B tooltip
+on,
+.B max\-length
+70.
+.SH PROCESS LIFETIME
+The stream is launched and supervised by
+.B waybar
+itself as the module's
+.B exec
+command.
+There is no
+.B exec_always
+in sway's autostart, no PID file, and no single\-instance guard:
+.B waybar
+restarts the script if it exits, and stopping waybar stops the script.
+.SH SIGNALS
+.TP
+.B SIGUSR1
+Sent by
+.B window\-title\-rename.py
+to
+.B window\-title\-stream.py
+after writing or clearing an override.
+Triggers an immediate re\-emit of the focused window's title with the new
+label applied.
+.SH PROGRAMS
+.TP
+.B python3
+Runtime for both scripts.
+Uses only the standard library
+.RI ( socket ", " struct ", " json ", " signal ", " html ", " os ).
+.TP
+.B swaymsg
+Called only by
+.B window\-title\-rename.py
+to fetch the focused window's tree.
+The stream daemon uses a raw UNIX socket directly \(em no
+.B swaymsg
+subprocess per event.
+.TP
+.B rofi
+Launcher used as the text\-input UI for the rename prompt.
+.SH STORAGE
+All runtime files are in
+.I /tmp
+and are not persisted across reboots.
+.TP
+.I /tmp/waybar\-window\-names\-$USER/<id>.name
+Per\-window custom label set via right\-click rename.
+Cleared by the stream daemon on the window
+.B close
+event; uncustomized windows simply have no file.
+.SH HISTORY
+The original implementation was a bash daemon
+.RB ( window\-title.sh )
+backed by
+.BR jq ,
+.BR pstree ,
+.BR /proc
+inspection, a
+.I /tmp
+JSON cache file, and a left\-click app\-name flash.
+.B waybar
+polled the cache through a script
+.RB ( window\-title\-output.sh )
+that ran on every
+.B SIGRTMIN+10
+signal.
+.PP
+This pipeline lagged on workspace switches because the per\-event
+.BR pstree / ps / readlink
+calls landed in the hot path and the cache\(em>signal\(em>exec round\-trip
+added latency.
+The current Method 3 design replaces the whole stack with a single Python
+process that streams JSON straight to waybar over its stdout pipe.
+.PP
+Removed in the migration: the four
+.B .sh
+scripts above and the
+.B exec_always
+entry in
+.IR 99\-autostart\-applications.conf .
+The left\-click "flash app name for 3 seconds" interaction is also gone;
+re\-add it as an
+.B on\-click
+binding if you miss it.
+.SH SEE ALSO
+.BR waybar (5),
+.BR sway (1),
+.BR rofi (1),
+.BR python3 (1)

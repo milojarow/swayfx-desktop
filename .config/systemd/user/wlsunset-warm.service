@@ -1,0 +1,15 @@
+[Unit]
+Description=wlsunset — forced warm gamma (overrides schedule)
+PartOf=graphical-session.target
+After=graphical-session.target
+Conflicts=wlsunset.service
+
+[Service]
+Type=simple
+ExecStart=%h/.config/sway/scripts/wlsunset-launch.sh --force-warm
+Restart=on-failure
+RestartSec=5
+# Same as wlsunset.service — SIGKILL on stop avoids gamma-restore flash
+# when Conflicts= switches us back to the auto schedule.
+KillMode=process
+KillSignal=SIGKILL

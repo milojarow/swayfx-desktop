@@ -1,0 +1,19 @@
+# Not required. Each one switches on a feature that degrades quietly without it.
+
+wlsunset            # night light — wlsunset.service / wlsunset-warm.service
+wluma               # adaptive brightness
+kanshi              # multi-monitor layouts
+dex                 # runs XDG autostart .desktop entries tagged for sway
+swaycwd             # $mod+Return opens the terminal in the focused window's cwd
+xdg-terminal-exec   # checkupdates.sh opens its terminal through this
+sworkstyle          # app icons next to workspace numbers
+poweralertd         # battery warnings
+flashfocus          # focus flash
+kvantum             # Qt side of the palette theming (see man palette-theming)
+papirus-icon-theme  # icon colour switching in the palette theming
+valent              # phone integration, used by scripts/valent.py
+github-cli          # waybar notifications module
+
+# Apps two keybindings expect. Nothing breaks without them — the key is a no-op.
+nchat               # $mod+m  — WhatsApp TUI, born in the scratchpad
+# claude-desktop    — Ctrl+$mod+space, not in any repo; install it or drop the bind

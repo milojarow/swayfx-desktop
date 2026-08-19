@@ -1,0 +1,903 @@
+#!/usr/bin/env python3
+"""peek — a centred prompt that shows an image, video or audio file the moment you paste its path.
+
+    peek                       open the prompt
+    peek --paste TEXT          open it with the entry prefilled (for testing)
+
+Paste an image instead of a path and it runs the other way: the picture is
+written to /tmp, opened, and its location left in the entry and on the clipboard.
+    peek --view PATH           open one picture or video as a floating window
+    peek --view PATH -s I -n N one of N windows, placed in slot I of a grid
+    peek --audio PATH...       open one player for every audio file at once
+
+No Enter: the entry resolves on every keystroke, so a pasted path shows itself.
+One path grows the prompt into the picture; a video starts playing. Several
+paths open one window each, laid out on a grid so none covers another.
+
+Audio is the exception: every audio file pasted at once lands in a single
+player, because two songs at the same time is noise. Move the cursor with the
+arrows or j/k and press space to play, space again to pause.
+
+Escape closes every peek window at once, prompt, pictures, videos and players
+alike.
+"""
+import fcntl
+import itertools
+import math
+import os
+import re
+import shlex
+import time
+import subprocess
+import sys
+
+# gtk4-layer-shell has to be loaded before libwayland-client or it cannot
+# intercept the surface, and a language binding loads GTK too late for that.
+# Re-exec once with it preloaded; without this the prompt silently falls back to
+# an ordinary window and SwayFX rounds its corners. The keybinding sets
+# LD_PRELOAD itself, so the common path skips this and saves an interpreter
+# start; launching peek by hand from a shell still gets the re-exec.
+_LAYER_SO = "/usr/lib/libgtk4-layer-shell.so"
+if (_LAYER_SO not in os.environ.get("LD_PRELOAD", "")
+        and not os.environ.get("PEEK_PRELOADED")
+        and os.path.exists(_LAYER_SO)):
+    os.environ["PEEK_PRELOADED"] = "1"
+    os.environ["LD_PRELOAD"] = _LAYER_SO
+    os.execv(sys.executable, [sys.executable, os.path.abspath(__file__), *sys.argv[1:]])
+
+APP_ID = "dev.milo.peek"
+# The prompt is a layer-shell surface, not an ordinary window. That is the only
+# way SwayFX can give one surface square corners: corner_radius on a window is a
+# global setting, while layer_effects <namespace> is genuinely per-surface.
+LAYER_NAMESPACE = "peek"
+IMAGE_EXT = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".svg", ".avif", ".tif", ".tiff", ".ico"}
+VIDEO_EXT = {".mp4", ".webm", ".mkv", ".mov", ".avi", ".m4v", ".ogv",
+             ".mpg", ".mpeg", ".wmv", ".flv", ".ts", ".m2ts", ".3gp"}
+# .ogg lives here rather than with video: in the wild it is nearly always
+# Vorbis audio. Theora video keeps .ogv.
+AUDIO_EXT = {".mp3", ".m4a", ".aac", ".flac", ".wav", ".ogg", ".oga", ".opus",
+             ".wma", ".aiff", ".aif", ".alac", ".mka", ".ape"}
+MEDIA_EXT = IMAGE_EXT | VIDEO_EXT | AUDIO_EXT
+GAP = 16
+
+# Held open for the life of the prompt so a second $mod+i is a no-op instead of
+# a second window. Module-level so it is never garbage collected.
+_LOCK_FD = None
+
+
+def claim_prompt_lock() -> bool:
+    """One prompt at a time.
+
+    Pressing the keybinding again because the first press seemed to do nothing
+    used to open a second prompt. Take the lock before GTK is even imported, so
+    the duplicate press costs a few milliseconds and dies quietly.
+    """
+    global _LOCK_FD
+    run_dir = os.environ.get("XDG_RUNTIME_DIR") or "/tmp"
+    try:
+        fd = os.open(os.path.join(run_dir, "peek-prompt.lock"), os.O_CREAT | os.O_RDWR, 0o600)
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        return False
+    _LOCK_FD = fd
+    return True
+
+
+_ARGV = sys.argv[1:]
+_IS_PROMPT = not _ARGV or _ARGV[0] in ("--paste",)
+if _IS_PROMPT and not claim_prompt_lock():
+    sys.exit(0)
+
+import gi  # noqa: E402
+
+gi.require_version("Gtk", "4.0")
+gi.require_version("Gtk4LayerShell", "1.0")
+from gi.repository import Gtk, Gdk, GLib  # noqa: E402
+from gi.repository import Gtk4LayerShell as LayerShell  # noqa: E402
+
+CSS = b"""
+window.peek { background: #0a0612; }
+/* Not `.frame`: GTK themes define that class themselves and win the cascade,
+   which is why the border used to come out a dull theme grey instead of cyan.
+   Every class here is prefixed for that reason. */
+.peek-frame {
+  border: 1px solid #00ecec;
+  background: #0a0612;
+  /* Matches `corner_radius 15` from the sway config. These are ordinary
+     windows, so SwayFX clips the surface to that arc -- a square border drawn
+     at the edge loses all four corners to the clip and reads as four
+     disconnected lines. The border has to follow the window, and it cannot be
+     the other way round: corner_radius in a for_window rule is a GLOBAL
+     setting, and squaring these windows squares every window on the machine. */
+  border-radius: 15px;
+}
+/* The prompt wears no border -- it is a bare slab. The media windows keep
+   theirs, which is what separates a picture from the desktop behind it. */
+.peek-prompt-frame { background: #0a0612; }
+/* 16px each side + the 24px entry keeps the slab at the 56px it has always
+   been, border or no border. */
+.bar { padding: 16px 0; }
+.prompt {
+  color: #00ecec;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 4px 0 14px;
+}
+/* GTK ignores padding, min-height and colour set on the entry node itself --
+   only the inner text node answers -- so the vertical rhythm lives on .bar and
+   every text property is addressed to `text`. Styling `entry.path` looks right
+   and does nothing. */
+.path text {
+  color: #d8d4f0;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 15px;
+  caret-color: #00ecec;
+}
+.path text selection { background: #00ecec; color: #0a0612; }
+.hint { color: #6b6390; font-family: "JetBrainsMono Nerd Font", monospace; font-size: 12px;
+        padding: 0 14px 12px 14px; }
+.hint.bad { color: #ff2e97; }
+/* audio player */
+.peek-row { padding: 4px 12px 4px 10px; }
+.peek-mark {
+  color: #00ecec;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 14px;
+  margin-right: 8px;
+}
+.peek-name {
+  color: #7a7396;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 14px;
+}
+.peek-row.sel .peek-name { color: #d8d4f0; }
+.peek-row.playing .peek-name { color: #00ecec; }
+.peek-transport { padding: 10px 12px 12px 10px; }
+.peek-state {
+  color: #00ecec;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 14px;
+  margin-right: 10px;
+}
+.peek-time {
+  color: #6b6390;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 12px;
+  margin-left: 10px;
+}
+/* the transport bar is a DrawingArea, so it needs no CSS -- see _draw_bar */
+.ph {
+  color: #4d4770;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 15px;
+  margin-left: 8px;
+}
+"""
+
+# The two things this prompt does, said one at a time so neither is buried.
+PLACEHOLDERS = ("pega la ruta de una imagen o un video", "corre cualquier comando")
+
+
+def force_crisp_text() -> None:
+    """Hint the glyphs properly, which GTK will not do on its own.
+
+    GTK 4.16 defaults gtk-font-rendering to AUTOMATIC, and in that mode it
+    rasterises this font softly: stems land between pixel columns at half
+    intensity and the flat top of every digit gets rounded away, which reads as
+    the tops of the text being cut off. Drawing the same string straight
+    through PangoCairo shows what it should look like; switching to MANUAL with
+    full hinting reproduces that exactly.
+
+    This is per-process. Nothing outside peek changes.
+    """
+    try:
+        settings = Gtk.Settings.get_default()
+        if settings is None:
+            return
+        settings.set_property("gtk-font-rendering", Gtk.FontRendering.MANUAL)
+        settings.set_property("gtk-xft-hinting", 1)
+        settings.set_property("gtk-xft-hintstyle", "hintfull")
+    except Exception:
+        pass   # older GTK has no gtk-font-rendering; soft text beats no prompt
+
+
+def sway(*args: str) -> str:
+    try:
+        return subprocess.run(["swaymsg", *args], capture_output=True, text=True, timeout=4).stdout
+    except Exception:
+        return ""
+
+
+def kill_all_peeks(local=None) -> None:
+    """Escape means the whole thing goes away, not just the window you are in.
+
+    The picture windows are ordinary windows and die by app_id. The prompt is a
+    layer surface, which has no app_id in the tree, so it has to close itself.
+    """
+    sway("-q", f'[app_id="{APP_ID}"] kill')
+    if local is not None:
+        local.close()
+
+
+def usable_area() -> tuple[int, int, int, int]:
+    """The area a window may actually occupy: the workspace rect, not the output.
+
+    The output rect includes the bar, so laying a grid out on it pushes the
+    bottom row off the screen.
+    """
+    import json
+    try:
+        for w in json.loads(sway("-t", "get_workspaces") or "[]"):
+            if w.get("focused"):
+                r = w.get("rect") or {}
+                return (int(r.get("x", 0)), int(r.get("y", 0)),
+                        int(r.get("width", 1920)), int(r.get("height", 1080)))
+    except Exception:
+        pass
+    return 0, 0, 1920, 1080
+
+
+def screen_size() -> tuple[int, int]:
+    _x, _y, w, h = usable_area()
+    return w, h
+
+
+def is_video(path: str) -> bool:
+    return os.path.splitext(path)[1].lower() in VIDEO_EXT
+
+
+def is_audio(path: str) -> bool:
+    return os.path.splitext(path)[1].lower() in AUDIO_EXT
+
+
+_GST = None
+
+
+def gst():
+    """GStreamer, imported only when there is audio to play.
+
+    This is the only audio path on this machine, and not by preference.
+    Gtk.MediaFile goes through GstPlay, which forces playbin3 and decodebin3,
+    and that combination ABORTS THE WHOLE PROCESS on an mp3 here:
+
+        gstdecodebin3.c:3381: mq_slot_handle_stream_start:
+        assertion failed: (collection)  ->  Bail out!
+
+    It is a GLib abort, so there is nothing to catch -- peek would simply die
+    mid-paste. Plain playbin decodes the same file without complaint, so audio
+    is driven straight from GStreamer and never touches Gtk.MediaFile.
+    Verified again on gstreamer 1.28.5, 2026-08-01.
+    """
+    global _GST
+    if _GST is None:
+        gi.require_version("Gst", "1.0")
+        from gi.repository import Gst
+        Gst.init(None)
+        _GST = Gst
+    return _GST
+
+
+def clock(ns: int) -> str:
+    if ns is None or ns < 0:
+        return "--:--"
+    s = int(ns // 1_000_000_000)
+    return f"{s // 60}:{s % 60:02d}"
+
+
+def parse_paths(text: str) -> list[str]:
+    """Pull every existing image or video path out of whatever was pasted.
+
+    Accepts plain paths, ~, file:// URIs, quoted paths, and several at once
+    separated by whitespace or newlines.
+    """
+    text = text.strip()
+    if not text:
+        return []
+    chunks: list[str] = []
+    for line in text.splitlines():
+        try:
+            chunks.extend(shlex.split(line))
+        except ValueError:
+            chunks.extend(line.split())
+    out: list[str] = []
+    for c in chunks:
+        c = re.sub(r"^file://", "", c).strip().strip("'\"")
+        c = os.path.expanduser(c)
+        if not os.path.isfile(c):
+            # A path pasted at the end of a sentence carries its punctuation.
+            trimmed = c.rstrip(".,;:!?)]}”’\"'")
+            if os.path.isfile(trimmed):
+                c = trimmed
+        if os.path.isfile(c) and os.path.splitext(c)[1].lower() in MEDIA_EXT:
+            out.append(os.path.abspath(c))
+    return out
+
+
+def fit_in(iw: int, ih: int, cw: int, ch: int) -> tuple[int, int]:
+    """Largest box with the media's aspect ratio that still fits the cell.
+
+    A 9:16 phone video in a 16:9 cell is mostly black bars otherwise.
+    """
+    if iw <= 0 or ih <= 0:
+        return cw, ch
+    s = min(cw / iw, ch / ih)
+    return max(200, min(cw, round(iw * s))), max(150, min(ch, round(ih * s)))
+
+
+def place_self(tag: str, slot: int, total: int, aspect: tuple[int, int] | None = None,
+               fixed: tuple[int, int] | None = None) -> None:
+    """Put this window in its own cell of a grid, so none of them overlap."""
+    ox, oy, sw, sh = usable_area()
+    cols = max(1, math.ceil(math.sqrt(total)))
+    rows = max(1, math.ceil(total / cols))
+    cw = (sw - GAP * (cols + 1)) // cols
+    ch = (sh - GAP * (rows + 1)) // rows
+    col, row = slot % cols, slot // cols
+    if fixed:
+        # A player has no picture to fill a cell with; it keeps its own size and
+        # sits in the middle of the cell.
+        w, h = min(fixed[0], cw), min(fixed[1], ch)
+    else:
+        w, h = fit_in(*aspect, cw, ch) if aspect else (cw, ch)
+    # sway places a floating window relative to the workspace, which already
+    # starts below the bar -- adding the workspace origin again pushes the bottom
+    # row off the screen.
+    del ox, oy
+    x = GAP + col * (cw + GAP) + (cw - w) // 2
+    y = GAP + row * (ch + GAP) + (ch - h) // 2
+    # Target this exact window by its unique title. __focused__ would act on
+    # whatever happens to have focus, which is not necessarily us -- that is how
+    # a launcher ends up resizing someone else's window.
+    sway("-q", f'[title="{tag}"] floating enable, resize set {w} {h}, move position {x} {y}')
+
+
+def centre_self(tag: str, width: int, height: int) -> None:
+    sway("-q", f'[title="{tag}"] floating enable, resize set {width} {height}, move position center')
+
+
+def save_clipboard_image(texture) -> str:
+    """Write a pasted picture to /tmp and return where it landed."""
+    path = f"/tmp/peek-{time.strftime('%Y%m%d-%H%M%S')}.png"
+    n = 1
+    while os.path.exists(path):
+        path = f"/tmp/peek-{time.strftime('%Y%m%d-%H%M%S')}-{n}.png"
+        n += 1
+    texture.save_to_png(path)
+    return path
+
+
+def esc_controller(on_esc) -> Gtk.EventControllerKey:
+    ctl = Gtk.EventControllerKey()
+    # CAPTURE, so Escape still closes everything when the video controls have
+    # the key focus.
+    ctl.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
+    ctl.connect("key-pressed", lambda _c, k, _s, _m: (on_esc(), True)[1] if k == Gdk.KEY_Escape else False)
+    return ctl
+
+
+class Viewer(Gtk.Window):
+    def __init__(self, path: str, slot: int, total: int):
+        self.tag = f"peek:{os.getpid()}"
+        super().__init__(title=self.tag)
+        self.add_css_class("peek")
+        self.set_decorated(False)
+        self.slot, self.total = slot, total
+
+        frame = Gtk.Box()
+        frame.add_css_class("peek-frame")
+        # A picture is a rectangle and would paint straight over the rounded
+        # corners of its own frame, erasing the border arc. Children have to be
+        # clipped to the frame's shape; labels never reach that far, so only
+        # the media windows show the difference.
+        frame.set_overflow(Gtk.Overflow.HIDDEN)
+        if is_video(path):
+            content = Gtk.Video.new_for_filename(path)
+            content.set_autoplay(True)
+            content.set_loop(True)
+            stream = content.get_media_stream()
+            # The intrinsic size only exists once the stream is prepared, so
+            # the window is placed on the cell first and reshaped on arrival.
+            if stream is not None:
+                stream.connect("notify::prepared", self._on_prepared)
+        else:
+            content = Gtk.Picture.new_for_filename(path)
+            content.set_content_fit(Gtk.ContentFit.CONTAIN)
+            content.set_can_shrink(True)
+        content.set_hexpand(True)
+        content.set_vexpand(True)
+        self.content = content
+        frame.append(content)
+        self.set_child(frame)
+        self.add_controller(esc_controller(lambda: kill_all_peeks(self)))
+        self.connect("map", lambda *_: GLib.idle_add(self._place))
+
+    def _aspect(self) -> tuple[int, int] | None:
+        try:
+            if isinstance(self.content, Gtk.Video):
+                stream = self.content.get_media_stream()
+                if stream is None or not stream.is_prepared():
+                    return None
+                return stream.get_intrinsic_width(), stream.get_intrinsic_height()
+            paintable = self.content.get_paintable()
+            if paintable is None:
+                return None
+            return paintable.get_intrinsic_width(), paintable.get_intrinsic_height()
+        except Exception:
+            return None
+
+    def _place(self):
+        # Never let a failure to work out the aspect ratio leave the window
+        # sitting unplaced at its natural size.
+        aspect = self._aspect()
+        place_self(self.tag, self.slot, self.total, aspect if aspect and all(aspect) else None)
+        return False
+
+    def _on_prepared(self, stream, _pspec):
+        if stream.is_prepared():
+            self._place()
+
+
+class AudioViewer(Gtk.Window):
+    """One window for every audio file pasted at once.
+
+    A picture can share the screen with another picture; two songs playing at
+    the same time cannot, so audio collapses into a single list instead of one
+    window per file. Move the cursor, press space to play, space again to
+    pause.
+    """
+    W = 620
+    ROW_H = 28
+    MAX_ROWS = 9
+
+    def __init__(self, paths: list[str], slot: int, total: int):
+        self.tag = f"peek:{os.getpid()}"
+        super().__init__(title=self.tag)
+        self.add_css_class("peek")
+        self.set_decorated(False)
+        self.paths = paths
+        self.slot, self.total = slot, total
+        self.sel = 0
+        self.loaded = None       # index the player currently holds
+        self.playing = False
+
+        col = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        col.add_css_class("peek-frame")
+
+        self.rows = []
+        listbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        listbox.add_css_class("peek-list")
+        for p in paths:
+            row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+            row.add_css_class("peek-row")
+            mark = Gtk.Label(label=" ", xalign=0)
+            mark.add_css_class("peek-mark")
+            name = Gtk.Label(label=os.path.basename(p), xalign=0, ellipsize=3)
+            name.add_css_class("peek-name")
+            name.set_hexpand(True)
+            row.append(mark)
+            row.append(name)
+            listbox.append(row)
+            self.rows.append((row, mark, name))
+        if len(paths) > self.MAX_ROWS:
+            scroller = Gtk.ScrolledWindow()
+            scroller.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+            scroller.set_child(listbox)
+            scroller.set_size_request(-1, self.MAX_ROWS * self.ROW_H)
+            self.scroller = scroller
+            col.append(scroller)
+        else:
+            self.scroller = None
+            col.append(listbox)
+
+        bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        bar.add_css_class("peek-transport")
+        self.state_lbl = Gtk.Label(label="■")      # BLACK SQUARE
+        self.state_lbl.add_css_class("peek-state")
+        # Drawn by hand, not a Gtk.ProgressBar. The theme owns the `progress`
+        # node the same way it owns `.frame` and the `entry` box: every
+        # selector tried came out Catppuccin sky (153,209,219) and min-height
+        # was ignored outright. Two rectangles of cairo answer to nobody.
+        self.frac = 0.0
+        self.progress = Gtk.DrawingArea()
+        self.progress.set_content_height(3)
+        self.progress.set_hexpand(True)
+        self.progress.set_valign(Gtk.Align.CENTER)
+        self.progress.set_draw_func(self._draw_bar)
+        self.time_lbl = Gtk.Label(label="0:00 / --:--")
+        self.time_lbl.add_css_class("peek-time")
+        bar.append(self.state_lbl)
+        bar.append(self.progress)
+        bar.append(self.time_lbl)
+        col.append(bar)
+        self.set_child(col)
+
+        self.player = gst().ElementFactory.make("playbin", None)
+        busw = self.player.get_bus()
+        busw.add_signal_watch()
+        busw.connect("message::eos", self._on_eos)
+        busw.connect("message::error", self._on_error)
+
+        self.add_controller(esc_controller(lambda: kill_all_peeks(self)))
+        keys = Gtk.EventControllerKey()
+        keys.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
+        keys.connect("key-pressed", self._on_key)
+        self.add_controller(keys)
+
+        self.connect("map", lambda *_: GLib.idle_add(self._on_map))
+        self.connect("close-request", lambda *_: (self._stop(), False)[1])
+        self._refresh()
+
+    def _draw_bar(self, _area, cr, w, h):
+        cr.set_source_rgb(0x24 / 255, 0x1f / 255, 0x38 / 255)
+        cr.rectangle(0, 0, w, h)
+        cr.fill()
+        cr.set_source_rgb(0.0, 0xec / 255, 0xec / 255)
+        cr.rectangle(0, 0, w * self.frac, h)
+        cr.fill()
+
+    def _set_frac(self, f: float):
+        self.frac = max(0.0, min(1.0, f))
+        self.progress.queue_draw()
+
+    # -- placement -----------------------------------------------------------
+    def _wanted_size(self) -> tuple[int, int]:
+        visible = min(len(self.paths), self.MAX_ROWS)
+        return self.W, 2 + visible * self.ROW_H + 46
+
+    def _on_map(self):
+        place_self(self.tag, self.slot, self.total, fixed=self._wanted_size())
+        # One file is an unambiguous request to hear it. A list is a menu, and
+        # a menu that starts playing on its own picks for you.
+        if len(self.paths) == 1:
+            self._load(0)
+        GLib.timeout_add(200, self._tick)
+        return False
+
+    # -- transport -----------------------------------------------------------
+    def _load(self, i: int):
+        G = gst()
+        self.player.set_state(G.State.NULL)
+        self.player.set_property("uri", G.filename_to_uri(self.paths[i]))
+        self.player.set_state(G.State.PLAYING)
+        self.loaded, self.playing = i, True
+        self._refresh()
+
+    def _toggle(self):
+        G = gst()
+        if self.loaded != self.sel:
+            self._load(self.sel)
+        elif self.playing:
+            self.player.set_state(G.State.PAUSED)
+            self.playing = False
+        else:
+            self.player.set_state(G.State.PLAYING)
+            self.playing = True
+        self._refresh()
+
+    def _stop(self):
+        try:
+            self.player.set_state(gst().State.NULL)
+        except Exception:
+            pass
+        self.playing = False
+
+    def _on_eos(self, _bus, _msg):
+        # Stop where it ended rather than rolling into the next track: peek is
+        # for listening to a file, not for running a playlist unattended.
+        self._stop()
+        self.loaded = None
+        self._set_frac(0.0)
+        self._refresh()
+
+    def _on_error(self, _bus, msg):
+        err, _dbg = msg.parse_error()
+        self._stop()
+        self.time_lbl.set_text(err.message[:40])
+        self._refresh()
+
+    def _tick(self):
+        G = gst()
+        if self.loaded is not None:
+            ok_p, pos = self.player.query_position(G.Format.TIME)
+            ok_d, dur = self.player.query_duration(G.Format.TIME)
+            if ok_d and dur > 0:
+                self._set_frac((pos if ok_p else 0) / dur)
+                self.time_lbl.set_text(f"{clock(pos if ok_p else 0)} / {clock(dur)}")
+            elif ok_p:
+                self.time_lbl.set_text(f"{clock(pos)} / --:--")
+        return True
+
+    # -- selection -----------------------------------------------------------
+    def _move(self, d: int):
+        self.sel = max(0, min(len(self.paths) - 1, self.sel + d))
+        self._refresh()
+        if self.scroller is not None:
+            adj = self.scroller.get_vadjustment()
+            top, bottom = self.sel * self.ROW_H, (self.sel + 1) * self.ROW_H
+            if top < adj.get_value():
+                adj.set_value(top)
+            elif bottom > adj.get_value() + adj.get_page_size():
+                adj.set_value(bottom - adj.get_page_size())
+
+    def _refresh(self):
+        for i, (row, mark, _name) in enumerate(self.rows):
+            sel, plays = i == self.sel, i == self.loaded
+            mark.set_text("▸" if sel else " ")            # BLACK RIGHT-POINTING SMALL TRIANGLE
+            for cls, on in (("sel", sel), ("playing", plays)):
+                (row.add_css_class if on else row.remove_css_class)(cls)
+        self.state_lbl.set_text("▶" if self.playing else "■")
+
+    def _on_key(self, _ctl, keyval, _code, state):
+        if keyval == Gdk.KEY_space:
+            self._toggle()
+            return True
+        if keyval in (Gdk.KEY_Down, Gdk.KEY_j):
+            self._move(1)
+            return True
+        if keyval in (Gdk.KEY_Up, Gdk.KEY_k):
+            self._move(-1)
+            return True
+        if keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
+            self._load(self.sel)
+            return True
+        if keyval == Gdk.KEY_Home:
+            self._move(-len(self.paths))
+            return True
+        if keyval == Gdk.KEY_End:
+            self._move(len(self.paths))
+            return True
+        return False
+
+
+class Prompt(Gtk.Window):
+    W = 720
+
+    def __init__(self):
+        self.tag = f"peek:{os.getpid()}"
+        super().__init__(title=self.tag)
+        self.add_css_class("peek")
+        self.set_decorated(False)
+        self._debounce = 0
+
+        LayerShell.init_for_window(self)
+        LayerShell.set_layer(self, LayerShell.Layer.TOP)
+        LayerShell.set_namespace(self, LAYER_NAMESPACE)
+        # Without EXCLUSIVE the surface appears but never takes the keyboard,
+        # so the prompt looks dead until you click it.
+        LayerShell.set_keyboard_mode(self, LayerShell.KeyboardMode.EXCLUSIVE)
+        # Width is fixed, height is whatever the padding and the font add up to.
+        # Pinning the height squeezed the text against the top border.
+        self.set_default_size(self.W, -1)
+
+        self.entry = Gtk.Entry(hexpand=True, has_frame=False)
+        self.entry.add_css_class("path")
+        self.entry.connect("changed", self._on_changed)
+        self.entry.connect("activate", self._on_activate)
+
+        # GTK cannot fade its built-in placeholder, so this is a label of our own
+        # sitting over the entry, shown only while the entry is empty.
+        self._ph_i = 0
+        self.ph = Gtk.Label(label=PLACEHOLDERS[0], xalign=0)
+        self.ph.add_css_class("ph")
+        self.ph.set_can_target(False)
+        over = Gtk.Overlay()
+        over.set_child(self.entry)
+        over.add_overlay(self.ph)
+        self.ph.set_halign(Gtk.Align.START)
+        self.ph.set_valign(Gtk.Align.CENTER)
+
+        bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        bar.add_css_class("bar")
+        prompt = Gtk.Label(label=">")
+        prompt.add_css_class("prompt")
+        bar.append(prompt)
+        bar.append(over)
+
+        self.hint = Gtk.Label(xalign=0)
+        self.hint.add_css_class("hint")
+        self.hint.set_visible(False)
+
+        col = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        col.add_css_class("peek-prompt-frame")
+        col.set_size_request(self.W, -1)
+        col.append(bar)
+        col.append(self.hint)
+        self.set_child(col)
+
+        self.add_controller(esc_controller(lambda: kill_all_peeks(self)))
+
+        # Catch Ctrl+V before the entry does: a clipboard holding a picture is
+        # the whole point of the reverse direction, and the entry would only
+        # ever look for text.
+        paste = Gtk.EventControllerKey()
+        paste.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
+        paste.connect("key-pressed", self._on_key)
+        self.add_controller(paste)
+
+        self.connect("map", lambda *_: GLib.idle_add(self._on_map))
+
+    def _on_map(self):
+        self.entry.grab_focus()
+        GLib.timeout_add(2600, self._cycle_placeholder)
+        return False
+
+    # -- placeholder that alternates, fading out and back in -----------------
+    def _cycle_placeholder(self):
+        if self.entry.get_text():
+            return True  # keep the timer, just stay out of the way
+        self._fade(1.0, 0.0, on_done=self._swap_placeholder)
+        return True
+
+    def _swap_placeholder(self):
+        self._ph_i = (self._ph_i + 1) % len(PLACEHOLDERS)
+        self.ph.set_text(PLACEHOLDERS[self._ph_i])
+        self._fade(0.0, 1.0)
+
+    def _fade(self, a: float, b: float, on_done=None, ms: int = 420):
+        steps = 14
+        state = {"i": 0}
+
+        def tick():
+            state["i"] += 1
+            k = state["i"] / steps
+            self.ph.set_opacity(a + (b - a) * k)
+            if state["i"] >= steps:
+                if on_done:
+                    on_done()
+                return False
+            return True
+
+        GLib.timeout_add(ms // steps, tick)
+
+    def _on_activate(self, _entry):
+        """Enter runs whatever was typed, unless it is already a picture."""
+        text = self.entry.get_text().strip()
+        if not text or parse_paths(text):
+            return
+        sway("-q", f"exec {text}")
+        kill_all_peeks(self)
+
+    def _on_key(self, _ctl, keyval, _code, state):
+        if keyval in (Gdk.KEY_v, Gdk.KEY_V) and state & Gdk.ModifierType.CONTROL_MASK:
+            Gdk.Display.get_default().get_clipboard().read_texture_async(None, self._on_texture)
+            return True   # swallow it; if there is no picture we paste the text ourselves
+        return False
+
+    def _on_texture(self, clipboard, result):
+        try:
+            texture = clipboard.read_texture_finish(result)
+        except Exception:
+            texture = None
+        if texture is None:
+            # No picture on the clipboard: do the ordinary paste we swallowed.
+            clipboard.read_text_async(None, self._on_text)
+            return
+        path = save_clipboard_image(texture)
+        self._just_saved = path
+        self.entry.set_text(path)
+        self.entry.select_region(0, -1)
+        # The location is the deliverable, so it goes straight to the clipboard.
+        Gdk.Display.get_default().get_clipboard().set(path)
+        self.hint.set_text(f"guardada en {path} · ruta copiada")
+        self.hint.set_visible(True)
+        subprocess.Popen([sys.argv[0], "--view", path, "-s", "0", "-n", "1"], start_new_session=True)
+
+    def _on_text(self, clipboard, result):
+        try:
+            text = clipboard.read_text_finish(result) or ""
+        except Exception:
+            text = ""
+        if text:
+            pos = self.entry.get_position()
+            self.entry.insert_text(text, pos)
+            self.entry.set_position(pos + len(text))
+
+    def _on_changed(self, _entry):
+        if self._debounce:
+            GLib.source_remove(self._debounce)
+        # Resolving on every keystroke would stat the disk mid-paste; a short
+        # settle keeps it to one look per pause without ever needing Enter.
+        self.ph.set_visible(not self.entry.get_text())
+        self._debounce = GLib.timeout_add(120, self._resolve)
+
+    def _resolve(self):
+        self._debounce = 0
+        text = self.entry.get_text()
+        paths = parse_paths(text)
+        if os.environ.get("PEEK_DEBUG"):
+            print(f"peek: texto={text!r} rutas={len(paths)}", file=sys.stderr, flush=True)
+
+        if paths and text != getattr(self, "_just_saved", None):
+            # Pictures and videos get one window each; they can share a screen.
+            # Every audio file collapses into a single player, because two of
+            # them playing at once is noise, not a preview.
+            visual = [p for p in paths if not is_audio(p)]
+            audio = [p for p in paths if is_audio(p)]
+            total = len(visual) + (1 if audio else 0)
+            # Ordinary floating windows, which is what makes them resizable.
+            # The prompt cannot become one -- a layer surface is not.
+            for i, p in enumerate(visual):
+                subprocess.Popen(
+                    [sys.argv[0], "--view", p, "-s", str(i), "-n", str(total)],
+                    start_new_session=True,
+                )
+            if audio:
+                subprocess.Popen(
+                    [sys.argv[0], "--audio", *audio, "-s", str(len(visual)), "-n", str(total)],
+                    start_new_session=True,
+                )
+            GLib.timeout_add(150, lambda: (self.close(), False)[1])
+            return False
+
+        stripped = text.strip()
+        self.hint.set_text("no encuentro ese archivo" if stripped and "/" in stripped else "")
+        self.hint.set_visible(bool(self.hint.get_text()))
+        return False
+
+
+def main() -> int:
+    argv = sys.argv[1:]
+    view_path = slot = total = None
+    audio_paths = None
+    prefill = None
+
+    def grid_slot(args):
+        s = int(args[args.index("-s") + 1]) if "-s" in args else 0
+        n = int(args[args.index("-n") + 1]) if "-n" in args else 1
+        return s, n
+
+    if argv and argv[0] in ("--view", "-v"):
+        if len(argv) < 2:
+            print("peek: --view necesita una ruta", file=sys.stderr)
+            return 2
+        view_path = os.path.expanduser(argv[1])
+        slot, total = grid_slot(argv)
+    elif argv and argv[0] == "--audio":
+        rest = argv[1:]
+        audio_paths = [os.path.expanduser(a) for a in
+                       itertools.takewhile(lambda a: not a.startswith("-"), rest)]
+        if not audio_paths:
+            print("peek: --audio necesita al menos una ruta", file=sys.stderr)
+            return 2
+        slot, total = grid_slot(rest)
+    elif argv and argv[0] == "--paste":
+        prefill = argv[1] if len(argv) > 1 else ""
+    elif argv and argv[0] in ("-h", "--help"):
+        print(__doc__)
+        return 0
+    elif argv:
+        print(f"peek: opción desconocida: {argv[0]}", file=sys.stderr)
+        return 2
+
+    # No Gtk.Application: registering one costs about 400 ms before the window
+    # is even built, which is most of the wait between the keybinding and the
+    # prompt showing up. The Wayland app_id comes from the program name instead.
+    GLib.set_prgname(APP_ID)
+    Gtk.init()
+    force_crisp_text()
+
+    prov = Gtk.CssProvider()
+    prov.load_from_data(CSS)
+    Gtk.StyleContext.add_provider_for_display(
+        Gdk.Display.get_default(), prov, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+    )
+
+    loop = GLib.MainLoop()
+    if view_path:
+        win = Viewer(view_path, slot, total)
+    elif audio_paths:
+        win = AudioViewer(audio_paths, slot, total)
+    else:
+        win = Prompt()
+    win.connect("close-request", lambda *_: (loop.quit(), False)[1])
+    win.connect("destroy", lambda *_: loop.quit())
+    win.present()
+    if prefill and not view_path:
+        GLib.timeout_add(300, lambda: (win.entry.set_text(prefill), False)[1])
+    loop.run()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

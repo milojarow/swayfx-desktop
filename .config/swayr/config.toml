@@ -1,0 +1,30 @@
+[menu]
+executable = 'rofi'
+args = [
+    '-dmenu',
+    '-i',
+    '-markup-rows',
+    '-theme', '~/.config/rofi/themes/swayr-window',
+    '-p', '{prompt}',
+    '-matching', 'fuzzy',
+    '-show-icons'
+]
+
+[format]
+window_format = '{app_icon} <i>{app_name}</i> — <b>{title}</b> <span alpha="20000">({workspace_name})</span>'
+indent = '  '
+urgency_start = '<span background="#ff79c6" foreground="#282a36">'
+urgency_end = '</span>'
+html_escape = true
+icon_dirs = [
+    '/usr/share/icons/hicolor/scalable/apps',
+    '/usr/share/icons/hicolor/64x64/apps',
+    '/usr/share/icons/hicolor/48x48/apps',
+    '/usr/share/pixmaps'
+]
+
+[focus]
+lockin_delay = 750
+
+[misc]
+auto_nop_delay = 3000

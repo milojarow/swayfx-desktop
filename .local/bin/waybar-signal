@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# Check if a module name was provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <module_name>" >&2
+    exit 1
+fi
+
+# Map module names to their signal numbers
+case "$1" in
+    "pacman")
+        signal=14
+        ;;
+    "scratchpad")
+        signal=7
+        ;;
+    "sunset")
+        signal=6
+        ;;
+    "theme")
+        signal=17
+        ;;
+    "recorder")
+        signal=8
+        ;;
+    "github")
+        signal=4
+        ;;
+    "playerctl")
+        signal=5
+        ;;
+    "clipboard")
+        signal=9
+        ;;
+    "weather")
+        signal=16
+        ;;
+    "dnd")
+        signal=11
+        ;;
+    "adaptive_brightness" | "adaptive-light")
+        signal=12
+        ;;
+    "valent")
+        signal=13
+        ;;
+    "window-title" | "window_title")
+        signal=10
+        ;;
+    "privacy")
+        signal=15
+        ;;
+    *)
+        echo "Warning: No signal defined for module: $1" >&2
+        exit 0
+        ;;
+esac
+
+# Send the signal to waybar
+pkill -RTMIN+${signal} waybar

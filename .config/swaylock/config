@@ -1,0 +1,43 @@
+# ── Lock Screen & Idle ────────────────────────────────────────────────────────
+# Role:     swaylock visual configuration (indicator, colors, font)
+# Used by:  lock.sh (invokes swaylock with blurred screenshot)
+# ─────────────────────────────────────────────────────────────────────────────
+# Tamaño y grosor del círculo
+indicator-radius=135
+indicator-thickness=15
+# Deshabilitar elementos innecesarios
+hide-keyboard-layout
+show-failed-attempts
+# Colores del indicador interior
+inside-color=2e344098
+inside-clear-color=e3a5a590
+inside-caps-lock-color=009ddc98
+inside-ver-color=d9d8d890
+inside-wrong-color=ee2e2490
+# Colores del anillo
+ring-color=5294e2aa
+ring-clear-color=e3a5a5aa
+ring-caps-lock-color=009ddcaa
+ring-ver-color=d9d8d8aa
+ring-wrong-color=ee2e24aa
+# Colores del texto (minimalista)
+text-color=eceff4cc
+text-clear-color=eceff400
+text-caps-lock-color=eceff4cc
+text-ver-color=eceff400
+text-wrong-color=eceff4cc
+# Colores de resaltado al presionar teclas
+key-hl-color=56e3a6aa
+bs-hl-color=ee2e24aa
+caps-lock-key-hl-color=56a4e3aa
+caps-lock-bs-hl-color=ee2e24aa
+# Líneas y separadores
+line-color=00000000
+line-clear-color=00000000
+line-caps-lock-color=00000000
+line-ver-color=00000000
+line-wrong-color=00000000
+separator-color=00000000
+# Fuente
+font=Inter
+font-size=26

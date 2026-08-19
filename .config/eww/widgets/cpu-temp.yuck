@@ -1,0 +1,32 @@
+; feature: cpu-temp
+; role:    window
+(defwidget temp-indicator [temp]
+  (box :class "temp-indicator-container"
+       :orientation "vertical"
+       :space-evenly false
+    (box :class "thermometer"
+      (box :class "temp-fill ${temp < 50 ? 'cool' : temp < 70 ? 'normal' : temp < 85 ? 'warm' : 'hot'}"
+           :style "height: ${temp}%;"))
+    (box :class "temp-info"
+      (label :text "${temp}°C")
+      (label :class "temp-label" :text "CPU TEMP"))))
+
+(defwidget cpu-temp []
+  (box :class "temp-dashboard"
+       :orientation "vertical"
+       :space-evenly false
+    (label :class "temp-title" :text "SYSTEM TEMPERATURE")
+    (box :class "temp-indicators" :orientation "horizontal" :space-evenly true
+      (temp-indicator :temp {EWW_TEMPS.CPU_AVERAGE}))))
+
+(defwindow cpu-temp
+  :monitor 0
+  :geometry (geometry :x "20px"
+                      :y "100px"
+                      :width "180px"
+                      :height "300px"
+                      :anchor "left center")
+  :stacking "bottom"
+  :windowtype "normal"
+  :wm-ignore true
+  (cpu-temp))

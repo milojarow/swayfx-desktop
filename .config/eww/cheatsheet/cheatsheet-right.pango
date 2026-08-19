@@ -1,0 +1,50 @@
+<span font_family="monospace">
+<span foreground="#bd93f9" weight="bold">  TOOLS &amp; SCRIPTS</span>
+<span foreground="#6272a4">escríbelos en la terminal</span>
+<span foreground="#50fa7b">clipardo</span>              Copy files to clipboard (markdown fmt)
+<span foreground="#50fa7b">hyprpicker</span>            Pick colors from screen
+<span foreground="#50fa7b">ssht &lt;host&gt; [session]</span>  SSH with persistent tmux sessions
+                      Survives suspend/resume (<span foreground="#8be9fd">ssht --help</span>)
+<span foreground="#50fa7b">bt-audio-fix</span>          Restore BT A2DP after dropout
+
+<span foreground="#50fa7b" weight="bold">  TMUX  (prefix = Ctrl+B)</span>
+New Window               <span foreground="#8be9fd">Prefix  c</span>
+Next / Prev Window       <span foreground="#8be9fd">Prefix  n / p</span>
+Go to Window N           <span foreground="#8be9fd">Prefix  1–9</span>
+Split Vertical           <span foreground="#8be9fd">Prefix  %</span>
+Split Horizontal         <span foreground="#8be9fd">Prefix  "</span>
+Move Between Panes       <span foreground="#8be9fd">Prefix  ←↓↑→</span>
+Zoom Pane (toggle)       <span foreground="#8be9fd">Prefix  z</span>
+Close Pane               <span foreground="#8be9fd">Prefix  x  (confirm y)</span>
+Scroll / Copy Mode       <span foreground="#8be9fd">Prefix  [  (vi keys, q to exit)</span>
+Detach (keep alive)      <span foreground="#8be9fd">Prefix  d</span>
+Close Window             <span foreground="#8be9fd">exit</span>
+List Sessions            <span foreground="#8be9fd">tmux ls</span>
+
+<span foreground="#ffb86c" weight="bold">󰛓  CLIPBOARD</span>
+Open Clipboard           <span foreground="#8be9fd">Mod+Shift+P</span>
+
+<span foreground="#f1fa8c" weight="bold">  AUDIO &amp; BRIGHTNESS</span>
+Volume Up / Down         <span foreground="#8be9fd">XF86AudioRaiseVolume / LowerVolume</span>
+Mute Audio               <span foreground="#8be9fd">XF86AudioMute</span>
+Mute Microphone          <span foreground="#8be9fd">XF86AudioMicMute</span>
+Play / Pause             <span foreground="#8be9fd">XF86AudioPlay</span>
+Next / Previous          <span foreground="#8be9fd">XF86AudioNext / Prev</span>
+Brightness Up / Down     <span foreground="#8be9fd">XF86MonBrightnessUp / Down</span>
+
+
+<span foreground="#8be9fd" weight="bold">  DISPLAY &amp; SCALING</span>
+Scale Up                 <span foreground="#8be9fd">Alt++</span>
+Scale Down               <span foreground="#8be9fd">Alt+-</span>
+Scale Default            <span foreground="#8be9fd">Mod+=</span>
+
+<span foreground="#ff79c6" weight="bold">󰖷  SYSTEM SETTINGS</span>
+AUR Helper               <span foreground="#8be9fd">paru</span>
+Text Editor              <span foreground="#8be9fd">vim</span>
+Terminal                 <span foreground="#8be9fd">foot</span>
+File Manager             <span foreground="#8be9fd">pcmanfm</span>
+System Monitor           <span foreground="#8be9fd">btop  ·  glances  ·  top</span>
+USB Devices              <span foreground="#8be9fd">Automounted by default</span>
+Lid Close                <span foreground="#8be9fd">Screen off (processes keep running)</span>
+Lid Open                 <span foreground="#8be9fd">Screen on + BT reconnect</span>
+</span>

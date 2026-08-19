@@ -1,0 +1,196 @@
+.TH CHEATSHEET 1 "2026-06-02" "sway dotfiles" "User Commands"
+.SH NAME
+cheatsheet \- fullscreen Sway keybinding & skills help overlay (Super+/)
+.SH SYNOPSIS
+.B toggle-cheatsheet.sh
+.PP
+Bound to
+.B $mod+slash
+(Super+/) in the default sway mode. Toggles a fullscreen, read-only
+.BR eww (1)
+overlay. Accepts no arguments.
+.SH DESCRIPTION
+A three-column reference grid that floats over the whole screen. It is a
+.I static,
+hand-curated cheat sheet \(em not generated from the live config \(em laid
+out in three Pango-markup columns:
+.IP \(bu 3
+.B Left
+\(em Sway window-manager keybindings: Essentials, Window Layouts,
+Navigation, Workspaces, Modes, Scratchpad.
+.IP \(bu 3
+.B Middle
+\(em a bookmark of the operator's custom Claude Code skill plugins, plus a
+"+ terceros" line for third-party skills. Ends in a pinned, glowing
+\(lqSwap Windows\(rq badge \(em the swap-mode binding, surfaced for findability.
+.IP \(bu 3
+.B Right
+\(em tools and scripts, tmux bindings, clipboard, audio/brightness,
+display/scaling, and system-settings reminders.
+.PP
+Each column lives in its own
+.I .pango
+file and scrolls independently with the mouse wheel. Press
+.B Super+/
+again \(em or click anywhere on the overlay \(em to dismiss.
+.PP
+Two complementary help surfaces exist. This overlay
+.RB ( Super+/ )
+is the curated, color-grouped, at-a-glance grid. The other,
+.B $mod+question
+.RB ( Super+? ),
+runs
+.I command-finder.sh
+which
+.I dynamically
+scrapes every
+.B ## Action // Description ##
+annotated
+.B $bindsym
+out of the sway config into a searchable rofi list \(em always current,
+never hand-edited. Use
+.B Super+?
+to discover a binding; use
+.B Super+/
+for the curated overview.
+.SH KEYBINDING
+.TP
+.B $mod+slash
+Toggle the overlay. Defined in
+.IR ~/.config/sway/modes/default ,
+dispatched to
+.IR ~/.config/sway/scripts/toggle-cheatsheet.sh ,
+which runs
+.BR "eww open cheatsheet --toggle" .
+.TP
+.B $mod+question
+The companion dynamic finder (see DESCRIPTION), dispatched via
+.B $help
+to
+.IR ~/.config/sway/scripts/command-finder.sh .
+.SH CONTENT MECHANISM
+.B cheatsheet.yuck
+declares three
+.B defpoll
+variables \(em
+.IR cs-left ", " cs-mid ", " cs-right " \(em"
+each running
+.RB "" "cat" " of its"
+.I .pango
+file with
+.BR ":interval \(dq999h\(dq" .
+The fullscreen
+.B defwindow
+.RI ( :stacking " overlay, " :focusable " false, " "100% x 100%" )
+renders them as three scrollable
+.B :markup
+labels separated by dividers. The 999h interval means the files are read
+essentially once and then cached \(em see GOTCHAS before editing.
+.SH FILES
+.TP
+.I ~/.config/sway/scripts/toggle-cheatsheet.sh
+Entry point. Sets PATH for the cargo-installed eww and runs
+.BR "eww open cheatsheet --toggle" .
+.TP
+.I ~/.config/eww/widgets/cheatsheet.yuck
+eww window + widget. Declares the
+.IR cs-left ", " cs-mid ", " cs-right
+defpolls and the fullscreen overlay
+.BR defwindow .
+.TP
+.I ~/.config/eww/cheatsheet/cheatsheet-left.pango
+Left column \(em Sway WM keybindings.
+.TP
+Middle column \(em custom Claude Code skills bookmark.
+.TP
+.I ~/.config/eww/cheatsheet/cheatsheet-right.pango
+Right column \(em tools, tmux, audio, display, system settings.
+.TP
+.I ~/.config/eww/styles/cheatsheet.scss
+Styling \(em the
+.B .cs-*
+classes (container, header, title, hint, column, divider) and the
+translucent dark background.
+.TP
+.I ~/.config/sway/modes/default
+Defines the
+.B $mod+slash
+toggle and the
+.B $mod+question
+finder bindings.
+.SH DEPENDENCIES
+.BR eww (1)
+(Wayland build, run under the
+.B eww.service
+systemd user unit),
+Pango markup, and an installed Nerd Font for the section-header glyphs.
+.SH GOTCHAS
+.TP
+.B Edits are not live \(em reload after editing a .pango file
+Because the columns load through
+.B defpoll
+with
+.BR ":interval \(dq999h\(dq" ,
+editing a
+.I .pango
+file does NOT update the overlay on its own. Run
+.B eww reload
+(or
+.BR "eww poll cs-left cs-mid cs-right" )
+afterwards. Re-opening the overlay alone can still show stale cached text.
+.TP
+.B eww is systemd-managed
+Do not
+.B eww kill
+/
+.BR "eww daemon" .
+Use
+.B eww reload
+for content changes and
+.B systemctl --user restart eww.service
+for a full restart \(em a manual daemon spawns a second instance and you
+get duplicate windows.
+.TP
+.B Never reload while the overlay is open
+Running
+.B eww reload
+while the cheatsheet is open can leave a stale ghost surface on top that the
+toggle no longer tracks \(em trapping the screen (this happened 2026-06-02).
+Edit the
+.I .pango
+files (or this widget) only while it is CLOSED, then reload. Safety nets now
+in place:
+.B :focusable false
+(the window cannot grab the keyboard, so
+.B Super+/
+always toggles it off), clicking anywhere closes it, and
+.B "eww close cheatsheet"
+from a TTY is the last resort.
+.TP
+.B Nerd Font PUA glyphs in the .pango files
+The section headers use Private-Use-Area glyphs that are invisible to
+text-processing tools and can be silently dropped by a naive full rewrite.
+Edit the files with byte-preserving, surgical edits \(em never blind-overwrite.
+.TP
+.B Manual curation drifts
+Unlike
+.B Super+?
+(command-finder, auto-generated), this overlay is hand-maintained and
+.I will
+go stale as keybindings change. Re-sync it against
+.I ~/.config/sway/modes/*
+and the installed skill set periodically.
+.TP
+.B Column alignment is space-padded
+Each label is left-padded to a fixed monospace width before its value
+.RB ( <span> ) \(em
+roughly 25 chars in the left/right columns, 21 (after the leading emoji) in
+the skills column. Preserve the padding or the columns misalign.
+.SH SEE ALSO
+.BR eww (1),
+.BR sway (5),
+.BR palette-theming (1)
+.PP
+Companion dynamic finder:
+.I ~/.config/sway/scripts/command-finder.sh
+.RB ( $mod+question ).

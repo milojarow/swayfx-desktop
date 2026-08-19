@@ -1,0 +1,89 @@
+.TH RESIZE 1 "2026-03-15" "sway dotfiles" "User Commands"
+.SH NAME
+resize \- interactive window resize and gap adjustment mode for sway
+.SH DESCRIPTION
+Resize mode allows the focused window to be grown or shrunk incrementally with the
+arrow keys, and the inner gap of the current workspace to be adjusted with
+.B +
+and
+.BR - .
+.PP
+The sway bar displays a pango-markup label while the mode is active, showing a
+resize icon, the word
+.BR Resize ,
+the navigation hint
+.BR "(↑ ↓ ← →)" ,
+.B "Increase Gaps"
+.BR "(+)" ,
+and
+.B "Decrease Gaps"
+.BR "(-)" .
+.SH KEYBINDINGS
+Enter resize mode by pressing
+.BR $mod+r .
+Inside the mode:
+.SS Window resize \(em fine (10 px per press)
+.TP
+.BR "← " / " →"
+Shrink / grow the focused window's width by 10 px.
+.TP
+.BR "↑ " / " ↓"
+Shrink / grow the focused window's height by 10 px.
+.SS Window resize \(em coarse (50 px per press)
+.TP
+.BR "Shift+← " / " Shift+→"
+Shrink / grow the focused window's width by 50 px.
+.TP
+.BR "Shift+↑ " / " Shift+↓"
+Shrink / grow the focused window's height by 50 px.
+.SS Gap adjustment
+.TP
+.B +
+Increase the inner gap of the current workspace by 5 px.
+.TP
+.B -
+Decrease the inner gap of the current workspace by 5 px.
+.SS Exit
+.TP
+.BR Return " or " Escape
+Return to default mode.
+.SH NOTES
+The mode file sets the default gaps applied at sway startup:
+.B "gaps inner 5px"
+and
+.BR "gaps outer 5px" .
+.PP
+Both the primary arrow-key aliases
+.RI ( $left ,
+.IR $right ,
+.IR $up ,
+.IR $down )
+and their alternate variants
+.RI ( $left_alt ,
+etc.) are bound, covering keyboard layout differences defined in
+.IR ~/.config/sway/config.d/01-definitions.conf .
+.PP
+There is no waybar indicator, no script, and no signal associated with this mode.
+.SH FILES
+.TP
+.I ~/.config/sway/modes/resize
+Full mode definition: keybindings for resize and gap adjustment, plus the default
+gap values applied at sway startup.
+.TP
+.I ~/.config/sway/themes/<name>/theme.conf
+Defines the
+.I $colorN
+variables (e.g.\&
+.IR $color5 ,
+.IR $color10 )
+referenced in the pango markup of
+.IR $mode_resize .
+The active theme is symlinked at runtime to
+.I ~/.config/sway/definitions.d/theme.conf
+(generated — not tracked in git).
+See
+.BR palette-theming (1)
+for the full theming system.
+.SH SEE ALSO
+.BR swaymsg (1),
+.BR palette-theming (1)

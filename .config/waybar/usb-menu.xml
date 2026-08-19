@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ── USB Management ──────────────────────────────────────────────────────────
+     Role:    Right-click context menu for the waybar USB module
+     Used by: ~/.config/waybar/config.jsonc  (menu-file property of custom/usb)
+     Actions: usb-action-open.sh · usb-action-mount.sh · usb-action-unmount.sh
+              usb-action-eject.sh · usb-action-refresh.sh
+     ──────────────────────────────────────────────────────────────────────────── -->
+<interface>
+  <object class="GtkMenu" id="menu">
+    <child>
+      <object class="GtkMenuItem" id="open">
+        <property name="label">󰉋  Open in File Manager</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem"/>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="unmount">
+        <property name="label">  Unmount</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="eject">
+        <property name="label">  Eject (safely remove)</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem"/>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="mount">
+        <property name="label">󱘖  Mount</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem"/>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="refresh">
+        <property name="label">  Refresh</property>
+      </object>
+    </child>
+  </object>
+</interface>

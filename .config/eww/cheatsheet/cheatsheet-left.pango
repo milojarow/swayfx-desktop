@@ -1,0 +1,58 @@
+<span font_family="monospace">
+<span foreground="#ffb86c" weight="bold">󰣇  ESSENTIALS</span>
+Help / Command Finder    <span foreground="#8be9fd">Mod+?</span>
+Toggle Cheatsheet        <span foreground="#8be9fd">Mod+/</span>
+Terminal                 <span foreground="#8be9fd">Mod+Return</span>
+Floating Terminal        <span foreground="#8be9fd">Mod+Shift+Return</span>
+App Launcher             <span foreground="#8be9fd">Mod+D</span>
+Emoji Picker             <span foreground="#8be9fd">Mod+.</span>
+Window Switcher          <span foreground="#8be9fd">Mod+P</span>
+Kill Window              <span foreground="#8be9fd">Mod+Shift+Q</span>
+Kill App (all windows)   <span foreground="#8be9fd">Mod+Ctrl+Shift+Q</span>
+Lock Screen              <span foreground="#8be9fd">Mod+X</span>
+Reload Config            <span foreground="#8be9fd">Mod+Shift+C</span>
+Toggle Waybar            <span foreground="#8be9fd">Mod+Shift+B</span>
+Theme Selector           <span foreground="#8be9fd">Mod+T</span>
+Voice Dictation          <span foreground="#8be9fd">Ctrl+Shift+Space</span>
+Claude Desktop           <span foreground="#8be9fd">Mod+Ctrl+Space</span>
+
+<span foreground="#50fa7b" weight="bold">󰖯  WINDOW LAYOUTS</span>
+Stacking Mode            <span foreground="#8be9fd">Mod+S</span>
+Tabbed Mode              <span foreground="#8be9fd">Mod+W</span>
+Tiled / Toggle Split     <span foreground="#8be9fd">Mod+E</span>
+Split Horizontal         <span foreground="#8be9fd">Mod+B</span>
+Split Vertical           <span foreground="#8be9fd">Mod+V</span>
+Toggle Floating          <span foreground="#8be9fd">Mod+Shift+Space</span>
+Focus Float ↔ Tile       <span foreground="#8be9fd">Mod+Space</span>
+Toggle Fullscreen        <span foreground="#8be9fd">Mod+F</span>
+Global Fullscreen        <span foreground="#8be9fd">Mod+Shift+F</span>
+Focus Parent             <span foreground="#8be9fd">Mod+A</span>
+
+<span foreground="#bd93f9" weight="bold">  NAVIGATION</span>
+Focus L/D/U/R            <span foreground="#8be9fd">Mod+H/J/K/L  or  Mod+←↓↑→</span>
+Move Window              <span foreground="#8be9fd">Mod+Shift+H/J/K/L  or  Mod+Shift+←↓↑→</span>
+Move Workspace           <span foreground="#8be9fd">Mod+Alt+←↓↑→</span>
+Last Used Window         <span foreground="#8be9fd">Alt+Tab</span>
+Window Switcher (swayr)  <span foreground="#8be9fd">Mod+P</span>
+Last Workspace           <span foreground="#8be9fd">Mod+Tab</span>
+
+<span foreground="#f1fa8c" weight="bold">  WORKSPACES</span>
+Switch to 1–10           <span foreground="#8be9fd">Mod+1–0</span>
+Move window to 1–10      <span foreground="#8be9fd">Mod+Shift+1–0</span>
+New Workspace            <span foreground="#8be9fd">Mod+N</span>
+Move to new ws           <span foreground="#8be9fd">Mod+Shift+N</span>
+Move + switch to new ws  <span foreground="#8be9fd">Mod+Shift+M</span>
+Launcher in new ws       <span foreground="#8be9fd">Mod+Shift+D</span>
+
+<span foreground="#ff79c6" weight="bold">󱡂  MODES</span>
+Screenshot Mode          <span foreground="#8be9fd">Print</span>
+Recording Mode           <span foreground="#8be9fd">Mod+Shift+R</span>
+Stop Recording           <span foreground="#8be9fd">Mod+Escape</span>
+Resize Mode              <span foreground="#8be9fd">Mod+R</span>
+Swap Mode                <span foreground="#8be9fd">Mod+Ctrl+W</span>
+Power Menu               <span foreground="#8be9fd">Mod+Shift+E</span>
+
+<span foreground="#ff5555" weight="bold">  SCRATCHPAD</span>
+Send to Scratchpad       <span foreground="#8be9fd">Mod+Shift+-</span>
+Show Scratchpad          <span foreground="#8be9fd">Mod+-</span>
+</span>

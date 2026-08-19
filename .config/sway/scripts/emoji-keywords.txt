@@ -1,0 +1,3281 @@
+# Emoji Keywords — emoji<TAB>kw1 kw2 kw3 ...
+#
+# Per-emoji search synonyms attached as invisible rofi metadata, alongside
+# the cluster aliases in emoji-aliases.txt. Matched by the rofi filter,
+# never displayed in the picker rows.
+#
+# Format
+#   <emoji><TAB>keyword<SPACE>keyword<SPACE>...
+#
+# Notes
+#   - Comments start with #. Blank lines ignored.
+#   - The same emoji may be repeated; the handler merges all occurrences.
+#   - Read by ~/.config/sway/scripts/emoji-modi-handler on every picker launch.
+#
+# The first 545 entries below were generated from
+# /usr/share/oh-my-zsh/plugins/emoji/gemoji_db.json (CLDR aliases + tags,
+# deduped against the description and stopwords). Manual additions to
+# extend coverage and refine search are appended below the auto block.
+
+# === Auto (gemoji-derived) ===
+0️⃣	zero
+💯	100 perfect score
+🔢	1234
+👍	+1 approve ok thumbsup
+👎	-1 bury disapprove thumbsdown
+1️⃣	one
+👆	2 point
+2️⃣	two
+3️⃣	three
+4️⃣	four
+5️⃣	five
+6️⃣	six
+7️⃣	seven
+🎱	8ball billiards
+8️⃣	eight
+🚨	911 emergency rotating
+9️⃣	nine
+🔤	abc alphabet
+🔡	abcd
+🔠	abcd capital letters
+♿	accessibility
+🤧	achoo sick
+🌍	africa earth international world
+🛄	airport
+🇦🇽	aland
+😲	amazed gasp
+🇺🇸	america us
+😇	angel innocent
+💢	angry
+😡	angry pout rage
+📢	announcement
+😠	annoyed mad
+👏	applause clap praise
+🏹	archery
+◀️	arrow backward
+⏫	arrow double
+⏬	arrow double
+🔽	arrow down small
+▶️	arrow forward
+🔼	arrow small up
+🔀	arrows rightwards twisted
+🎨	art design paint
+🌏	asia earth international world
+*️⃣	asterisk
+👟	athletic sneaker sport
+👊	attack facepunch punch
+🍆	aubergine
+🍂	autumn
+🏆	award contest winner
+👜	bag
+☑️	ballot
+🎍	bamboo
+🤕	bandage head hurt
+‼️	bangbang
+❗	bang heavy
+🤢	barf disgusted sick
+🇧🇱	barthelemy
+⛹️‍♂️	basketball
+🚿	bath
+😭	bawling cry sad sob
+👙	beach
+🐚	beach sea
+💅	beauty care manicure
+🐝	bee
+🍻	beers drinks
+💪	bicep flex muscle strong workout
+🚲	bike
+🎁	birthday christmas present
+🎈	birthday party
+🇬🇼	bissau guinea
+🃏	black
+✴️	black eight pointed
+🙈	blind evil ignore no see
+🚫	block entry forbidden no sign
+💨	blow dash fast wind
+🚙	blue car
+☺️	blush pleased relaxed
+😊	blush proud
+🎓	board college education mortar university
+⛵	boat
+💣	boom
+💥	boom explode
+🍳	breakfast egg fried
+🍵	breakfast green tea
+🔆	brightness high
+🔅	brightness low
+🇬🇧	british gb uk
+🥉	bronze
+🍾	bubbly celebration champagne
+🐞	bug
+🚅	bullettrain front
+🚄	bullettrain side
+🐰	bunny
+🍔	burger
+🔥	burn
+👨‍💼	business
+💼	business
+🚏	busstop
+☕	cafe coffee espresso
+🍰	cake dessert
+📲	call calling incoming
+📞	call phone
+⛺	camping
+🍁	canada
+🚗	car red
+🐈	cat2
+💿	cd
+🎆	celebration festival
+🏁	checkered finish milestone
+🥂	cheers toast
+👨‍🍳	chef
+🍗	chicken meat
+👦	child
+👧	child
+👪	child home parents
+👶	child newborn
+💝	chocolates gift
+🔪	chop cut hocho
+🎅	christmas
+☃️	christmas snow winter
+🌇	city sunrise
+🌆	city sunset
+🎩	classy tophat
+🕐	clock1
+🕙	clock10
+🕥	clock1030
+🕚	clock11
+🕦	clock1130
+🕛	clock12
+🕧	clock1230
+🕜	clock130
+🕑	clock2
+🕝	clock230
+🕒	clock3
+🕞	clock330
+🕓	clock4
+🕟	clock430
+🕔	clock5
+🕠	clock530
+🕕	clock6
+🕡	clock630
+🕖	clock7
+🕢	clock730
+🕗	clock8
+🕣	clock830
+🕘	clock9
+🕤	clock930
+😝	closed eyes out prank stuck
+🔐	closed lock security
+♣️	clubs
+🇨🇳	cn
+👨‍💻	coder
+😰	cold nervous
+❄️	cold weather winter
+💬	comment
+❓	confused
+🎮	console controller play
+😎	cool
+👮	cop law
+🇨🇮	cote ivory
+👬	couple date two
+👩‍❤️‍💋‍👨	couplekiss
+💏	couplekiss
+🐄	cow2
+💩	crap hankey poop shit
+💰	cream dollar moneybag
+👸	crown royal
+🤴	crown royal
+😍	crush eyes heart love
+😢	cry sad tear
+💘	cupid love
+🇨🇼	curacao
+🥘	curry paella
+✂️	cut
+🍴	cutlery
+🇨🇿	czech republic
+👨	dad father mustache
+🕺	dancer
+💀	danger dead poison
+🎯	dart target
+📅	date schedule
+🇩🇪	de
+🙉	deaf evil hear no
+🤝	deal
+🐪	desert dromedary
+💻	desktop screen
+👿	devil evil imp
+😈	devil evil imp
+💎	diamond
+♦️	diamonds
+🎲	dice gambling
+📁	directory
+😥	disappointed nervous phew sweat
+📄	document
+📜	document
+📝	document note pencil
+🐩	dog
+🐕	dog2
+🚯	do litter not
+💸	dollar
+↕️	down up
+🙃	down upside
+📉	downwards graph metrics trend
+🎭	drama theater
+🍸	drink
+🍺	drink
+💦	drops water workout
+🌾	ear
+🎧	earphones headphones music
+🌎	earth international world
+✳️	eight spoked
+📧	e-mail
+💌	email envelope
+✉️	email letter
+💍	engaged marriage wedding
+♻️	environment green recycle
+🇪🇸	es
+🇪🇺	eu
+🏤	european
+🏰	european
+🙊	evil hush mute no speak
+👓	eyeglasses
+😜	eye out prank silly stuck
+😻	eyes heart
+🐼	face
+🦊	face
+😿	face sad tear
+⏩	fast forward
+🐾	feet
+👣	feet tracks
+🎬	film
+🎦	film movie
+🎥	film video
+🎣	fish
+🎏	flags
+✈️	flight
+🛫	flight
+🛬	flight
+🐬	flipper
+😘	flirt heart kissing
+😉	flirt wink
+🌷	flower
+🌹	flower
+💐	flowers
+🌸	flower spring
+⏳	flowing sand time
+👔	formal shirt
+🔮	fortune
+🇫🇷	fr french
+🍌	fruit
+🍏	fruit
+🍒	fruit
+🍓	fruit
+🖕	fu
+⛽	fuelpump
+👾	game invader retro space
+🤓	geek glasses
+🌐	global international world
+🥇	gold
+🏅	gold winner
+⛳	golf
+👋	goodbye wave
+👨‍🎓	graduation
+📈	graph metrics trend upwards
+❔	grey
+❕	grey
+😁	grin
+👥	group team users
+🔫	gun shoot weapon
+🏋️‍♂️	gym weight workout
+😃	haha happy joy smiley
+😆	haha happy laughing satisfied
+👨‍🦰	haired
+👻	halloween
+🎃	halloween jack lantern o
+😄	happy joy laugh pleased smile
+😀	happy smile
+#️⃣	hash number
+🐥	hatched
+⤴️	heading
+⤵️	heading
+💉	health hospital needle
+💊	health medicine
+👂	hear listen sound
+💓	heartbeat
+💗	heartpulse
+♥️	hearts
+✔️	heavy
+❣️	heavy
+➕	heavy
+➖	heavy
+➗	heavy
+✖️	heavy x
+👠	heel high
+👷	helmet
+✋	highfive stop
+↪️	hook
+↩️	hook leftwards return
+🙌	hooray raised
+🎉	hooray tada
+🤞	hopeful luck
+🙏	hope please pray wish
+🙀	horror scream
+😱	horror scream shocked
+🌭	hotdog
+😅	hot smile
+♨️	hotsprings
+🤗	hugs
+🤐	hush mouth silence zipper
+🍦	icecream
+💡	idea
+😷	ill sick
+😮	impressed surprise wow
+🔏	ink lock
+💠	inside shape
+⁉️	interrobang
+🔬	investigate laboratory science
+📱	iphone smartphone
+ℹ️	source
+🇮🇹	it
+🚮	its place put
+🏮	izakaya
+👺	japanese
+👹	japanese monster
+🇯🇵	jp
+🌁	karl
+👑	king queen royal
+👄	kiss lips
+🇰🇷	kr
+🔵	large
+🚀	launch ship
+🍃	leaves
+🤛	left
+↙️	left lower
+↔️	left right
+↖️	left upper
+🇹🇱	leste timor
+🤥	liar
+📚	library
+😋	lick tongue yum
+⚡	lightning thunder zap
+⛔	limit
+💋	lipstick
+📌	location
+📍	location
+🔑	lock password
+🔒	lock private security
+🤣	lol rofl
+👀	look see watch
+🔁	loop
+🔊	loud sound
+❤️	love
+↘️	lower right
+🍀	luck
+🇲🇴	macau
+🔎	mag
+🔍	mag search zoom
+📬	mail
+📭	mail no
+💄	makeup
+🕵️‍♂️	male sleuth
+🍊	mandarin orange
+🎽	marathon sash
+💒	marriage
+◽	medium small
+◾	medium small
+📣	mega
+😐	meh
+😒	meh
+🤘	metal
+📊	metrics stats
+🍼	milk
+💽	minidisc
+💵	money
+🤑	money mouth rich
+⏰	morning
+🐁	mouse2
+🗿	moyai stone
+🎶	music
+📴	mute
+😶	mute no silence
+🔇	mute sound volume
+❎	negative squared
+😟	nervous
+🆕	fresh
+🌙	night
+🚱	non-potable
+🍜	noodle ramen
+🔕	no off volume
+🔔	notification sound
+⭕	o
+🌊	ocean sea
+🆗	yes
+👴	older
+🔂	one
+🅾️	o2
+😨	oops scared shocked
+☂️	open
+😛	out stuck
+👨‍🎨	painter
+👖	pants
+⛅	partly sunny weather
+🎂	party
+🍝	pasta
+✌️	peace v
+✏️	pencil2
+😣	persevere struggling
+🐱	pet
+🐶	pet
+🐹	pet
+☎️	phone
+📷	photo
+📸	photo
+🎹	piano
+🐖	pig2
+🌱	plant
+📻	podcast
+☝️	point
+👇	point
+👈	point
+👉	point
+🔯	pointed six
+🚩	post
+👝	pouch
+✊	power
+🔋	power
+🅿️	parking
+📰	press
+🏳️‍🌈	pride
+🇸🇹	principe sao tome
+👨‍🏫	professor school
+🖖	prosper spock
+🐇	rabbit2
+🐎	racehorse speed
+🌂	rain weather
+👨‍🔬	research
+🚾	restroom toilet wc
+🇷🇪	reunion
+⏪	rewind
+🎑	rice scene
+🤜	right
+↗️	right upper
+🎸	rock
+👨‍🎤	rockstar
+🙄	roll
+🇷🇺	ru
+😞	sad
+🤶	santa
+🎒	satchel school
+💾	save
+📆	schedule
+♏	scorpius
+🐳	sea
+🔓	security unlock
+🚦	semaphore
+🐑	sheep
+✨	shiny
+⚓	ship
+🚤	ship
+📦	shipping
+👕	shirt
+🤒	sick
+📡	signal
+📶	signal strength wifi
+😯	silence speechless
+🥈	silver
+🎤	sing
+🎿	ski
+💤	sleeping
+🐌	slow
+🐢	slow
+🔺	small
+🔻	small
+👃	smell
+😸	smile
+😺	smiley
+😼	smirk
+😏	smirk smug
+🚬	smoking
+😤	smug triumph
+🆘	emergency help
+🔉	sound
+👨‍🚀	space
+♠️	spades
+⚽	sports
+⚾	sports
+🎾	sports
+🏀	sports
+🏈	sports
+💫	star
+🌟	star2
+🌠	stars
+🚂	steam train
+🍲	stew
+😧	stunned
+💳	subscription
+🌞	summer
+🍹	summer vacation
+☀️	sunny weather
+🇸🇿	swaziland
+🍬	sweet
+🌀	swirl
+🔄	sync
+👅	taste
+🍤	tempura
+🔟	ten
+🦃	thanksgiving
+💭	thinking
+🐅	tiger2
+⌚	time
+⌛	time
+😩	tired
+😪	tired
+™️	tm trademark
+🍞	toast
+🚻	toilet
+🔧	tool
+🔨	tool
+🇹🇷	tr
+🚋	train
+🚆	train2
+📺	tv
+👽	ufo
+🔞	underage
+😫	upset whine
+👤	user
+📼	vhs
+💧	water
+🚽	wc
+☔	weather
+🐋	whale2
+😌	whew
+🥃	whisky
+✅	white
+⛄	winter
+⚠️	wip
+🚧	wip
+🌲	wood
+🌳	wood
+❌	x
+😴	zzz
+🈁	koko
+🈂️	sa
+🉑	accept
+🉐	advantage ideograph
+
+# === Manual additions ===
+
+# --- Batch 1: faces ---
+🫠	melt embarrassed cringe
+☠️	death poison pirate danger
+☹️	unhappy disappointed sad
+❤️‍🩹	healing recovery comfort
+❤️‍🔥	passion burning desire
+👁️‍🗨️	witness see attention
+💔	heartbreak breakup pain
+💕	affection cute romance
+💖	special shimmer crush
+💙	calm trust water
+💚	nature jealousy envy
+💛	friendship sunshine warm
+💜	royalty creative magic
+💞	romance circular spinning
+💟	symbol decoration ornament
+🕳️	pit dig empty void
+🖤	dark goth empty
+🗨️	talk dialogue chat
+🗯️	shout yell rage
+😂	laugh cry funny lmao
+😑	blank flat indifferent
+😓	tired ashamed exhausted
+😔	reflective dejected gloomy
+😕	puzzled unsure perplexed
+😖	frustrated suffering pain
+😗	kiss whistle pucker
+😙	kiss affectionate sweet
+😚	kiss tender gentle
+😦	shocked worried gasping
+😬	awkward yikes uncomfortable
+😮‍💨	relief sigh phew
+😳	blush flushed shy
+😵	dead dizzy knockout
+😵‍💫	dizzy hypnotized confused
+😶‍🌫️	hazy foggy distracted
+😹	kitten laugh cry
+😽	kitten kiss affection
+😾	kitten grumpy mad
+🙁	mild disappointed sad
+🙂	polite okay subtle
+🙂‍↔️	no disagree negative
+🙂‍↕️	yes agree affirm
+🤔	think hmm wonder ponder
+🤖	ai bot machine android
+🤠	western yeehaw rodeo
+🤡	joker silly creepy circus
+🤤	hungry desire sleep saliva
+
+# --- Batch 2: activities ---
+🧨	explosion bang celebration
+♟️	game strategy piece
+⛸️	skating winter rink
+🀄	tile asian game
+🎀	bow gift decoration
+🎄	xmas pine holiday
+🎇	firework spark celebration
+🎊	celebration party explode
+🎋	bamboo wish japanese
+🎎	festival hina culture
+🎐	bell breeze peaceful
+🎖️	award honor service
+🎗️	awareness cause cancer
+🎟️	entry event pair
+🎫	admission concert pass
+🎰	gamble vegas casino
+🎳	strike pins game
+🎴	hanafuda japanese deck
+🏉	ball oval sport
+🏏	bat ball wicket
+🏐	ball net beach
+🏑	stick ball turf
+🏒	puck stick rink
+🏓	table tennis paddle
+🏸	racket shuttlecock court
+🕹️	game arcade controller
+🖼️	art painting gallery
+🥅	score sport
+🥊	punch fight ring
+🥋	gi karate judo
+
+# --- Batch 3: food ---
+🌮	mexican shell tortilla
+🌯	mexican wrap roll
+🌰	nut autumn brown
+🌶️	spicy chili heat
+🌽	maize cob yellow
+🍄‍🟫	fungi cremini portobello
+🍅	fruit red sauce
+🍇	wine fruit purple
+🍈	fruit cantaloupe sweet
+🍉	fruit summer juicy
+🍋	citrus sour yellow
+🍋‍🟩	citrus sour green
+🍍	tropical fruit spiky
+🍎	fruit doctor crisp
+🍐	fruit green sweet
+🍑	fruit butt cute
+🍕	italian cheese slice
+🍖	drumstick chicken protein
+🍘	asian senbei snack
+🍙	onigiri japanese seaweed
+🍚	bowl asian grain
+🍛	indian japanese spice
+🍟	potato fast salty
+🍠	yam asian street
+🍡	mochi japanese skewer
+🍢	japanese fishcake skewer
+🍣	japanese raw nigiri
+🍥	narutomaki ramen kamaboko
+🍧	kakigori summer cold
+🍨	cold sundae sweet
+🍩	donut sweet hole
+🍪	biscuit chocolate sweet
+🍫	cocoa sweet candy
+🍭	candy stick sweet
+🍮	flan pudding caramel
+🍯	bee sweet sticky
+🍱	japanese lunch meal
+🍶	japanese alcohol rice
+🍷	alcohol red merlot
+🍽️	dining meal restaurant
+🍿	cinema movie snack
+🏺	vase greek pottery
+🥄	utensil cutlery scoop
+🥐	french pastry buttery
+🥑	guacamole green toast
+🥒	vegetable green pickle
+🥓	pork breakfast crispy
+🥔	vegetable spud root
+🥕	vegetable orange rabbit
+🥖	french loaf crusty
+🥗	healthy vegetables lettuce
+🥙	gyro pita kebab
+🥚	breakfast yolk shell
+🥛	dairy white drink
+🥜	nuts snack legume
+🥝	fruit green fuzzy
+🥞	breakfast syrup stack
+🧀	dairy yellow swiss
+
+# --- Batch 4: animals ---
+☘️	irish luck clover
+🌴	tropical beach island
+🌵	desert spiky succulent
+🌺	tropical hawaii flower
+🌻	yellow summer big
+🌼	daisy spring petal
+🌿	leaf plant green
+🍄	fungus toadstool red
+🏵️	ribbon award decoration
+🐀	rodent vermin pest
+🐂	cattle bull strong
+🐃	cattle asian farm
+🐆	cat spotted wild
+🐈‍⬛	cat halloween superstition
+🐉	mythical fire chinese
+🐊	reptile gator river
+🐍	serpent reptile slither
+🐏	male sheep horns
+🐐	mountain greatest cheese
+🐒	ape primate jungle
+🐓	chicken male crow
+🐔	hen poultry farm
+🐕‍🦺	assistance helper trained
+🐗	wild pig tusk
+🐘	trunk huge memory
+🐙	tentacle ocean cephalopod
+🐛	caterpillar insect creep
+🐜	insect colony tiny
+🐟	ocean swim scales
+🐠	reef colorful aquarium
+🐡	puffer poison spiky
+🐣	newborn easter egg
+🐤	cute yellow tweet
+🐦	fly tweet feather
+🐦‍⬛	crow raven dark
+🐦‍🔥	mythical fire rebirth
+🐧	antarctic tuxedo waddle
+🐨	australia eucalyptus marsupial
+🐫	bactrian desert hump
+🐭	rodent small cute
+🐮	moo cattle dairy
+🐯	cat jungle stripes
+🐲	mythical chinese cute
+🐴	equine mane stable
+🐵	ape primate cheeky
+🐷	pork oink cute
+🐸	amphibian green ribbit
+🐺	pack howl fierce
+🐻	grizzly forest cuddly
+🐻‍❄️	arctic white cold
+🐽	snout pork sniff
+🐿️	squirrel rodent small
+💮	cherry blossom japanese
+🕊️	peace bird wedding
+🕷️	arachnid web halloween
+🕸️	cobweb halloween silk
+🥀	dead sad dying
+🦀	crustacean ocean cancer
+🦁	king jungle mane
+🦂	arachnid sting venom
+🦄	mythical magical horn
+🦅	raptor freedom america
+🦆	quack pond bill
+🦇	halloween fly cave
+🦈	ocean fin teeth
+🦉	wise night hoot
+🦋	wings transform colorful
+🦌	buck antlers forest
+🦍	ape silverback africa
+🦎	reptile gecko climb
+🦏	horn africa charge
+🦐	seafood prawn small
+🦑	tentacle ocean ink
+
+# --- Batch 5: objects ---
+⌨️	typing computer keys
+⚒️	labor mining tools
+⚔️	battle war fight
+⚖️	justice law libra
+⚗️	chemistry distill flask
+⚙️	settings cog mechanic
+⚰️	death funeral burial
+⚱️	ashes cremation memorial
+⛏️	mine dig tool
+⛑️	hardhat safety emergency
+⛓️	bound shackle metal
+⛓️‍💥	freedom liberation snap
+✒️	write calligraphy pen
+🎙️	podcast record voice
+🎚️	audio mix volume
+🎛️	audio dj synth
+🎞️	cinema reel movie
+🎵	song melody tune
+🎷	jazz brass instrument
+🎺	brass horn jazz
+🎻	string strad classical
+🎼	sheet composition staff
+🏷️	tag price sticker
+👗	women clothing skirt
+👘	japanese robe traditional
+👛	wallet women coin
+👞	leather oxford formal
+💴	japan money cash
+💶	europe money cash
+💷	britain money cash
+💹	finance market japan
+📀	disc movie media
+📂	directory open browse
+📃	document paper note
+📇	contacts rolodex business
+📋	list checklist task
+📎	attach office document
+📏	measure length tool
+📐	geometry math draft
+📑	markers pages document
+📒	accounting book notebook
+📓	write journal pages
+📔	diary journal pretty
+📕	reading literature red
+📖	reading literature study
+📗	reading literature manual
+📘	reading literature manual
+📙	reading literature manual
+📟	beeper old retro
+📠	office old retro
+📤	sent mail upload
+📥	received mail download
+📨	mail letter arrive
+📩	mail send delivery
+📪	empty mail none
+📫	mail waiting new
+📮	mailbox letter post
+📯	mail announcement old
+📹	recording film shoot
+📽️	cinema movie reel
+📿	rosary religion meditation
+🔈	quiet sound audio
+🔌	power outlet socket
+🔖	save page reading
+🔗	url hyperlink chain
+🔦	torch light dark
+🔩	hardware fasten screw
+🔭	astronomy stars observe
+🕯️	flame wax light
+🕶️	shades cool summer
+🖇️	attach office documents
+🖊️	write ink ballpoint
+🖋️	write ink fancy
+🖌️	art paint stroke
+🖍️	kids color draw
+🖥️	pc monitor workstation
+🖨️	print office paper
+🖱️	click cursor pointer
+🖲️	input cursor old
+🗂️	organize files tabs
+🗃️	archive storage organize
+🗄️	storage office organize
+🗑️	trash garbage delete
+🗒️	write notes pad
+🗓️	schedule date plan
+🗜️	vise grip tool
+🗝️	vintage rusty antique
+🗞️	news vintage roll
+🗡️	blade weapon stab
+🗳️	vote election democracy
+🚪	entrance open close
+🛁	bath bathroom soak
+🛋️	sofa living relax
+🛍️	buy mall retail
+🛏️	sleep bedroom rest
+🛒	buy supermarket trolley
+🛠️	tools fix maintenance
+🛡️	defend protect armor
+🥁	rhythm beat percussion
+
+# --- Batch 6: people ---
+🧑‍🩰	ballet dance pirouette
+🧑‍🧑‍🧒	parents kid trio
+🧑‍🧑‍🧒‍🧒	parents kids quartet
+🧚‍♀️	magic wings female
+🧔‍♂️	bearded facial male
+🧎‍♂️‍➡️	kneel pray right
+🧑‍⚕️	doctor nurse medical
+🧑‍⚖️	court law gavel
+🧑‍✈️	fly aviation airline
+🧑‍🌾	agriculture rural crops
+🧑‍🍳	chef culinary kitchen
+🧑‍🎄	santa christmas neutral
+🧑‍🎓	graduate school university
+🧑‍🎤	vocalist artist mic
+🧑‍🎨	painter creative palette
+🧑‍🏫	educator school instructor
+🧑‍🏭	industrial blue-collar manufacturing
+🧑‍💻	developer coder programmer
+🧑‍💼	corporate suit business
+🧑‍🔧	repair tools garage
+🧑‍🔬	research lab experiment
+🧑‍🚀	space cosmos nasa
+🧑‍🚒	emergency hose rescue
+⛷️	snow slope alpine
+✍️	pen handwriting compose
+🏂	snow shred slope
+🏃‍♂️	jogger run male
+🏃‍♂️‍➡️	jogger run right
+🏄‍♂️	wave board male
+🏇	jockey derby horse
+🏊‍♂️	pool stroke male
+🏌️‍♂️	golf swing male
+👁️	see watch vision
+👌	perfect approve good
+👐	hug welcome embrace
+👨‍🦯‍➡️	blind cane walking
+👨‍⚕️	doctor nurse male
+👨‍⚖️	court law male
+👨‍✈️	fly aviation male
+👨‍🌾	agriculture rural male
+👨‍🏭	industrial male manufacturing
+👨‍👦	father son dad
+👨‍👦‍👦	father sons dad
+👨‍👧	father daughter dad
+👨‍👧‍👦	father kids dad
+👨‍👧‍👧	father daughters dad
+👨‍👩‍👦	parents son household
+👨‍👩‍👦‍👦	parents sons household
+👨‍👩‍👧	parents daughter household
+👨‍👩‍👧‍👦	parents kids household
+👨‍👩‍👧‍👧	parents daughters household
+👨‍🔧	repair tools male
+👨‍🚒	emergency hose male
+👩‍❤️‍👨	love romance straight
+👩‍🍼	mother nurse infant
+👩‍👦	mother son mom
+👩‍👦‍👦	mother sons mom
+👩‍👧	mother daughter mom
+👩‍👧‍👦	mother kids mom
+👩‍👧‍👧	mother daughters mom
+👮‍♂️	cop law male
+👯‍♀️	dance bunny party
+👯‍♂️	dance bunny party
+👰‍♀️	bride wedding marriage
+👱‍♂️	blonde male hair
+👳‍♂️	sikh muslim cultural
+👷‍♂️	builder hardhat male
+👼	cherub heaven cute
+💁‍♂️	information sass male
+💂	soldier sentry royal
+💂‍♂️	soldier sentry male
+💆‍♂️	spa relax male
+💇‍♂️	barber salon male
+💑	love romance pair
+🕵️	investigator spy mystery
+🖐️	halt high palm
+🗣️	talking voice say
+🙅‍♂️	reject deny male
+🙆‍♂️	approve agree male
+🙇‍♂️	respect apology male
+🙋‍♂️	volunteer ask male
+🙍‍♂️	sad upset male
+🙎‍♂️	grumpy sulk male
+🚣‍♂️	row boat male
+🚴‍♂️	cycle bike male
+🚵‍♂️	cycle trail male
+🚶‍♂️	stroll walk male
+🚶‍♂️‍➡️	stroll walk right
+🤙	shaka hawaii hang
+🤚	halt stop palm
+🤦‍♂️	frustrated disbelief male
+🤰	pregnancy mother expecting
+🤳	photo phone narcissism
+🤵‍♂️	groom formal male
+🤷‍♂️	idk dunno male
+🤸‍♂️	gymnastics flip male
+🤹‍♂️	circus skill male
+🤼‍♂️	grapple fight male
+🤽‍♂️	pool sport male
+🤾‍♂️	court sport male
+
+# --- Batch 7: symbols ---
+©️	legal mark intellectual
+®️	legal trademark mark
+⏏️	remove disc media
+⏭️	skip forward media
+⏮️	skip back media
+⏯️	toggle media transport
+⏸️	stop media transport
+⏹️	halt media transport
+⏺️	capture media transport
+▪️	tiny dark dot
+▫️	tiny light dot
+◻️	light box block
+◼️	dark box block
+☢️	nuclear danger waste
+☣️	toxic dangerous warning
+☦️	christian eastern religion
+☪️	islam muslim religion
+☮️	hippie love sign
+☯️	balance taoist duality
+☸️	buddhism dharma religion
+♀️	woman gender venus
+♂️	man gender mars
+♈	zodiac ram march
+♉	zodiac bull april
+♊	zodiac twins may
+♋	zodiac crab june
+♌	zodiac lion july
+♍	zodiac virgin august
+♎	zodiac scales september
+♐	zodiac archer november
+♑	zodiac goat december
+♒	zodiac water january
+♓	zodiac fish february
+♾️	forever endless loop
+⚕️	caduceus health doctor
+⚛️	physics nucleus science
+⚜️	french royal lily
+⚧️	trans pride lgbt
+⚪	light dot bullet
+⚫	dark dot bullet
+⛎	zodiac serpent thirteenth
+✝️	christian religion church
+✡️	judaism jewish religion
+❇️	glitter shiny decoration
+➡️	east forward direction
+➰	ribbon swirl curl
+➿	ribbon swirl complex
+⬅️	west back direction
+⬆️	north top direction
+⬇️	south bottom direction
+⬛	dark box big
+⬜	light box big
+〰️	squiggle line japanese
+〽️	repeat japanese music
+🏧	cash bank withdraw
+💱	forex foreign money
+💲	cash money usd
+📛	label tag identify
+📳	silent buzz phone
+📵	forbidden cellphone restriction
+🔃	refresh reload sync
+🔘	option select round
+🔙	return previous direction
+🔚	finish stop direction
+🔛	activate enable direction
+🔜	upcoming future direction
+🔝	up best direction
+🔣	punctuation special characters
+🔰	newbie shoshinsha learner
+🔱	poseidon weapon fork
+🔲	dark frame button
+🔳	light frame button
+🔴	dot warning point
+🔶	gem shape orange
+🔷	gem shape blue
+🔸	gem shape tiny orange
+🔹	gem shape tiny blue
+🕉️	hindu sacred chant
+🕎	hanukkah jewish lights
+🚭	forbidden cigarette restriction
+🚰	drinking faucet tap
+🚳	forbidden bike restriction
+🚷	forbidden walk restriction
+🚸	school caution warning
+🚹	bathroom male toilet
+🚺	bathroom female toilet
+🚼	infant nursery changing
+🛂	border immigration airport
+🛃	border declaration airport
+🛅	storage baggage airport
+🛐	church temple religion
+#️⃣	hash pound hashtag
+🅰️	letter blood type
+🆎	letters blood type
+🅱️	letter blood type
+🆑	clearing cyrillic
+🆒	cool cyrillic
+🆓	no charge gratis
+🆔	identify card identity
+Ⓜ️	metro letter
+🆖	no good fail
+🆙	upgrade ascend levelup
+🆚	versus compete fight
+🈹	sale waribiki
+🈴	pass goukaku
+🈺	open eigyou
+🈯	reserved shitei
+🈷️	monthly getsugaku
+🈶	paid yuuryou
+🈵	full manshitsu
+🈚	free muryou
+🈸	apply shinsei
+㊗️	congrats iwai
+🈲	forbidden kinshi
+㊙️	confidential himitsu
+🈳	empty kuuseki
+
+# --- Batch 8: travel ---
+⏱️	race timer chronograph
+⏲️	countdown alarm cooking
+☁️	sky overcast nebula
+☄️	meteor space tail
+⛈️	storm thunder downpour
+⛩️	torii japan religion
+⛪	christian cross worship
+⛰️	peak rocky climb
+⛱️	beach parasol vacation
+⛲	water plaza park
+⛴️	boat passenger crossing
+⭐	favorite night shine
+🌃	evening sky urban
+🌄	morning dawn peak
+🌅	morning dawn horizon
+🌈	colors pride lgbt
+🌉	infrastructure dark span
+🌋	eruption lava magma
+🌌	galaxy stars space
+🌑	dark phase invisible
+🌒	growing phase sliver
+🌓	half phase growing
+🌔	growing phase almost
+🌕	bright phase round
+🌖	shrinking phase gibbous
+🌗	half phase shrinking
+🌘	shrinking phase sliver
+🌚	cute dark mischief
+🌛	cute half growing
+🌜	cute half shrinking
+🌝	cute bright round
+🌡️	temperature hot fever
+🌤️	partly cloudy bright
+🌥️	mostly cloudy dim
+🌦️	showers sunshower passing
+🌧️	rainy showers wet
+🌨️	snowy winter cold
+🌩️	thunderbolt strike storm
+🌪️	twister whirlwind storm
+🌫️	mist haze visibility
+🌬️	blowing breeze gust
+🎠	fair amusement merry-go-round
+🎡	fair amusement giant
+🎢	ride amusement thrill
+🎪	carnival big-top performance
+🏍️	bike ride moto
+🏎️	formula speed race
+🏔️	alpine peak frozen
+🏕️	outdoors tent nature
+🏖️	vacation sand sea
+🏗️	site development crane
+🏘️	neighborhood suburb residential
+🏙️	urban skyline downtown
+🏚️	abandoned ruined empty
+🏛️	museum government greek
+🏜️	sand dune arid
+🏝️	tropical castaway alone
+🏞️	wilderness reserve nature
+🏟️	arena sports venue
+🏠	home residence dwelling
+🏡	home suburb cozy
+🏢	corporate workplace tower
+🏣	mail japan postal
+🏥	medical clinic emergency
+🏦	finance vault deposit
+🏨	accommodation lodging stay
+🏩	romance japan affair
+🏪	konbini 7eleven shop
+🏫	education classroom student
+🏬	mall shopping retail
+🏭	industrial smokestack plant
+🏯	shogun feudal pagoda
+💈	haircut salon striped
+💺	chair airplane reserved
+🕋	mecca islam pilgrimage
+🕌	islam worship muslim
+🕍	judaism worship jewish
+🕰️	vintage antique fancy
+🗺️	atlas geography globe
+🗻	japan iconic peak
+🗼	japan landmark eiffel
+🗽	america nyc landmark
+🗾	archipelago islands country
+🚁	chopper aircraft hover
+🚃	carriage train wagon
+🚇	subway underground tube
+🚈	tram urban transit
+🚉	terminal stop platform
+🚊	streetcar trolley urban
+🚌	coach transit public
+🚍	coach approaching public
+🚎	electric tram urban
+🚐	van shuttle small
+🚑	emergency medical hospital
+🚒	emergency truck firefighter
+🚓	cop emergency cruiser
+🚔	cop approaching cruiser
+🚕	cab fare yellow
+🚖	cab approaching yellow
+🚘	car approaching front
+🚚	shipping cargo van
+🚛	semi truck cargo
+🚜	farm agriculture rural
+🚝	elevated train futuristic
+🚞	scenic alpine train
+🚟	cable hanging transit
+🚠	gondola cable lift
+🚡	cable car skiing
+🚢	vessel ocean cargo
+🚥	signal stoplight intersection
+🛎️	hotel reception service
+🛑	halt octagon traffic
+🛢️	barrel petroleum fuel
+🛣️	highway interstate road
+🛤️	tracks rails crossing
+🛥️	speedboat watercraft engine
+🛩️	propeller private aviation
+🛰️	orbit space communications
+🛳️	cruise liner ocean
+🛴	push roller urban
+🛵	vespa moped urban
+🛶	kayak paddle river
+
+# --- Batch 9: flags (country flags via ISO + region) ---
+🇦🇨	ac africa country
+🇦🇩	ad europe country
+🇦🇪	ae asia country
+🇦🇫	af asia country
+🇦🇬	ag americas country
+🇦🇮	ai americas country
+🇦🇱	al europe country
+🇦🇲	am asia country
+🇦🇴	ao africa country
+🇦🇶	aq antarctica country
+🇦🇷	ar americas country
+🇦🇸	as oceania country
+🇦🇹	at europe country
+🇦🇺	au oceania country
+🇦🇼	aw americas country
+🇦🇽	ax europe country
+🇦🇿	az asia country
+🇧🇦	ba europe country
+🇧🇧	bb americas country
+🇧🇩	bd asia country
+🇧🇪	be europe country
+🇧🇫	bf africa country
+🇧🇬	bg europe country
+🇧🇭	bh asia country
+🇧🇮	bi africa country
+🇧🇯	bj africa country
+🇧🇱	bl americas country
+🇧🇲	bm americas country
+🇧🇳	bn asia country
+🇧🇴	bo americas country
+🇧🇶	bq americas country
+🇧🇷	br americas country
+🇧🇸	bs americas country
+🇧🇹	bt asia country
+🇧🇻	bv antarctica country
+🇧🇼	bw africa country
+🇧🇾	by europe country
+🇧🇿	bz americas country
+🇨🇦	ca americas country
+🇨🇨	cc oceania country
+🇨🇩	cd africa country
+🇨🇫	cf africa country
+🇨🇬	cg africa country
+🇨🇭	ch europe country
+🇨🇮	ci africa country
+🇨🇰	ck oceania country
+🇨🇱	cl americas country
+🇨🇲	cm africa country
+🇨🇳	cn asia country
+🇨🇴	co americas country
+🇨🇵	cp oceania country
+🇨🇶	cq europe country
+🇨🇷	cr americas country
+🇨🇺	cu americas country
+🇨🇻	cv africa country
+🇨🇼	cw americas country
+🇨🇽	cx oceania country
+🇨🇾	cy asia country
+🇨🇿	cz europe country
+🇩🇪	de europe country
+🇩🇬	dg africa country
+🇩🇯	dj africa country
+🇩🇰	dk europe country
+🇩🇲	dm americas country
+🇩🇴	do americas country
+🇩🇿	dz africa country
+🇪🇦	ea africa country
+🇪🇨	ec americas country
+🇪🇪	ee europe country
+🇪🇬	eg africa country
+🇪🇭	eh africa country
+🇪🇷	er africa country
+🇪🇸	es europe country
+🇪🇹	et africa country
+🇪🇺	eu europe country
+🇫🇮	fi europe country
+🇫🇯	fj oceania country
+🇫🇰	fk americas country
+🇫🇲	fm oceania country
+🇫🇴	fo europe country
+🇫🇷	fr europe country
+🇬🇦	ga africa country
+🇬🇧	gb europe country
+🇬🇩	gd americas country
+🇬🇪	ge asia country
+🇬🇫	gf americas country
+🇬🇬	gg europe country
+🇬🇭	gh africa country
+🇬🇮	gi europe country
+🇬🇱	gl americas country
+🇬🇲	gm africa country
+🇬🇳	gn africa country
+🇬🇵	gp americas country
+🇬🇶	gq africa country
+🇬🇷	gr europe country
+🇬🇸	gs antarctica country
+🇬🇹	gt americas country
+🇬🇺	gu oceania country
+🇬🇼	gw africa country
+🇬🇾	gy americas country
+🇭🇰	hk asia country
+🇭🇲	hm antarctica country
+🇭🇳	hn americas country
+🇭🇷	hr europe country
+🇭🇹	ht americas country
+🇭🇺	hu europe country
+🇮🇨	ic africa country
+🇮🇩	id asia country
+🇮🇪	ie europe country
+🇮🇱	il asia country
+🇮🇲	im europe country
+🇮🇳	in asia country
+🇮🇴	io africa country
+🇮🇶	iq asia country
+🇮🇷	ir asia country
+🇮🇸	is europe country
+🇮🇹	it europe country
+🇯🇪	je europe country
+🇯🇲	jm americas country
+🇯🇴	jo asia country
+🇯🇵	jp asia country
+🇰🇪	ke africa country
+🇰🇬	kg asia country
+🇰🇭	kh asia country
+🇰🇮	ki oceania country
+🇰🇲	km africa country
+🇰🇳	kn americas country
+🇰🇵	kp asia country
+🇰🇷	kr asia country
+🇰🇼	kw asia country
+🇰🇾	ky americas country
+🇰🇿	kz asia country
+🇱🇦	la asia country
+🇱🇧	lb asia country
+🇱🇨	lc americas country
+🇱🇮	li europe country
+🇱🇰	lk asia country
+🇱🇷	lr africa country
+🇱🇸	ls africa country
+🇱🇹	lt europe country
+🇱🇺	lu europe country
+🇱🇻	lv europe country
+🇱🇾	ly africa country
+🇲🇦	ma africa country
+🇲🇨	mc europe country
+🇲🇩	md europe country
+🇲🇪	me europe country
+🇲🇫	mf americas country
+🇲🇬	mg africa country
+🇲🇭	mh oceania country
+🇲🇰	mk europe country
+🇲🇱	ml africa country
+🇲🇲	mm asia country
+🇲🇳	mn asia country
+🇲🇴	mo asia country
+🇲🇵	mp oceania country
+🇲🇶	mq americas country
+🇲🇷	mr africa country
+🇲🇸	ms americas country
+🇲🇹	mt europe country
+🇲🇺	mu africa country
+🇲🇻	mv asia country
+🇲🇼	mw africa country
+🇲🇽	mx americas country
+🇲🇾	my asia country
+🇲🇿	mz africa country
+🇳🇦	na africa country
+🇳🇨	nc oceania country
+🇳🇪	ne africa country
+🇳🇫	nf oceania country
+🇳🇬	ng africa country
+🇳🇮	ni americas country
+🇳🇱	nl europe country
+🇳🇴	no europe country
+🇳🇵	np asia country
+🇳🇷	nr oceania country
+🇳🇺	nu oceania country
+🇳🇿	nz oceania country
+🇴🇲	om asia country
+🇵🇦	pa americas country
+🇵🇪	pe americas country
+🇵🇫	pf oceania country
+🇵🇬	pg oceania country
+🇵🇭	ph asia country
+🇵🇰	pk asia country
+🇵🇱	pl europe country
+🇵🇲	pm americas country
+🇵🇳	pn oceania country
+🇵🇷	pr americas country
+🇵🇸	ps asia country
+🇵🇹	pt europe country
+🇵🇼	pw oceania country
+🇵🇾	py americas country
+🇶🇦	qa asia country
+🇷🇪	re africa country
+🇷🇴	ro europe country
+🇷🇸	rs europe country
+🇷🇺	ru europe country
+🇷🇼	rw africa country
+🇸🇦	sa asia country
+🇸🇧	sb oceania country
+🇸🇨	sc africa country
+🇸🇩	sd africa country
+🇸🇪	se europe country
+🇸🇬	sg asia country
+🇸🇭	sh africa country
+🇸🇮	si europe country
+🇸🇯	sj europe country
+🇸🇰	sk europe country
+🇸🇱	sl africa country
+🇸🇲	sm europe country
+🇸🇳	sn africa country
+🇸🇴	so africa country
+🇸🇷	sr americas country
+🇸🇸	ss africa country
+🇸🇹	st africa country
+🇸🇻	sv americas country
+🇸🇽	sx americas country
+🇸🇾	sy asia country
+🇸🇿	sz africa country
+🇹🇦	ta africa country
+🇹🇨	tc americas country
+🇹🇩	td africa country
+🇹🇫	tf africa country
+🇹🇬	tg africa country
+🇹🇭	th asia country
+🇹🇯	tj asia country
+🇹🇰	tk oceania country
+🇹🇱	tl asia country
+🇹🇲	tm asia country
+🇹🇳	tn africa country
+🇹🇴	to oceania country
+🇹🇷	tr asia country
+🇹🇹	tt americas country
+🇹🇻	tv oceania country
+🇹🇼	tw asia country
+🇹🇿	tz africa country
+🇺🇦	ua europe country
+🇺🇬	ug africa country
+🇺🇲	um oceania country
+🇺🇳	un global country
+🇺🇸	us americas country
+🇺🇾	uy americas country
+🇺🇿	uz asia country
+🇻🇦	va europe country
+🇻🇨	vc americas country
+🇻🇪	ve americas country
+🇻🇬	vg americas country
+🇻🇮	vi americas country
+🇻🇳	vn asia country
+🇻🇺	vu oceania country
+🇼🇫	wf oceania country
+🇼🇸	ws oceania country
+🇽🇰	xk europe country
+🇾🇪	ye asia country
+🇾🇹	yt africa country
+🇿🇦	za africa country
+🇿🇲	zm africa country
+🇿🇼	zw africa country
+
+# --- Batch 9 cont: special non-ISO flags ---
+🎌	japan celebration banners
+🏳️	surrender peace truce
+🏳️‍⚧️	trans pride lgbt
+🏴	pirate anarchy mourning
+🏴‍☠️	pirate skull crossbones
+🏴󠁧󠁢󠁥󠁮󠁧󠁿	england britain stgeorge
+🏴󠁧󠁢󠁳󠁣󠁴󠁿	scotland britain saltire
+🏴󠁧󠁢󠁷󠁬󠁳󠁿	wales britain dragon
+
+# --- Refinement: alert/warning/emergency emojis (audit pass) ---
+⚠️	caution hazard attention
+🚨	alarm urgent flashing
+🚧	barrier roadwork blocked
+❗	important attention urgent
+❓	help wonder confused
+🚸	school zone slow
+🛑	octagonal red halt
+🆘	help distress mayday
+🔔	alert ring chime
+📢	announce broadcast loud
+📣	shout cheer rally
+🚑	medical paramedic rescue
+🚒	firefighter rescue red
+🚓	cop police siren
+🆗	approved fine ok
+✅	done check approved
+❌	wrong incorrect cancel
+
+# --- Refinement: ordinal medals (first/second/third) ---
+🥇	first winner champion
+🥈	second runner-up
+🥉	third
+
+# --- Enrichment pass 2026-08-01: chunks 000, 001, 002, 003, 004, 005 ---
+😀	sonrisa feliz alegre contento cheerful
+😃	sonrisota emocionado entusiasmado excited alegría alegria
+😄	felicidad risueño risueno encantado delighted jeje
+😁	dientes teeth radiante sonriente jiji
+😆	carcajada risa jaja risotada xd
+😅	sudor nervioso awkward gotita apenado
+🤣	muerto-de-risa jajaja lmao chistoso carcajada
+😂	llorar-de-risa lágrimas lagrimas hilarante gracioso risa
+🙂	pasivo-agresivo sarcasmo tranquilo educado leve
+🙃	ironía ironia sarcasmo volteado de-cabeza silly
+🫠	derretido calor pena bochorno heat
+😉	guiño guino coqueteo complicidad ojo cheeky
+😊	sonrojo tierno amable gracias sweet
+😇	santo aureola inocencia bendición bendicion saint
+🥰	enamorado cariño carino corazones adorar ternura
+😍	me-encanta me-gusta flechado adoración adoracion amor
+🤩	estrellas wow fan impresionado deslumbrado
+😘	beso besito muack mua lanzar-beso
+😗	beso silbar piquito boquita smooch
+☺️	calma sereno agradable simpático simpatico bienestar
+😚	beso ojos-cerrados mimos cariñoso carinoso dulce
+😙	beso piquito silbido dulzura mua
+🥲	lágrima lagrima emotivo nostalgia conmovido bittersweet orgullo
+😋	delicioso sabroso rico antojo tasty
+😛	lengua burla travieso bleh playful
+😜	lengua guiño guino broma juguetón jugueton bromista
+🤪	loco chiflado alocado goofy crazy
+😝	lengua mofa burlón burlon cotorreo bromear
+🤑	dinero billete lana varo codicia
+🤗	abrazo abrazote consuelo bienvenida apapacho
+🤭	risita chisme oops giggle secreto
+🫢	sorpresa asombro gasp ay impacto
+🫣	espiar asomarse miedo vergüenza verguenza cringe
+🤫	silencio callar shh quiet cállate callate
+🤔	pensar duda reflexión reflexion mmm barbilla
+🫡	saludo militar respeto sí-señor si-senor entendido
+🤐	cierre sellado boca-cerrada discreto secreto
+🤨	ceja sospecha escéptico esceptico desconfianza suspicious
+😐	indiferente poker-face incómodo incomodo apático apatico plano
+😑	neutro serio aburrido deadpan sin-emoción sin-emocion
+😶	callado mudo speechless sin-palabras quieto
+🫥	invisible desaparecer ausente ignorado punteado
+😶‍🌫️	niebla despistado perdido confundido mente-en-blanco
+😏	picardía picardia coqueto presumido malicia sonrisa-ladeada
+😒	fastidio molesto annoyed hastío hastio desaprobación desaprobacion
+🙄	ojos-en-blanco exasperación exasperacion desprecio obvio hartazgo
+😬	mueca dientes nervios tensión tension ups
+😮‍💨	suspiro desahogo soplar uf respirar
+🤥	mentira pinocho nariz falso engaño engano
+🫨	temblor sacudida vibrar susto terremoto
+🙂‍↔️	negar nel nope rechazo desacuerdo
+🙂‍↕️	asentir sí si claro nod aprobación aprobacion simón simon
+😌	alivio paz tranquilidad satisfecho zen
+😔	triste decepción decepcion melancolía melancolia cabizbajo down
+😪	sueño sueno cansado desvelado bostezo drowsy
+🤤	baba babear hambre gula ansia
+😴	dormir siesta descanso nap roncar
+🫩	ojeras cansancio desvelo agotado insomnio tired
+😷	cubrebocas tapabocas enfermo gripa covid contagio
+🤒	fiebre calentura temperatura enfermo fever
+🤕	vendaje herido golpe accidente injured
+🤢	asco guácala guacala mareado queasy repugnante
+🤮	puke barf asco guacarear náusea nausea throw-up
+🤧	gripa estornudo resfriado alergia flu tissue
+🥵	calor sudor bochorno sofocado overheated
+🥶	frío frio congelado helado freezing tiritando
+🥴	borracho mareado drunk tipsy crudo
+😵	noqueado desmayado muerto ko fainted
+😵‍💫	mareado aturdido confundido woozy vueltas
+🤯	mindblown cabeza asombro boom increíble increible
+🤠	vaquero sombrero norteño norteno charro country
+🥳	fiesta pachanga cumpleaños cumpleanos confeti birthday
+🥸	disfraz bigote incógnito incognito lentes undercover
+😎	lentes chido gafas swag relajado
+🤓	ñoño nono estudioso lentes friki bookworm
+🧐	monóculo monoculo sospecha detective curioso suspicious
+😕	duda confundido indeciso no-entiendo huh
+🫤	meh mueca incómodo incomodo awkward ni-modo
+😟	preocupado angustia inquieto concerned ansiedad
+🙁	triste ceño ceno descontento desanimado bummed
+☹️	triste ceño ceno amargado bajón bajon gloomy
+😮	asombro boquiabierto sorpresa omg oh
+😯	silencio callado shh mudo quiet
+😲	asombrado boquiabierto impactado increíble increible wow
+😳	sonrojado pena rubor vergüenza verguenza awkward
+🫪	deformado glitch cursed raro warped
+🥺	porfa ojitos súplica suplica please puppy-eyes
+🥹	emocionado conmovido lágrimas lagrimas orgullo touched
+😦	asombro preocupado ceño ceno boquiabierto whoa
+😧	angustia pánico panico horror sufrimiento distress
+😨	miedo susto temor terror frightened
+😰	ansiedad sudor estrés estres angustia panic
+😥	alivio triste suspiro resignado sigh
+😢	llorar llanto lágrima lagrima triste weep
+😭	llorar chillar berrinche sollozo tears
+😱	grito pánico panico susto miedo scared
+😖	dolor frustración frustracion agobiado harto overwhelmed
+😣	aguantar esfuerzo soportar dolor enduring
+😞	decepción decepcion desilusión desilusion cabizbajo bajón bajon letdown
+😓	sudor derrotado abatido esfuerzo defeated
+😩	cansado harto fastidio agobio fed-up
+😫	cansado agotado fatiga desvelado exhausted
+🥱	bostezo sueño sueno aburrido flojera sleepy
+😤	enojo bufido frustrado determinado huff
+😡	enojado furia coraje rojo mad
+😠	enojado enfadado irritado ceño ceno grumpy
+🤬	groserías groserias palabrotas censura insultos cursing
+😈	diablo travieso pícaro picaro maldad naughty
+👿	diablo demonio furioso cuernos wicked
+💀	calavera muerte muerto-de-risa catrina cringe
+☠️	calavera veneno pirata tóxico toxico hazard
+💩	caca popó popo mierda excremento turd
+🤡	payaso bufón bufon ridículo ridiculo circo prank
+👹	oni demonio máscara mascara colmillos fangs
+👺	tengu duende máscara mascara nariz-larga folklore
+👻	fantasma espíritu espiritu susto boo ghosting
+👽	extraterrestre marciano ovni espacio et
+👾	marcianito videojuego arcade pixel 8bit
+🤖	autómata automata máquina maquina chatbot mecánico mecanico ia
+😺	gato michi felino sonrisa kitty
+😸	gato michi felino sonrisa gatito contento
+😹	gato risa carcajada michi lol gracioso
+😻	gato enamorado michi amor flechado encanta
+😼	gato michi travieso picardía picardia sonrisita malicioso
+😽	gato michi besito muack cariño carino labios
+🙀	gato michi susto asustado sorpresa grito
+😿	gato michi llorando triste lágrima lagrima pena
+😾	gato michi enojado molesto berrinche gruñón grunon
+🙈	mono chango vergüenza verguenza pena tapar-ojos oops
+🙉	mono chango oídos oidos sordo ignorar tapar-oídos tapar-oidos
+🙊	mono chango boca callar secreto shh
+💌	carta sobre amor mensaje romántico romantico enamorada
+💘	flecha corazón corazon flechazo amor enamorarse san-valentín san-valentin
+💝	corazón corazon regalo moño mono listón liston caja san-valentín san-valentin
+💖	corazón corazon brillante destellos amor ilusión ilusion resplandor
+💗	corazón corazon latido creciendo emoción emocion amor cariño carino
+💓	corazón corazon latir pulso enamorado nervios amor
+💞	corazones amor pareja girando enamorados dos
+💕	corazones pareja novios amor cariño carino
+💟	corazón corazon morado cuadrito amor adorno
+❣️	corazón corazon admiración admiracion signo amor énfasis enfasis puntuación puntuacion
+💔	corazón corazon roto desamor tristeza dolido partido
+❤️‍🔥	corazón corazon fuego llamas ardiente amor deseo
+❤️‍🩹	corazón corazon curita vendaje sanando ánimo animo mejórate mejorate
+❤️	corazón corazon rojo amor cariño carino te-quiero like
+🩷	corazón corazon rosa rosado amor ternura dulce
+🧡	corazón corazon naranja amor amistad cálido calido otoño otono
+💛	corazón corazon amarillo amistad sol alegría alegria
+💚	corazón corazon verde ecología ecologia planta celos amor
+💙	corazón corazon azul amistad lealtad mar
+🩵	corazón corazon celeste cielo azul-claro turquesa amor
+💜	corazón corazon morado violeta lila amor
+🤎	corazón corazon café cafe marrón marron chocolate tierra amor
+🖤	corazón corazon negro luto oscuro amor
+🩶	corazón corazon gris plata neutral ceniza amor
+🤍	corazón corazon blanco pureza boda paz amor
+💋	beso labios labial muack boca
+💯	cien calificación calificacion excelente aprobado total
+💢	enojo coraje vena molesto furia berrinche
+🫯	pelea nube golpes bronca riña rina brawl
+💥	explosión explosion choque bang estallido impacto pum
+💫	mareado estrella chispa vueltas destello
+💦	sudor gotas agua salpicar ejercicio
+💨	humo viento correr rápido rapido huir escapar
+🕳️	hoyo agujero hueco pozo caer
+💬	mensaje chat globo hablar plática platica sms
+👁️‍🗨️	ojo globo testigo mirar vigilar
+🗨️	globo mensaje bocadillo izquierda comentario
+🗯️	globo enojo gritar coraje regaño regano
+💭	pensamiento nube idea imaginar globo soñar sonar
+💤	dormir sueño sueno ronquido siesta cansado
+👋	adiós adios hola saludo mano despedida
+🤚	mano dorso alto espera nudillos
+🖐️	mano cinco dedos abierta saludo
+✋	mano alto palma permiso participar
+🖖	mano saludo startrek dedos larga-vida
+🫱	mano derecha ofrecer apretón apreton dar
+🫲	mano izquierda ofrecer apretón apreton recibir
+🫳	mano abajo bajar calma acariciar
+🫴	mano arriba ofrecer dame pedir sostener
+🫷	empujar detente izquierda stop palma
+🫸	empujar detente derecha stop palma
+👌	okey correcto vale de-acuerdo listo
+🤌	italiano mano gesto chef-kiss pellizco
+🤏	poquito tantito pequeño pequeno tiny small
+✌️	paz dos deuces hippie ganar
+🤞	suerte ojalá ojala deseo espero superstición supersticion
+🫰	corazón-coreano corazon-coreano finger-heart kpop amor dinero
+🤟	ily te-quiero señas senas asl cariño carino
+🤘	rock cuernos rocanrol concierto heavy
+🤙	llámame llamame teléfono telefono surf aloha marcar
+👈	izquierda señalar senalar dedo apuntar
+👉	derecha señalar senalar dedo apuntar
+👆	arriba señalar senalar dedo above apuntar
+🖕	mentada grosería groseria insulto flip-off rude
+👇	abajo señalar senalar dedo below apuntar
+☝️	arriba uno dedo atención atencion señalar senalar
+🫵	tú tu you acusar señalar senalar dedo
+👍	pulgar like me-gusta dale va
+👎	pulgar dislike no-me-gusta rechazar malo
+✊	puño puno lucha resistencia fuerza solidaridad
+👊	puño puno chócalas chocalas fist-bump golpe saludo
+🤛	puño puno izquierda choque bump golpe
+🤜	puño puno derecha choque bump golpe
+👏	aplausos palmas bravo felicidades ovación ovacion
+🙌	manos-arriba celebrar alabanza yay festejo
+🫶	corazón corazon amor cariño carino love gracias
+👐	abrazo abierto recibir jazz-hands acoger
+🤲	dua rezar pedir súplica suplica ofrecer
+🤝	apretón apreton saludo acuerdo trato negocio
+🙏	gracias porfa orar namaste bendición bendicion
+✍️	escribir firmar nota lápiz lapiz redactar
+💅	uñas unas esmalte sass salón salon pintar
+🤳	autofoto celular cámara camara pose instagram
+💪	fuerza gimnasio gym brazo ánimo animo
+🦾	prótesis protesis brazo robot biónico bionico cyborg
+🦿	prótesis protesis pierna robot biónico bionico cyborg
+🦵	pierna patada rodilla muslo kick
+🦶	pie pisar talón talon descalzo huella
+👂	oreja oído oido escuchar audición audicion
+🦻	audífono audifono sordera oreja accesibilidad deaf
+👃	nariz olfato oler aroma respirar
+🧠	cerebro mente pensar inteligencia neuronas
+🫀	corazón corazon órgano organo cardio latido pulso
+🫁	pulmones respirar aire oxígeno oxigeno órgano organo
+🦷	diente muela dentista caries odontología odontologia
+🦴	hueso esqueleto perro fractura radiografía radiografia
+👀	ojos mirar chismear espiar atento
+👁️	ojo mirada pupila vigilar ver
+👅	lengua burla sabor lamer saborear
+👄	boca labios beso hablar sensual
+🫦	labio morder nervios coqueto sexy
+👶	bebé bebe pañal panal nene infante chiquito
+🧒	niño nino chamaco kid menor infantil
+👦	niño nino chamaco chavo muchacho varón varon
+👧	niña nina chamaca chava muchacha nena
+👨	hombre señor senor varón varon adulto masculino
+🧔‍♂️	barba hombre barbón barbon hipster vello
+👨‍🦰	pelirrojo cabello ginger hombre rojizo
+👨‍🦱	rizado rizos cabello chino hombre
+👨‍🦳	canoso canas señor senor grey elderly hombre
+👨‍🦲	calvo pelón pelon rapado hombre calvicie
+👱‍♂️	rubio güero guero hombre chavo
+👴	abuelo anciano viejito grandpa señor senor
+🙍‍♂️	triste desanimado ceño ceno disappointed bummed
+🙎‍♂️	puchero berrinche enojado mohín mohin huffy
+🙅‍♂️	nel prohibido nope cancelado negativa
+🙆‍♂️	correcto sale bien listo perfecto
+💁‍♂️	recepcionista obvio ayuda duh pues
+🙋‍♂️	presente yo pregunta participar aquí aqui
+🧏‍♂️	sordo señas senas lsm sign-language hombre
+🙇‍♂️	reverencia disculpa perdón perdon dogeza gracias
+🤦‍♂️	vergüenza-ajena verguenza-ajena cringe no-manches decepción decepcion exasperado
+🤷‍♂️	ni-idea quién-sabe quien-sabe whatever me-vale hombros
+🧑‍⚕️	médico medico enfermero bata hospital consulta
+👨‍⚕️	médico medico enfermero bata hospital hombre
+🧑‍🎓	estudiante egresado birrete titulación titulacion diploma
+👨‍🎓	estudiante egresado birrete universitario titulado
+🧑‍🏫	maestro profe docente pizarrón pizarron clase
+👨‍🏫	maestro profe docente pizarrón pizarron catedrático catedratico
+🧑‍⚖️	juez juzgado justicia magistrado toga
+👨‍⚖️	juez martillo justicia toga hombre
+🧑‍🌾	campesino agricultor granjero cosecha campo
+👨‍🌾	campesino agricultor granjero cosecha ranchero
+🧑‍🍳	cocinero gorro guisar restaurante comida
+👨‍🍳	cocinero gorro cocina restaurante guisar
+🧑‍🔧	mecánico mecanico llave taller refacciones mantenimiento
+👨‍🔧	mecánico mecanico llave taller garage refacciones
+🧑‍🏭	obrero fábrica fabrica maquila planta ensamble
+👨‍🏭	obrero fábrica fabrica maquila planta operario
+🧑‍💼	oficinista empleado ejecutivo traje chamba
+👨‍💼	oficinista empleado ejecutivo traje corbata
+🧑‍🔬	científico cientifico química quimica microscopio bata probeta
+👨‍🔬	científico cientifico laboratorio química quimica microscopio bata
+🧑‍💻	programador laptop código codigo dev informática informatica
+👨‍💻	programador laptop código codigo dev computadora
+🧑‍🎤	cantante cantar concierto karaoke música musica
+👨‍🎤	cantante micrófono microfono concierto karaoke música musica
+🧑‍🎨	pintor arte pincel cuadro dibujar
+👨‍🎨	pintor paleta pincel arte dibujar
+🧑‍✈️	piloto avión avion capitán capitan aeropuerto tripulación tripulacion
+👨‍✈️	piloto avión avion capitán capitan aerolínea aerolinea aeropuerto
+🧑‍🚀	astronauta cosmonauta cohete casco órbita orbita
+👨‍🚀	astronauta cohete nasa casco luna
+🧑‍🚒	bombero incendio fuego casco extintor
+👨‍🚒	bombero incendio fuego casco rescate
+👮	policía policia patrulla poli uniforme agente
+👮‍♂️	policía policia patrulla poli uniforme gorra
+🕵️	espía espia lupa sabueso incógnito incognito gabardina
+🕵️‍♂️	espía espia lupa investigador misterio pista
+💂	guardia británico britanico londres palacio uniforme
+💂‍♂️	guardia británico britanico londres palacio realeza
+🥷	sigilo shinobi katana japón japon encapuchado
+👷	albañil albanil obra casco chaleco maestro-de-obra
+👷‍♂️	albañil albanil obra casco chalán chalan chaleco
+🤴	príncipe principe realeza heredero monarquía monarquia corona
+👸	princesa realeza tiara monarquía monarquia corona
+👳‍♂️	turbante india hombre tocado sij
+🤵‍♂️	esmoquin novio boda elegante moño mono
+👰‍♀️	novia velo casarse vestido boda
+🤰	embarazada panza maternidad baby-bump embarazo
+🤱	amamantar lactancia bebé bebe nursing pecho
+👩‍🍼	mamá mama biberón biberon mamila bottle alimentar
+👼	angelito alitas halo wings inocencia
+🎅	navidad papá-noel papa-noel regalos xmas barba
+🤶	navidad christmas mamá-noel mama-noel gorro esposa
+🧑‍🎄	navidad noel nochebuena regalos xmas
+🦸	superhéroe superheroe héroe heroe capa poderes cómic comic
+🦸‍♂️	superhéroe superheroe capa poderes hombre cómic comic
+🦹	supervillano villano malvado antagonista evil capa
+🦹‍♂️	supervillano villano malo maldad hombre
+🧙	mago hechicero wizard varita sombrero
+🧙‍♂️	mago hechicero wizard brujo conjuro
+🧚	hada alas tinkerbell cuento polvo-mágico polvo-magico
+🧚‍♂️	hada alas mágico magico cuento duendecillo
+🧚‍♀️	hada alas madrina cuento fantasía fantasia
+🧛	vampiro drácula dracula colmillos fangs halloween
+🧛‍♂️	vampiro drácula dracula colmillos conde fangs
+🧛‍♀️	vampira colmillos drácula dracula mordida fangs
+🧜‍♀️	sirena cola-de-pez océano oceano ariel mar
+🧝	elfo duende fantasía fantasia orejas bosque
+🧝‍♂️	elfo duende fantasía fantasia orejas mágico magico
+🧝‍♀️	elfa duende fantasía fantasia orejas mágica magica
+🧞	genio lámpara lampara deseos aladino wish
+🧟	zombi muerto-viviente undead halloween apocalipsis
+🧟‍♂️	zombi undead muerto-viviente halloween cadáver cadaver
+🧟‍♀️	zombi undead muerta-viviente halloween terror
+🧌	trol ogro monstruo trolear criatura
+🫈	bigfoot sasquatch yeti peludo pie-grande
+💆‍♂️	masaje sobada consentido relajación relajacion wellness
+💇‍♂️	corte peluquería peluqueria tijeras cabello rapado
+🚶‍♂️	caminar peatón peaton andar paseo caminata
+🚶‍♂️‍➡️	caminar derecha peatón peaton avanzar adelante
+🧍‍♂️	parado de-pie quieto formado esperar idle
+🧎‍♂️	arrodillado rodillas rezar súplica suplica perdón perdon
+🧎‍♂️‍➡️	arrodillado rodillas súplica suplica derecha humildad
+👨‍🦯	bastón baston ciego invidente accesibilidad blind
+👨‍🦯‍➡️	bastón baston invidente ciego derecha accesibilidad
+👨‍🦼	silla-de-ruedas eléctrica electrica discapacidad movilidad accesibilidad
+👨‍🦼‍➡️	silla-de-ruedas eléctrica electrica discapacidad derecha movilidad
+👨‍🦽	silla-de-ruedas discapacidad movilidad accesibilidad ruedas
+👨‍🦽‍➡️	silla-de-ruedas discapacidad derecha movilidad accesibilidad
+🏃‍♂️	correr corredor carrera trotar prisa
+🏃‍♂️‍➡️	correr carrera prisa adelante huir
+🧑‍🩰	bailarín bailarin danza tutú tutu puntas escenario
+🕺	bailar baile fiesta disco travolta
+👯‍♂️	gemelos conejo orejas dueto antro
+👯‍♀️	gemelas conejo orejas amigas antro
+🧖‍♂️	sauna spa toalla baño-turco bano-turco vapor
+🧗‍♂️	escalar roca montaña montana alpinismo boulder
+🏇	caballo carrera hípica hipica galope montar
+⛷️	esquí esqui nieve invierno montaña montana bastones
+🏂	snowboard tabla nieve invierno montaña montana
+🏌️‍♂️	palo hoyo campo putt birdie
+🏄‍♂️	surf tabla ola playa surfista
+🚣‍♂️	remar remo bote canoa remero
+🏊‍♂️	nadar natación natacion alberca brazada crol
+⛹️‍♂️	botar balón balon dribble básquet basquet cancha
+🏋️‍♂️	pesas mancuerna fuerza entrenar buff
+🚴‍♂️	bici bicicleta ciclista pedalear rodada
+
+# --- Enrichment pass 2026-08-01: chunks 006, 007, 008, 009, 010, 011 ---
+🚵‍♂️	bici ciclista mtb montaña montana downhill
+🤸‍♂️	maroma voltereta acrobacia pirueta tumbling
+🤼‍♂️	lucha luchadores wwe forcejeo pelea
+🤽‍♂️	waterpolo alberca natación natacion nadador acuático acuatico
+🤾‍♂️	balonmano pelota lanzar throw jugador
+🤹‍♂️	malabares malabarista pelotas multitask destreza
+🧘‍♂️	yoga meditar zen calma mindfulness relajación relajacion
+👬	amigos pareja gay compas amistad
+💏	beso besar romance smooch cariño carino
+👩‍❤️‍💋‍👨	beso novios hetero pareja enamorados
+💑	pareja novios enamorados corazón corazon relación relacion
+👩‍❤️‍👨	pareja novios enamorados corazón corazon noviazgo
+👨‍👩‍👦	familia papás papas hijo nuclear varón varon
+👨‍👩‍👧	familia papás papas hija nena nuclear
+👨‍👩‍👧‍👦	familia papás papas parejita hermanos cuatro
+👨‍👩‍👦‍👦	familia papás papas gemelos hermanos varones
+👨‍👩‍👧‍👧	familia papás papas gemelas hermanas nenas
+👨‍👦	paternidad papá-soltero papa-soltero monoparental familia varón varon
+👨‍👦‍👦	paternidad hermanos gemelos monoparental familia
+👨‍👧	paternidad hija nena monoparental familia
+👨‍👧‍👦	paternidad parejita hermanos monoparental familia
+👨‍👧‍👧	paternidad hermanas gemelas monoparental familia
+👩‍👦	maternidad mamá mama hijo monoparental familia
+👩‍👦‍👦	maternidad mamá mama gemelos hermanos familia
+👩‍👧	maternidad mamá mama hija nena familia
+👩‍👧‍👦	maternidad mamá mama parejita hermanos familia
+👩‍👧‍👧	maternidad mamá mama gemelas hermanas familia
+🗣️	hablar anuncio vocero conversar comunicar
+👤	persona perfil avatar usuario anónimo anonimo
+👥	personas contactos grupo equipo comunidad
+👪	familia papás papas hijos hogar convivencia
+🧑‍🧑‍🧒	familia adultos hijo tutores neutral
+🧑‍🧑‍🧒‍🧒	familia adultos hijos hermanos cuatro
+🧑‍🧒	familia monoparental hijo tutor crianza
+🧑‍🧒‍🧒	familia monoparental hijos hermanos crianza
+👣	huellas pisadas pasos descalzo rastro
+🫆	huella dactilar biometría biometria identidad forense
+🐵	mono chango changuito travieso simio
+🐒	chango mono cola trepar selva
+🦍	gorila primate fuerte king-kong simio
+🦧	simio primate borneo pelirrojo mono
+🐶	perro perrito cachorro mascota lomito
+🐕	perro canino mascota lomito ladrar
+🦮	perro lazarillo ciego arnés arnes asistencia
+🐕‍🦺	perro chaleco apoyo terapia discapacidad
+🐩	caniche perro french esponjado pompón pompon
+🐺	lobo manada aullido salvaje luna
+🦊	zorro astuto listo naranja cola
+🦝	mapache antifaz basura trash-panda nocturno
+🐱	gato gatito michi minino miau
+🐈	gato felino michi mascota maullar
+🐈‍⬛	gato negro michi mala-suerte brujería brujeria
+🦁	león leon felino rugido safari leo
+🐯	tigre felino rayas rugido bengala
+🐅	tigre felino rayas salvaje depredador
+🐆	leopardo felino manchas pantera depredador
+🐴	caballo yegua potro relincho jinete
+🫎	alce astas cornamenta bosque canadá canada
+🫏	burro asno mula terco rebuzno
+🐎	caballo galope jinete equino hípica hipica
+🦄	unicornio fantasía fantasia arcoíris arcoiris caballo startup
+🦓	cebra rayas stripes sabana africa
+🦌	venado ciervo reno bambi navidad
+🦬	bisonte búfalo bufalo buffalo pradera manada
+🐮	vaca res leche granja mu
+🐂	buey toro arado yunta fuerza
+🐃	búfalo bufalo carabao cuernos bovino
+🐄	vaca res ganado lechera milk
+🐷	cerdo puerco marrano cochino rosa
+🐖	cerdo puerco marrano swine granja
+🐗	jabalí jabali colmillo caza bosque pumbaa
+🐽	nariz hocico cerdo trompa
+🐏	carnero borrego aries cuernos lana
+🐑	oveja borrega lana rebaño rebano wool
+🐐	cabra chivo chiva barba trepar
+🐪	camello joroba caravana sahara arena
+🐫	camello bactriano jorobas caravana desierto
+🦙	alpaca andes perú peru lana escupe
+🦒	jirafa cuello alto sabana manchas
+🐘	elefante trompa colmillos safari dumbo
+🦣	mamut prehistórico prehistorico extinto colmillos hielo
+🦏	rinoceronte rhino cuerno safari sabana
+🦛	hipopótamo hipopotamo hippo río rio africa
+🐭	ratón raton ratoncito queso mickey roedor
+🐁	ratón raton roedor ratoncito plaga
+🐀	rata roedor alcantarilla plaga soplón soplon
+🐹	roedor mascota rueda jaula cachetes
+🐰	conejo conejito orejas pascua zanahoria
+🐇	conejo liebre orejas saltar hare
+🐿️	ardilla bellota chip-dale alvin roedor
+🦫	castor presa dique roedor dam
+🦔	erizo púas puas espinas sonic
+🦇	murciélago murcielago vampiro batman noche alas
+🐻	oso osito peluche miel bosque
+🐻‍❄️	oso hielo nieve frío frio polo
+🐨	eucalipto árbol arbol dormilón dormilon australiano
+🐼	bambú bambu china oso blanco-negro ojeras
+🦥	perezoso lento flojo árbol arbol slow
+🦦	nutria río rio nadar acuático acuatico juguetón jugueton
+🦨	zorrillo mofeta apestoso peste stink
+🦘	canguro australia salto marsupial bolsa
+🦡	tejón tejon madriguera honey-badger cavar
+🐾	huellas patas mascota rastro perro
+🦃	pavo guajolote cena plumas
+🐔	gallina pollo huevo granja cacarear
+🐓	gallo kikiriki amanecer cresta granja
+🐣	pollito polluelo cascarón cascaron nacer pío pio
+🐤	pollito pío pio amarillo piolín piolin ave
+🐥	pollito pío pio amarillo bebé bebe plumón plumon
+🐦	pájaro pajaro ave twitter trino pico
+🐧	pingüino pinguino linux tux hielo polo
+🕊️	paloma paz blanca libertad espíritu-santo espiritu-santo
+🦅	águila aguila méxico mexico escudo rapaz garras
+🦆	pato cuac patito nadar plumas
+🦢	cisne lago cuello elegante ballet
+🦉	búho buho lechuza tecolote sabiduría sabiduria ojos
+🦤	extinto ave pájaro pajaro mauricio extinct
+🪶	pluma plumaje ligero ave quill
+🦩	flamenco rosa pink zancudo laguna
+🦚	pavo-real plumas abanico presumido colores
+🦜	loro cotorra guacamaya pirata tropical
+🪽	ala vuelo pluma ángel angel feather flight
+🐦‍⬛	cuervo pájaro pajaro mirlo negro blackbird
+🪿	ganso oca honk granja ave
+🐦‍🔥	fénix fenix renacer cenizas resurgir ashes immortal
+🐸	rana sapo croar anfibio croak
+🐊	cocodrilo caimán caiman lagarto pantano swamp
+🐢	tortuga caparazón caparazon tortoise lento reptil
+🦎	lagartija lagarto iguana escamas
+🐍	víbora vibora culebra serpiente cobra veneno python
+🐲	cabeza bestia leyenda monstruo kaiju myth
+🐉	serpiente bestia leyenda fantasía fantasia wyvern medieval
+🦕	dinosaurio dino brontosaurio jurásico jurasico prehistoric
+🦖	dinosaurio dinosaur tiranosaurio jurásico jurasico carnívoro carnivoro dino
+🐳	ballena chorro cetáceo cetaceo océano oceano blue
+🐋	ballena cetáceo cetaceo océano oceano mar giant
+🐬	delfín delfin mar acuario saltar porpoise
+🫍	ballena-asesina killer-whale cetáceo cetaceo mar shamu
+🦭	foca lobo-marino aleta ártico artico sea-lion
+🐟	pez pescado pescar pecera seafood
+🐠	pez pecera arrecife buceo nemo snorkel
+🐡	pez-globo fugu espinas inflado veneno
+🦈	tiburón tiburon aleta jaws depredador mordida
+🐙	pulpo kraken ventosa tentáculo tentaculo mariscos
+🐚	concha caracola conch arena seashell
+🪸	arrecife reef buceo mar océano oceano
+🪼	medusa aguamala tentáculos tentaculos picadura sting mar
+🦀	cangrejo jaiba pinzas mariscos playa claws
+🦞	langosta mariscos pinzas crustáceo crustaceo seafood claws
+🦐	camarón camaron gamba langostino mariscos cóctel coctel crustacean
+🦑	calamar tinta mariscos kraken cephalopod
+🦪	ostión ostion ostra perla mariscos concha pearl
+🐌	caracol baba lento escargot concha
+🦋	mariposa monarca metamorfosis alas primavera
+🐛	oruga gusano error insecto debug larva
+🐜	hormiga hormiguero insecto plaga picnic
+🐝	abeja miel panal polen picadura buzz
+🪲	escarabajo insecto bicho insect antenas
+🐞	catarina mariquita ladybug suerte puntos rojo
+🦗	grillo chapulín chapulin saltamontes insecto chirp
+🪳	cucaracha plaga insecto asco roach pest
+🕷️	araña arana tarántula tarantula patas miedo aracnofobia
+🕸️	telaraña telarana araña arana trampa pegajoso net
+🦂	alacrán alacran escorpión escorpion aguijón aguijon desierto zodiaco scorpio
+🦟	zancudo piquete dengue picadura insecto bite
+🪰	mosca insecto zumbido basura housefly
+🪱	gusano lombriz tierra carnada compost
+🦠	virus bacteria germen microbio infección infeccion covid
+💐	ramo flores regalo boda aniversario
+🌸	sakura flor rosa japón japon primavera pétalos petalos
+💮	flor blanca sello aprobado bien-hecho stamp
+🪷	loto yoga meditación meditacion zen buda nenúfar nenufar
+🏵️	escarapela roseta premio condecoración condecoracion adorno badge
+🌹	rosa amor romance san-valentín san-valentin espinas
+🥀	marchita seca tristeza luto desamor rosa
+🌺	jamaica flor playa isla luau
+🌻	girasol semillas amarillo verano campo
+🌼	margarita flor primavera amarilla campo
+🌷	tulipán tulipan holanda primavera jardín jardin amsterdam
+🪻	jacinto morado lila primavera purple
+🌱	brote retoño retono germinar sprout crecimiento
+🪴	maceta jardinería jardineria houseplant planta-de-interior decoración decoracion
+🌲	pino conífera conifera bosque árbol arbol forest
+🌳	árbol arbol roble frondoso sombra oak park
+🌴	palmera cocotero vacaciones caribe resort
+🌵	nopal espinas desierto saguaro árido arido
+🌾	trigo espiga cosecha grano wheat harvest
+🌿	hierba yerba aromática aromatica hoja sprig
+☘️	trébol trebol irlanda san-patricio suerte verde
+🍀	trébol trebol suerte fortuna amuleto lucky
+🍁	hoja otoño otono arce canadiense fall
+🍂	hojas otoño otono hojarasca caída caida seca
+🍃	hoja viento brisa naturaleza breeze
+🪹	nido vacío vacio pájaro pajaro rama bird
+🪺	nido huevos pájaro pajaro incubar ave
+🍄	hongo seta champiñón champinon mario amanita
+🪾	árbol arbol seco ramas invierno bare
+🍇	uvas racimo viñedo vinedo vino morado
+🍈	melón fruta verano dulce jugoso
+🍉	sandía sandia verano rebanada semillas agua-fresca
+🍊	mandarina cítrico citrico gajo naranja fruta
+🍋	limón limon limonada ácido acido agrio amarillo
+🍋‍🟩	limón limon lima michelada ácido acido verde
+🍌	plátano platano banano amarillo cáscara cascara potasio
+🍍	piña pina piña-colada pina-colada al-pastor ananá anana jugo
+🥭	fruta tropical chamoy manila ataulfo
+🍎	manzana fruta roja maestro mordida
+🍏	manzana verde granny-smith ácida acida ensalada
+🍐	pera fruta jugosa madura postre
+🍑	durazno melocotón melocoton nalgas trasero booty
+🍒	cereza guinda fruta roja postre
+🍓	fresa frutilla fruta mermelada roja
+🫐	arándanos arandanos moras fruta azul berry
+🥝	rebanada tropical vitamina-c nueva-zelanda ácido acido
+🍅	jitomate tomate salsa ensalada ketchup
+🫒	aceituna oliva aceite mediterráneo mediterraneo martini
+🥥	coco tropical agua-de-coco palmera fruta
+🥑	aguacate palta hueso cremoso michoacán michoacan
+🍆	berenjena verdura morada albur pene
+🥔	papa patata puré pure frita tubérculo tuberculo
+🥕	zanahoria conejo verdura ensalada betacaroteno
+🌽	elote mazorca esquites maíz maiz choclo
+🌶️	chile picante jalapeño jalapeno salsa habanero
+🫑	pimiento morrón morron verdura verde capsicum
+🥒	pepino ensalada encurtido fresco verdura
+🥬	lechuga acelga espinaca verdura ensalada
+🥦	brócoli brocoli verdura arbolito saludable veggie
+🧄	ajo diente-de-ajo vampiro condimento cocina
+🧅	cebolla lágrimas lagrimas capas llorar morada
+🥜	cacahuate maní mani botana alergia salado
+🫘	frijoles frijol legumbre habichuelas olla
+🌰	castaña castana navidad asada otoño otono invierno
+🫚	jengibre raíz raiz té te especia remedio
+🫛	chícharos chicharos guisantes vaina arvejas legumbre
+🍄‍🟫	hongo champiñón champinon seta comestible bosque
+🫜	nabo tubérculo tuberculo raíz raiz rábano rabano verdura
+🍞	pan bolillo rebanada panadería panaderia hogaza
+🥐	cuernito medialuna hojaldre desayuno pan
+🥖	barra pan panadería panaderia francia corteza
+🫓	tortilla pita naan arepa comal
+🥨	brezel oktoberfest salado alemán aleman baviera
+🥯	rosca pan desayuno queso-crema nueva-york
+🥞	hotcakes panqueques desayuno miel maple
+🧇	wafle gofre desayuno belga miel
+🧀	queso cheddar lácteo lacteo rebanada gouda
+🍖	carne hueso costilla asado carnívoro carnivoro
+🍗	pollo muslo pata frito rostizado
+🥩	bistec filete steak res carne-asada
+🥓	tocino tocineta desayuno sartén sarten grasa
+🍔	hamburguesa comida-rápida comida-rapida chatarra mcdonalds carne
+🍟	papas papitas mcdonalds crujiente ketchup
+🍕	pepperoni rebanada pizzería pizzeria masa
+🌭	salchicha jocho perro-caliente mostaza dogo
+🥪	torta lonche emparedado bocadillo almuerzo
+🌮	pastor taquería taqueria antojito birria salsa
+🌯	harina chimichanga relleno norteño norteno enrollado
+🫔	tamal masa hoja atole navidad mexicano
+🥙	shawarma doner árabe arabe griego wrap
+🧆	garbanzo croqueta árabe arabe vegetariano frito
+🥚	huevo blanquillo gallina crudo proteína proteina
+🍳	sartén sarten estrellado huevo-frito cocina chef
+🥘	cazuela guiso sartén sarten arroz mariscos
+🍲	caldo sopa olla guisado pozole
+🫕	queso-fundido derretido suizo chocolate cena
+🥣	cereal avena desayuno tazón tazon cuchara
+🥗	ensalada lechuga dieta vegano saludable
+🍿	palomitas botana cine chisme maíz maiz
+🧈	mantequilla margarina barra grasa lácteo lacteo
+🧂	sal salero condimento salty sazón sazon
+🥫	lata enlatado conserva atún atun despensa
+🍱	lonchera tupper arroz japón japon almuerzo
+🍘	galleta arroz botana crujiente japonés japones
+🍙	nori triángulo triangulo alga anime bola-de-arroz
+🍚	arroz blanco tazón tazon guarnición guarnicion chino
+🍛	curri arroz picante india especias
+🍜	sopa fideos maruchan tazón tazon pho
+🍝	espagueti boloñesa bolonesa fideos italiana salsa
+🍠	camote batata horneado dulce tubérculo tuberculo
+🍢	brocheta pincho caldo japón japon palito
+🍣	pescado salmón salmon arroz crudo rollo
+🍤	camarón camaron empanizado marisco frito botana
+🍥	naruto espiral pescado anime sopa
+🥮	mooncake luna chino festival otoño otono
+🍡	brocheta bolitas dulce tricolor postre
+🥟	gyoza empanada relleno masa chino
+🥠	galleta suerte destino mensaje chino
+🥡	para-llevar comida-china domicilio delivery pedido
+🍦	helado nieve cono barquillo vainilla
+🍧	raspado granizado nieve jarabe hielo
+🍨	helado nieve postre copa bola
+🍩	dona rosquilla glaseado panadería panaderia chispas
+🍪	galleta chispas horneada postre merienda
+🎂	pastel velas cumpleaños cumpleanos bday felicidades
+🍰	rebanada pastel fresa crema postre
+🧁	mantecada panqué panque betún betun muffin postre
+🥧	pay tarta manzana rebanada postre
+🍫	barra tablilla dulce antojo cacao
+🍬	dulce caramelo golosina azúcar azucar envuelto
+🍭	paleta caramelo espiral dulce colorido
+🍮	natilla postre vainilla cremoso dulce
+🍯	miel tarro abeja panal endulzante
+🍼	biberón biberon mamila bebé bebe lactancia recién-nacido recien-nacido
+🥛	leche vaso lácteo lacteo calcio desayuno
+☕	taza cafecito humeante cafeína cafeina caliente
+🫖	tetera té te infusión infusion kettle porcelana
+🍵	matcha taza japonés japones infusión infusion zen
+🍶	licor botella japón japon nihonshu bar
+🍾	brindis fiesta descorchar espumoso año-nuevo ano-nuevo
+🍷	vino copa tinto bodega cata
+🍸	martini cóctel coctel bar copa trago
+🍹	piña-colada pina-colada playa sombrilla daiquiri verano
+🍺	cerveza chela cheve tarro bar
+🍻	salud brindis chelas cheers cantina
+🥂	brindis copas champán champan celebrar boda
+🥃	tequila ron licor vaso bourbon
+🫗	servir verter derramar agua spill
+🥤	refresco soda popote vaso comida-rápida comida-rapida
+🧋	boba tapioca perlas taiwán taiwan popote
+🧃	jugo juice popote cartón carton lonchera
+🧉	yerba argentina bombilla infusión infusion uruguay
+🧊	hielo cubito frío frio congelado cold
+🥢	palillos sushi asiático asiatico japonés japones ramen
+🍽️	comida cubiertos cena hambre comer
+🍴	tenedor cuchillo comer restaurante comida
+🥄	cuchara sopa cucharada postre revolver
+🔪	cuchillo cocina filo rebanar chef
+🫙	frasco tarro vidrio conserva mermelada
+🏺	ánfora anfora vasija barro arcilla museo
+🌍	mundo planeta tierra globo europa
+🌎	mundo globo tierra méxico mexico latinoamérica latinoamerica
+🌏	mundo globo tierra oceanía oceania pacífico pacifico
+🌐	internet web red idioma www
+🗺️	mapa mapamundi viaje ruta explorar
+🗾	japón japon nippon mapa asia tokio
+🧭	brújula brujula norte orientación orientacion navegación navegacion rumbo
+🏔️	montaña montana nevado cumbre everest alpes
+⛰️	montaña montana cerro sierra senderismo hiking
+🛘	derrumbe deslave alud desastre rocas
+🌋	volcán volcan popocatépetl popocatepetl ceniza cráter crater montaña montana
+🗻	fujiyama montaña montana volcán volcan nevado japonés japones
+🏕️	campamento acampar fogata casa-de-campaña casa-de-campana aire-libre
+🏖️	playa sombrilla verano arena costa
+🏜️	desierto cactus sequía sequia sahara calor
+🏝️	isla palmera paraíso paraiso caribe vacaciones
+🏞️	parque paisaje río rio bosque mirador
+🏟️	estadio fútbol futbol concierto partido graderías graderias
+🏛️	columnas templo capitolio banco antiguo
+🏗️	obra grúa grua wip albañil albanil edificio
+🧱	ladrillo tabique muro pared construcción construccion
+🪨	piedra roca stone boulder pesado
+🪵	madera tronco leña lena log carpintería carpinteria
+🛖	choza cabaña cabana palapa jacal refugio
+🏘️	casas colonia barrio fraccionamiento vecindario
+🏚️	casa ruinas embrujada vieja deteriorada
+🏠	casa hogar domicilio vivienda inicio
+🏡	casa jardín jardin patio hogar césped cesped
+🏢	oficina edificio empresa negocio chamba
+🏣	correos oficina envío envio paquete nippon
+🏤	correos oficina carta paquetería paqueteria envío envio
+🏥	doctor salud urgencias ambulancia enfermería enfermeria
+
+# --- Enrichment pass 2026-08-01: chunks 012, 013, 014, 015, 016, 017 ---
+🏦	banco sucursal dinero crédito credito savings
+🏨	hospedaje habitación habitacion posada resort check-in
+🏩	motel pareja corazón corazon rosa cita
+🏪	oxxo tienda abarrotes minisuper 24-horas
+🏫	escuela colegio primaria clases campus
+🏬	almacén almacen compras plaza tienda boutique
+🏭	fábrica fabrica maquiladora chimenea producción produccion humo
+🏯	castillo japón japon samurái samurai osaka fortaleza
+🏰	castillo fortaleza princesa disney medieval
+💒	boda novios casarse chapel matrimonio
+🗼	torre antena mirador roja paris
+🗽	libertad estatua nueva-york antorcha usa
+⛪	iglesia capilla misa catedral parroquia
+🕌	mezquita minarete rezo cúpula cupula ramadan
+🛕	templo india mandir hinduismo religión religion
+🕍	sinagoga judío judio torá tora israel rabino
+⛩️	santuario puerta kioto gate naranja
+🕋	meca hajj cubo arabia peregrinación peregrinacion
+⛲	fuente chorro agua monedas jardín jardin
+⛺	carpa campamento acampar scout outdoors
+🌁	niebla neblina bruma san-francisco golden-gate
+🌃	noche estrellas ciudad nocturno rascacielos
+🏙️	ciudad edificios rascacielos metrópoli metropoli buildings
+🌄	amanecer montaña montana sol madrugada paisaje
+🌅	amanecer alba sol mar playa
+🌆	atardecer anochecer crepúsculo crepusculo edificios tarde
+🌇	ocaso puesta-de-sol naranja dusk anochecer
+🌉	puente noche luces golden-gate río rio
+♨️	aguas-termales onsen vapor spa baño bano
+🎠	carrusel caballito feria tiovivo niños ninos
+🛝	resbaladilla tobogán tobogan parque niños ninos juegos
+🎡	rueda-de-la-fortuna feria carnaval parque vuelta
+🎢	montaña-rusa montana-rusa feria adrenalina parque loop
+💈	barbería barberia peluquería peluqueria corte navaja rayas
+🎪	circo carpa payaso feria acróbata acrobata
+🚂	locomotora ferrocarril vía via choo-choo railway
+🚃	vagón vagon ferrocarril pasajeros riel transporte
+🚄	tren-bala shinkansen velocidad ferrocarril rápido rapido
+🚅	shinkansen tren-bala japón japon alta-velocidad nariz
+🚆	tren ferrocarril riel vagones transporte
+🚇	subterráneo subterraneo cdmx andén anden vagón vagon transporte
+🚈	tren-ligero riel suburbano ferrocarril commuter
+🚉	estación estacion andén anden tren parada ferrocarril
+🚊	tranvía tranvia riel ciudad público publico transporte
+🚝	monorriel riel transporte aeropuerto disney
+🚞	montaña montana sierra paisaje turismo vía via
+🚋	tranvía tranvia vagón vagon riel ciudad streetcar
+🚌	camión camion autobús autobus ruta pasajeros parada
+🚍	camión camion autobús autobus frente ruta transporte
+🚎	trolebús trolebus camión camion cables catenaria transporte
+🚐	combi camioneta microbús microbus pesera transporte
+🚑	ambulancia urgencias 911 cruz-roja socorro
+🚒	bombero incendio manguera 911 rojo
+🚓	patrulla poli 911 arresto seguridad
+🚔	patrulla poli 911 frente sirena
+🚕	uber chofer viaje amarillo transporte
+🚖	amarillo chofer frente uber viaje
+🚗	carro coche auto vehículo vehiculo manejar
+🚘	carro coche auto faros vehículo vehiculo
+🚙	suv camioneta 4x4 todoterreno jeep
+🛻	troca camioneta 4x4 batea flete
+🚚	camión camion reparto mudanza paquetería paqueteria entrega
+🚛	tráiler trailer trailero 18-wheeler remolque transporte
+🚜	campo siembra cosecha granja ejido
+🏎️	carrera f1 bólido bolido velocidad nascar
+🏍️	motocicleta motociclista biker harley rodada
+🛵	motoneta repartidor italika dos-ruedas
+🦽	silla-de-ruedas discapacidad accesibilidad movilidad accessible
+🦼	silla-eléctrica silla-electrica discapacidad accesibilidad powerchair electric
+🛺	mototaxi tuktuk india taxi tricimoto
+🚲	bici ciclismo ciclista pedalear cycling
+🛴	patín-del-diablo patin-del-diablo monopatín monopatin patinar rodar
+🛹	patineta skate monopatín monopatin skater rampa
+🛼	patines patinaje rollers quads rodar
+🚏	parada paradero autobús autobus camión camion transporte
+🛣️	carretera autopista ruta viaje roadtrip
+🛤️	vías vias tren ferrocarril riel train
+🛢️	tambo petróleo petroleo combustible bidón bidon crudo
+⛽	gasolina gasolinera gas station diesel
+🛞	llanta rueda neumático neumatico tire caucho
+🚨	torreta patrulla policía policia ambulancia auxilio
+🚥	semáforo semaforo alto crucero verde rojo
+🚦	semáforo semaforo alto siga stoplight crucero
+🛑	alto pare detente señal senal frenar
+🚧	obra desvío desvio precaución precaucion mantenimiento cerrado
+⚓	ancla marino puerto náutico nautico barco
+🛟	salvavidas flotador rescate lifesaver socorro
+⛵	velero vela navegar mar sailing
+🛶	canoa remo piragua lago rowing
+🚤	lancha bote motora velocidad mar
+🛳️	crucero barco transatlántico transatlantico vacaciones puerto
+⛴️	transbordador barco travesía travesia embarcadero panga
+🛥️	yate lancha bote navegar mar
+🚢	barco buque navío navio puerto marítimo maritimo
+✈️	avión avion volar vuelo aeropuerto aerolínea aerolinea
+🛩️	avioneta hélice helice cessna piloto vuelo
+🛫	despegue despegar salida takeoff aeropuerto
+🛬	aterrizaje aterrizar llegada landing aeropuerto
+🪂	paracaídas paracaidas paracaidismo skydiving saltar caída caida
+💺	asiento butaca lugar vuelo pasajero
+🚁	helicóptero helicoptero hélice helice volar rescate aspas
+🚟	monorriel tren-colgante teleférico teleferico suspendido vagón vagon
+🚠	teleférico teleferico montaña montana funicular cabina esquí esqui
+🚡	teleférico teleferico cablebús cablebus góndola gondola montaña montana altura
+🛰️	satélite satelite antena gps señal senal espacial
+🚀	cohete despegue espacio nasa hype
+🛸	ovni ufo platillo-volador extraterrestre alien
+🛎️	timbre campana botones conserje mostrador
+🧳	maleta equipaje viaje valija travel
+⌛	reloj-de-arena arena tiempo-agotado espera terminado
+⏳	reloj-de-arena esperando pendiente cargando paciencia
+⌚	reloj hora muñeca muneca pulsera puntual
+⏰	despertador alarma despertar levantarse wake
+⏱️	cronómetro cronometro medir vuelta velocidad deporte
+⏲️	temporizador minutero cocina horno cuenta-regresiva
+🕰️	reloj chimenea hora retro antigüedad antiguedad
+🕛	mediodía mediodia medianoche doce noon hora
+🕧	doce-y-media media mediodía mediodia half-past
+🕐	una la-una hora trece 13
+🕜	una-y-media media hora half-past
+🕑	dos 2pm 2am 14h reloj hora
+🕝	dos-y-media 230pm 230am reloj hora
+🕒	tres 3pm 3am 15h reloj hora
+🕞	tres-y-media 330pm 330am reloj hora
+🕓	cuatro 4pm 4am 16h reloj hora
+🕟	cuatro-y-media 430pm 430am reloj hora
+🕔	cinco 5pm 5am 17h reloj hora
+🕠	cinco-y-media 530pm 530am reloj hora
+🕕	seis 6pm 6am 18h reloj hora
+🕡	seis-y-media 630pm 630am reloj hora
+🕖	siete 7pm 7am 19h reloj hora
+🕢	siete-y-media 730pm 730am reloj hora
+🕗	ocho 8pm 8am 20h reloj hora
+🕣	ocho-y-media 830pm 830am reloj hora
+🕘	nueve 9pm 9am 21h reloj hora
+🕤	nueve-y-media 930pm 930am reloj hora
+🕙	diez 10pm 10am 22h reloj hora
+🕥	diez-y-media 1030pm 1030am reloj hora
+🕚	once 11pm 11am 23h reloj hora
+🕦	once-y-media 1130pm 1130am reloj hora
+🌑	luna novilunio luna-nueva oscuro noche
+🌒	luna creciente lunar astronomía astronomia noche
+🌓	luna cuarto-creciente media-luna lunar mitad
+🌔	luna gibosa casi-llena lunar creciendo
+🌕	luna llena plenilunio luna-llena lunar
+🌖	luna menguante gibosa decreciente lunar
+🌗	luna cuarto-menguante media-luna menguante lunar
+🌘	luna menguante lunar madrugada astronomía astronomia
+🌙	luna medialuna islam ramadán ramadan buenas-noches dormir
+🌚	luna sospechoso travieso shady lunita
+🌛	luna lunita creciente sonrisa buenas-noches
+🌜	luna lunita menguante sonrisa dormir
+🌡️	termómetro termometro fiebre calor grados clima
+☀️	sol calor verano despejado día dia
+🌝	luna llena sonriente lunita plenilunio
+🌞	sol solecito sonriente calor radiante
+🪐	saturno planeta espacio anillos astronomía astronomia cosmos
+⭐	estrella rating calificación calificacion destacado premio
+🌟	estrella brillante destello sparkle estrellita
+🌠	estrella-fugaz meteoro deseo wish cometa
+🌌	vía-láctea via-lactea universo cosmos astronomía astronomia nocturno
+☁️	nube nublado cielo clima gris
+⛅	nublado medio-nublado sol-entre-nubes clima nubosidad
+⛈️	tormenta lluvia rayo aguacero temporal
+🌤️	sol nubecita despejado soleado clima
+🌥️	nublado nubarrón nubarron sol clima gris
+🌦️	lluvia chubasco llovizna sol clima
+🌧️	lluvia lloviendo aguacero llovizna mojado
+🌨️	nieve nevada nevando frío frio copos
+🌩️	rayo relámpago relampago tormenta trueno centella
+🌪️	tromba remolino torbellino viento desastre
+🌫️	niebla neblina bruma smog nublado
+🌬️	viento aire soplando ventarrón ventarron ráfaga rafaga
+🌀	huracán huracan espiral remolino tifón tifon ciclón ciclon
+🌈	arcoíris arcoiris diversidad colorido gay lluvia
+🌂	paraguas sombrilla plegado protección proteccion lluvioso
+☂️	paraguas sombrilla lluvia clima protección proteccion
+☔	paraguas lluvia sombrilla gotas lloviendo
+⛱️	sombrilla playa verano vacaciones sol
+⚡	rayo energía energia electricidad relámpago relampago corriente
+❄️	copo nieve frío frio helado escarcha
+☃️	muñeco-de-nieve muneco-de-nieve navidad bufanda zanahoria frosty
+⛄	muñeco muneco nieve navidad frío frio deshielo
+☄️	cometa estrella-fugaz asteroide astronomía astronomia shooting-star
+🔥	fuego llama hype racha lit incendio
+💧	gota agua lágrima lagrima sudor líquido liquido
+🌊	ola mar playa tsunami surf
+🎃	calabaza pumpkin octubre spooky terror
+🎄	navidad arbolito nochebuena posada diciembre
+🎆	fuegos-artificiales pirotecnia cohetes año-nuevo ano-nuevo new-year
+🎇	bengala chispas destello brillo
+🧨	cohete petardo dinamita mecha tronido
+✨	brillos destellos estrellitas glitter aesthetic
+🎈	globo cumpleaños cumpleanos helio fiesta bday
+🎉	felicidades confeti celebración celebracion congrats yay
+🎊	confeti serpentinas fiesta festejo felicidades
+🎋	deseo japón japon bambú bambu papelitos festivo
+🎍	kadomatsu japón japon año-nuevo ano-nuevo adorno bambú bambu
+🎎	muñecas munecas japón japon hinamatsuri kimono tradición tradicion
+🎏	koinobori japón japon pez banderines viento
+🎐	campanita furin japón japon viento tintineo
+🎑	tsukimi luna japón japon otoño otono dango
+🧧	hongbao sobre dinero año-nuevo-chino ano-nuevo-chino suerte
+🎀	moño mono listón liston lazo coquette rosa
+🎁	regalo obsequio sorpresa navidad caja
+🎗️	listón liston solidaridad concientización concientizacion apoyo lazo
+🎟️	boletos entradas cine concierto taquilla
+🎫	boleto entrada cine evento taquilla
+🎖️	medalla condecoración condecoracion veterano ejército ejercito valor
+🏆	trofeo copa campeón campeon victoria torneo
+🏅	medalla podio olimpiadas premio logro
+🥇	oro primero podio medalla número-uno numero-uno
+🥈	plata segundo podio medalla subcampeón subcampeon
+🥉	bronce tercero podio medalla tercer-lugar
+⚽	fútbol futbol balón balon gol cancha mundial
+⚾	béisbol beisbol pelota bate home-run pitcher
+🥎	sóftbol softbol pelota bate guante amarilla
+🏀	baloncesto básquet basquet canasta nba aro
+🏐	voleibol vóley voley saque remate cancha
+🏈	nfl touchdown superbowl fútbol-americano futbol-americano casco
+🏉	rugbi balón balon scrum tackle melé mele
+🎾	tenis raqueta pelota cancha wimbledon
+🥏	frisbee ultimate lanzar parque volador
+🎳	boliche bolos chuza pista bola
+🏏	críquet criquet bateador india inglaterra
+🏑	bastón baston palo césped cesped cancha
+🏒	nhl hielo palo disco canadá canada
+🥍	raqueta red bastón baston canadá canada pelota
+🏓	pimpón pimpon raqueta tenis-de-mesa pelotita
+🏸	gallito volante pluma red
+🥊	boxeo guante nocaut madrazo pelea
+🥋	taekwondo cinta-negra dojo kimono jiujitsu
+🥅	portería porteria arco red gol portero
+⛳	bandera hoyo golfista putt campo
+⛸️	patín patin hielo patinaje cuchilla
+🎣	caña cana pescar anzuelo carnada pesca
+🤿	buceo snorkel visor bucear submarinismo
+🎽	playera correr carrera atletismo dorsal
+🎿	esquí esqui esquiar nieve montaña montana bastones
+🛷	trineo nieve invierno deslizar toboggan
+🥌	piedra hielo ice escoba invierno
+🎯	diana dardos blanco puntería punteria objetivo
+🪀	yoyo juguete toy cuerda truco
+🪁	papalote cometa viento volar wind
+🔫	pistola arma juguete squirt disparar
+🎱	billar bola-ocho snooker carambola negra
+🔮	adivinar futuro videncia psychic tarot
+🪄	varita mago hechizo abracadabra spell
+🎮	videojuego control gamer jugar gaming
+🕹️	palanca maquinita retro atari videojuego
+🎰	tragamonedas apuesta suerte jackpot azar
+🎲	dado azar suerte random juego-de-mesa
+🧩	rompecabezas pieza jigsaw encajar armar
+🧸	osito peluche juguete oso plush
+🪅	posada cumpleaños cumpleanos dulces fiesta palo
+🪩	disco discoteca antro esfera fiesta
+🪆	matrioska matryoshka rusa muñecas munecas russian
+♠️	picas espadas naipes baraja cartas
+♥️	corazones baraja naipes cartas rojo
+♦️	diamantes rombo baraja naipes rojo
+♣️	tréboles treboles baraja naipes cartas negro
+♟️	peón peon ajedrez tablero jaque checkmate
+🃏	comodín comodin wildcard bufón bufon carta baraja
+🀄	ficha chino china rojo oriental
+🎴	naipes baraja koikoi japón japon flor
+🎭	teatro máscaras mascaras comedia tragedia actuación actuacion
+🖼️	cuadro marco museo pintura foto
+🎨	paleta pintar colores dibujar pintor
+🧵	hilo costura carrete coser spool
+🪡	aguja coser hilo costura stitch
+🧶	estambre lana tejer knit crochet
+🪢	nudo cuerda amarrar rope tie
+👓	lentes anteojos gafas vista miopía miopia
+🕶️	lentes-de-sol gafas sol playa deal-with-it
+🥽	visor natación natacion buceo seguridad protección proteccion
+🥼	bata científico cientifico doctor laboratorio médico medico
+🦺	chaleco reflectante construcción construccion seguridad obra
+👔	corbata traje oficina negocios elegante
+👕	playera camiseta ropa casual tee
+👖	pantalón pantalon mezclilla denim vaqueros ropa
+🧣	bufanda frío frio invierno cuello winter
+🧤	guantes manos frío frio invierno mitones
+🧥	abrigo chamarra jacket invierno frío frio
+🧦	calcetines calcetas pies medias ropa
+👗	vestido moda fiesta elegante mujer
+👘	japón japon yukata oriental seda
+🥻	india hindú hindu vestido tela indian
+🩱	traje-de-baño traje-de-bano bañador banador playa alberca nadar
+🩲	calzón calzon calzoncillos ropa-interior underwear speedo
+🩳	pantalón-corto pantalon-corto bermudas verano calor playa
+👙	traje-de-baño traje-de-bano verano playa alberca swimsuit
+🪭	abanico calor aire flamenco ventilar
+👛	monedero cartera bolsa dinero cambio
+👜	bolsa bolso cartera moda accesorio
+👝	bolsita cartera monedero fiesta noche
+🛍️	compras bolsas tienda plaza ofertas
+🎒	mochila escuela útiles utiles viaje estudiante
+🩴	chancla flip-flop playa sandalia verano
+👞	zapato calzado mocasín mocasin vestir caballero
+👟	tenis zapatilla correr deporte gym
+🥾	bota senderismo montaña montana trekking excursión excursion calzado
+🥿	zapatilla balerina mocasín mocasin calzado loafer
+👠	tacón tacon stiletto zapatilla fiesta pumps
+🩰	puntas bailarina danza dance pointe
+🪮	peine afro cabello comb peinar
+👑	corona realeza rey reina monarquía monarquia
+🎩	sombrero copa elegante mago formal
+🎓	graduación graduacion birrete egresado diploma escuela
+🧢	gorra cachucha visera baseball beisbol
+🪖	casco soldado ejército ejercito army guerra
+⛑️	casco rescate paramédico paramedico obra construcción construccion
+📿	rosario cuentas rezar oración oracion budismo
+💄	labial pintalabios maquillaje belleza bilé bile
+💍	anillo sortija compromiso boda propuesta
+💎	diamante joya brillante lujo cristal
+🔇	silencio silenciar bocina altavoz mudo
+🔈	bocina altavoz bajito suave
+🔉	bocina altavoz sonido volumen medio
+🔊	bocina altavoz ruidoso máximo maximo subir
+📢	bocina altavoz aviso anuncio difundir
+📣	megáfono megafono grito porra protesta altavoz
+📯	corneta cuerno correo clarín clarin cartero
+🔔	campana campanita timbre alarma aviso
+🔕	silenciar mudo silencio dnd notificaciones
+🎼	partitura pentagrama clave-de-sol notas solfeo
+🎵	nota canción cancion cantar audio mp3
+🎶	notas melodía melodia canción cancion cantar ritmo
+🎙️	micrófono microfono mic locutor grabar entrevista
+🎚️	fader deslizador consola ecualizador sonido
+🎛️	perillas mezcladora consola mixer estudio
+🎤	micrófono microfono karaoke cantante voz mic
+🎧	audífonos audifonos auriculares cascos escuchar diadema
+📻	estéreo estereo emisora sintonizar noticias fm
+🎷	saxofón saxofon sax blues viento banda
+🎺	trompeta mariachi banda viento tocar
+🪊	trombón trombon vara viento banda jazz
+🪗	acordeón acordeon norteño norteno fuelle corrido polka
+🎸	guitarra cuerdas acústica acustica eléctrica electrica tocar
+🎹	teclado teclas sintetizador órgano organo melodía melodia
+🎻	violín cuerdas arco orquesta sinfónica sinfonica
+🪕	cuerdas country bluegrass folk instrumento
+🥁	tambor batería bateria redoble tocar banda
+🪘	tambor conga djembe percusión percusion africano
+🪇	sonaja ritmo percusión percusion salsa agitar
+🪈	flauta viento soplar orquesta melodía melodia
+🪉	arpa cuerdas celestial orquesta ángel angel
+📱	celular móvil movil android teléfono telefono app
+📲	celular descargar llamada recibir mensaje
+☎️	teléfono telefono fijo llamar marcar antiguo
+📞	auricular llamada marcar contestar hablar
+📟	bíper biper localizador buscapersonas mensaje 90s
+📠	facsímil facsimil documento papel enviar impresión impresion
+🔋	batería bateria pila carga energía energia llena
+🪫	pila batería bateria descargada agotada cargar
+🔌	enchufe clavija corriente conectar cable
+💻	portátil portatil computadora compu lap trabajo
+🖥️	computadora pantalla escritorio torre cpu
+🖨️	impresora imprimir tinta hoja copia
+⌨️	teclado escribir mecánico mecanico teclear qwerty
+🖱️	ratón raton clic inalámbrico inalambrico periférico periferico scroll
+
+# --- Enrichment pass 2026-08-01: chunks 018, 019, 020, 021, 022, 023 ---
+🖲️	ratón raton bola mouse puntero esfera
+💽	disco md sony almacenamiento retro
+💾	disquete diskette guardar respaldo retro
+💿	disco compacto quemar música musica datos
+📀	disco película pelicula video reproductor datos
+🧮	ábaco abaco contar calcular matemáticas matematicas math
+🎥	cámara camara cine grabar rodaje filmadora
+🎞️	rollo película pelicula negativo celuloide fotograma
+📽️	proyector proyección proyeccion película pelicula sala pantalla
+🎬	claqueta acción accion rodaje corte take
+📺	tele televisor pantalla canal serie
+📷	cámara camara foto lente retrato fotografía fotografia
+📸	foto flashazo selfie paparazzi destello
+📹	videocámara videocamara grabar filmar camcorder handycam
+📼	cinta casete betamax rebobinar retro
+🔍	lupa buscar investigar detective find
+🔎	lupa buscar zoom search inspeccionar
+🕯️	vela veladora luto apagón apagon romántico romantico
+💡	foco bombilla luz ocurrencia invento
+🔦	linterna lámpara lampara apagón apagon alumbrar pilas
+🏮	farol farolillo japón japon china festival
+🪔	diwali india candil aceite hindú hindu
+📔	cuaderno libreta agenda apuntes diario
+📕	libro novela lectura rojo terminado
+📖	libro leer abierto lectura novela
+📗	libro verde guía guia lectura texto
+📘	libro azul diccionario texto guía guia
+📙	libro naranja lectura texto guía guia
+📚	libros biblioteca estudiar escuela lectura
+📓	cuaderno libreta apuntes notas escolar
+📒	libreta contabilidad cuentas registro amarillo
+📃	hoja página pagina documento impreso texto
+📜	pergamino papiro rollo diploma antiguo
+📄	hoja papel archivo documento file
+📰	periódico periodico noticias diario titular prensa
+🗞️	periódico periodico diario prensa repartidor enrollado
+📑	pestañas pestanas separadores índice indice organizar archivo
+🔖	marcador favorito señalador senalador guardar libro
+🏷️	etiqueta oferta descuento rebaja categoría categoria
+🪙	moneda cambio morralla peso oro
+💰	dinero lana bolsa riqueza ganancia
+🪎	cofre tesoro pirata botín botin oro
+💴	billete dinero japonés japones tokio divisa
+💵	billete efectivo usd lana dinero
+💶	billete dinero eur divisa europeo
+💷	libra esterlina billete gbp reino-unido
+💸	gasto gastar alas derroche broke
+💳	tarjeta pago débito debito banco compra
+🧾	recibo ticket factura comprobante cuenta
+💹	gráfica grafica alza bolsa ganancia subida
+✉️	sobre carta correo mensaje contacto
+📧	correo sobre mail arroba mensaje
+📨	correo recibido entrante sobre mensaje
+📩	enviar correo sobre salida mandar
+📤	bandeja salida enviados subir exportar
+📥	bandeja entrada descargar recibidos importar
+📦	paquete caja envío envio entrega pedido
+📫	buzón buzon correo cartas bandera pendiente
+📪	buzón buzon correo vacío vacio sin-cartas bandera
+📬	buzón buzon correo cartas aviso recibido
+📭	buzón buzon correo vacío vacio empty sin-correo
+📮	buzón buzon correo enviar send cartero
+🗳️	urna votar sufragio boleta comicios
+✏️	lápiz lapiz escribir dibujar write draw
+✒️	plumilla tinta firmar escribir sign
+🖋️	pluma estilográfica estilografica firmar escribir signature
+🖊️	bolígrafo boligrafo pluma lapicero escribir firmar
+🖌️	pincel pintar brocha artista acuarela
+🖍️	crayón colorear cera niños ninos escolar
+📝	apuntes tarea escribir recado examen
+💼	maletín maletin portafolio trabajo oficina work
+📁	carpeta archivo documentos guardar dir
+📂	carpeta abrir archivos explorar documentos
+🗂️	separadores carpetas clasificar archivero pestañas pestanas
+📅	calendario fecha agenda mes evento
+📆	calendario almanaque fecha agenda día dia
+🗒️	libreta cuaderno apuntes bloc anotar
+🗓️	calendario agenda mes almanaque planeación planeacion
+📇	fichero tarjetero directorio agenda fichas
+📈	gráfica grafica alza crecimiento ganancias bullish
+📉	gráfica grafica caída caida pérdidas perdidas crisis bearish
+📊	gráfica grafica barras datos reporte dashboard
+📋	portapapeles copiar pendientes inventario apuntar
+📌	tachuela chincheta fijar pin recordatorio
+📍	ubicación ubicacion mapa marcador dirección direccion gps
+📎	clip sujetar adjunto papelería papeleria broche
+🖇️	clips sujetar unir adjuntar papelería papeleria
+📏	regla centímetros centimetros medir escuela dibujo
+📐	escuadra regla ángulo angulo arquitectura medir
+✂️	tijeras cortar recortar snip peluquería peluqueria
+🗃️	archivero fichero guardar cajón cajon papeles
+🗄️	archivero gaveta cajones expedientes documentos
+🗑️	basura bote papelera borrar tirar
+🔒	candado cerrado seguro contraseña contrasena https
+🔓	candado abierto desbloqueado acceso inseguro
+🔏	candado privacidad firma confidencial nda
+🔐	candado llave contraseña contrasena cifrado encrypted
+🔑	llave acceso clave abrir login
+🗝️	llave cerradura castillo dorada secreto
+🔨	martillo clavo construir carpintería carpinteria obra
+🪓	hacha leña lena madera cortar leñador lenador chop
+⛏️	pico piqueta excavar minero pickaxe
+⚒️	martillo pico obrero trabajo construcción construccion
+🛠️	martillo herramientas reparar taller ajustes
+🗡️	daga puñal punal cuchillo filo traición traicion
+⚔️	espadas duelo guerra pvp medieval
+💣	bomba explosión explosion dinamita mecha explotar
+🪃	bumerán bumeran regresa australia lanzar karma
+🏹	arco flecha sagitario arquero cazar
+🛡️	escudo defensa blindaje antivirus caballero
+🪚	serrucho sierra madera cortar carpintero
+🔧	llave perico reparar mecánico mecanico ajustar
+🪛	desarmador destornillador tornillo atornillar reparar
+🔩	tuerca tornillo perno ferretería ferreteria mecánica mecanica
+⚙️	engrane engranaje ajustes configuración configuracion opciones
+🗜️	prensa apretar comprimir zip taller
+⚖️	balanza equilibrio abogado juicio derecho
+🦯	bastón baston ciego invidente accesibilidad blind discapacidad
+🔗	enlace liga vínculo vinculo compartir cadena
+⛓️‍💥	cadena romper libertad eslabón eslabon desatar
+⛓️	cadena eslabón eslabon encadenado atado link
+🪝	gancho garfio anzuelo colgar enganchar
+🧰	herramientas caja-herramientas taller reparar mecánico mecanico
+🧲	imán iman magnético magnetico atraer attract horseshoe
+🪜	escalera escalón escalon peldaño peldano subir climb
+🪏	pala cavar excavar tierra dig
+⚗️	alambique alquimia química quimica destilar laboratorio
+🧪	tubo-ensayo probeta experimento laboratorio ciencia
+🧫	cultivo bacterias microbio biología biologia germen
+🧬	adn genética genetica genoma doble-hélice doble-helice biología biologia
+🔬	microscopio células celulas análisis analisis lente zoom
+🔭	telescopio espacio universo galaxia cosmos
+📡	parabólica parabolica radar transmisión transmision cobertura broadcast
+💉	jeringa inyección inyeccion vacuna aguja vaccine
+🩸	sangre gota herida donación donacion period
+💊	pastilla píldora pildora cápsula capsula medicamento drug
+🩹	curita bandaid venda parche herida
+🩼	muleta lesión lesion fractura bastón baston injury
+🩺	estetoscopio doctor médico medico consulta checkup
+🩻	radiografía radiografia huesos esqueleto costillas bones
+🚪	puerta salida acceso portón porton exit
+🛗	ascensor edificio piso subir lift
+🪞	espejo reflejo mirarse vanidad reflection
+🪟	ventana vista cristal marco view
+🛏️	cama dormir siesta colchón colchon nap
+🛋️	sillón sillon sala descansar mueble lámpara lampara
+🪑	silla asiento sentarse mueble seat
+🚽	baño bano inodoro taza retrete sanitario
+🪠	destapacaños destapacanos desatascador plomería plomeria tapado chupón chupon
+🚿	regadera ducha bañarse banarse higiene aseo
+🛁	tina bañera banera remojo relajarse burbujas
+🪤	ratonera trampa queso roedor plaga
+🪒	rastrillo afeitar rasurar navaja shave
+🧴	crema hidratante shampoo bloqueador sunscreen
+🧷	alfiler imperdible seguro broche pañal panal
+🧹	escoba barrer limpieza bruja sweep
+🧺	canasta cesta ropa picnic laundry
+🧻	papel-higiénico papel-higienico sanitario rollo baño bano toiletpaper
+🪣	cubeta balde trapear agua pail
+🧼	jabón jabon lavar manos espuma higiene
+🫧	burbujas espuma pompas jabón jabon soap
+🪥	cepillo-dental dientes pasta dentista higiene
+🧽	esponja fregar trastes lavar absorber
+🧯	extintor incendio emergencia apagar seguridad
+🛒	carrito compras mandado despensa checkout
+🚬	cigarro fumar tabaco nicotina humo
+⚰️	ataúd ataud muerto entierro luto rip
+🪦	lápida lapida tumba cementerio panteón panteon rip
+⚱️	urna cenizas restos luto duelo
+🧿	ojo-turco mal-de-ojo evil-eye protección proteccion talismán talisman
+🪬	mano-de-fátima mano-de-fatima amuleto protección proteccion talismán talisman ojo
+🗿	estatua isla-de-pascua easter-island cara piedra
+🪧	pancarta letrero cartel protesta manifestación manifestacion
+🪪	credencial ine licencia gafete badge
+🏧	cajero efectivo dinero retirar banco
+🚮	basura basurero bote tirar trash
+🚰	agua bebedero llave grifo sed
+♿	silla-de-ruedas discapacidad accesible rampa handicap
+🚹	hombres caballeros baño bano sanitario varones
+🚺	mujeres damas baño bano sanitario señoras senoras
+🚻	baño bano sanitario bathroom aseo unisex
+🚼	bebé bebe pañal panal cambiador lactancia carriola
+🚾	baño bano sanitario inodoro retrete letrina
+🛂	migración migracion pasaporte visa frontera revisión revision
+🛃	aduana declarar impuestos frontera equipaje
+🛄	equipaje maletas banda luggage suitcase
+🛅	consigna casilleros lockers guardar maletas
+⚠️	peligro precaución precaucion cuidado aviso triángulo triangulo
+🚸	niños ninos cruce escolar peatones colegio
+⛔	prohibido alto restringido paso circular
+🚫	prohibido veto banned negado tachado
+🚳	bicicleta ciclista prohibido ciclismo ciclovía ciclovia
+🚭	fumar cigarro tabaco humo prohibido
+🚯	basura tirar contaminar trash tiradero
+🚱	agua beber contaminada drink insalubre
+🚷	peatones prohibido caminar paso banqueta
+📵	celular teléfono telefono apagar prohibido silencio
+🔞	adultos mayores 18+ nsfw restringido
+☢️	radiación radiacion atómico atomico uranio reactor chernobyl
+☣️	biológico biologico virus contaminación contaminacion cuarentena infeccioso
+⬆️	arriba subir flecha ascender upload
+↗️	noreste diagonal arriba-derecha northeast crecimiento
+➡️	derecha siguiente flecha avanzar next
+↘️	sureste diagonal southeast caída caida abajo-derecha
+⬇️	abajo bajar descargar download flecha
+↙️	suroeste diagonal southwest abajo-izquierda bajada
+⬅️	izquierda atrás atras regresar flecha anterior
+↖️	noroeste diagonal northwest arriba-izquierda subida
+↕️	vertical arriba-abajo altura resize doble-flecha
+↔️	horizontal ancho izquierda-derecha resize doble-flecha
+↩️	regresar responder deshacer undo reply
+↪️	reenviar forward redirigir desvío desvio adelante
+⤴️	subir elevar aumento rise repunte
+⤵️	bajar descender caída caida drop desplome
+🔃	recargar actualizar rotar ciclo repetir
+🔄	recargar actualizar refresh loop reciclar
+🔙	atrás atras volver retroceder devolver
+🔚	fin terminar final último ultimo acabar
+🔛	encendido prendido activo encender funcionando
+🔜	pronto próximamente proximamente ya-mero al-rato coming-soon
+🔝	arriba cima máximo maximo primero tope
+🛐	oración oracion rezar culto capilla fe
+⚛️	átomo atomo electrón electron química quimica react molécula molecula
+🕉️	yoga meditación meditacion mantra aum espiritual
+✡️	judío judio israel hexagrama sinagoga estrella
+☸️	budista rueda karma nirvana meditación meditacion
+☯️	equilibrio tao armonía armonia opuestos chino
+✝️	cruz crucifijo jesús jesus católico catolico fe
+☦️	cruz rusa bizantina eslava griega
+☪️	musulmán musulman media-luna mezquita islámico islamico ramadán ramadan
+☮️	paz pacifismo antiguerra sesentas armonía armonia
+🕎	candelabro velas janucá januca judaísmo judaismo brazos
+🔯	estrella hexagrama fortuna esotérico esoterico amuleto
+🪯	sij sikh religión religion espadas punjab
+♈	carnero marzo horóscopo horoscopo astrología astrologia signo
+♉	tauro toro abril horóscopo horoscopo astrología astrologia
+♊	géminis geminis gemelos mayo horóscopo horoscopo astrología astrologia
+♋	cáncer cangrejo junio horóscopo horoscopo astrología astrologia
+♌	león leon julio horóscopo horoscopo astrología astrologia fuego
+♍	agosto horóscopo horoscopo astrología astrologia doncella signo
+♎	balanza justicia octubre horóscopo horoscopo signo
+♏	escorpión escorpion alacrán alacran noviembre horóscopo horoscopo signo
+♐	sagitario arquero flecha centauro diciembre
+♑	capricornio cabra chivo enero horóscopo horoscopo
+♒	acuario aguador febrero horóscopo horoscopo signo
+♓	piscis peces marzo horóscopo horoscopo signo
+⛎	ofiuco serpentario serpiente culebra horóscopo horoscopo
+🔀	aleatorio random mezclar barajar playlist
+🔁	repetir bucle ciclo replay otra-vez
+🔂	bucle uno canción cancion replay misma-canción misma-cancion
+▶️	reproducir iniciar empezar start triángulo triangulo
+⏩	adelantar avanzar rápido rapido acelerar ff
+⏭️	siguiente saltar próxima proxima canción cancion pasar
+⏯️	reproducir pausar alternar espacio
+◀️	atrás atras retroceder izquierda regresar triángulo triangulo
+⏪	retroceder atrás atras rebobinar regresar retroceso
+⏮️	anterior previa canción cancion regresar saltar-atrás saltar-atras
+🔼	subir arriba aumentar triángulo triangulo
+⏫	subir arriba doble aumentar tope
+🔽	bajar abajo descender disminuir triángulo triangulo
+⏬	bajar abajo doble descender hasta-abajo
+⏸️	pausa espera descanso break dos-barras
+⏹️	detener parar alto cuadrado fin
+⏺️	grabar grabación grabacion rec círculo circulo rojo
+⏏️	expulsar sacar usb desmontar cd
+🎦	cine película pelicula proyector pantalla estreno
+🔅	brillo atenuar oscurecer tenue pantalla
+🔆	brillo iluminar aclarar sol pantalla
+📶	señal senal cobertura celular red datos
+🛜	wifi inalámbrico inalambrico internet red señal senal hotspot
+📳	vibrar celular zumbido modo-vibrar notificación notificacion
+📴	apagado apagar celular silencio no-molestar
+♀️	mujer femenino hembra chica género genero
+♂️	hombre masculino macho varón varon género genero
+⚧️	transgénero transgenero identidad género genero queer diversidad
+✖️	por equis tache cruz multiplicación multiplicacion
+➕	más mas suma sumar agregar añadir anadir add
+➖	menos resta restar quitar negativo
+➗	división division entre dividir fracción fraccion cociente
+🟰	igual igualdad resultado ecuación ecuacion equivalente
+♾️	infinito ilimitado eterno sin-fin ocho-acostado
+‼️	admiración admiracion urgente énfasis enfasis importante grito
+⁉️	duda sorpresa qué que wtf confusión confusion
+❓	pregunta duda interrogación interrogacion por-qué por-que incógnita incognita
+❔	pregunta duda blanco contorno interrogación interrogacion
+❕	admiración admiracion blanco contorno aviso atención atencion
+❗	admiración admiracion cuidado ojo aguas rojo
+〰️	onda ondulado raya tilde zigzag
+💱	cambio divisas tipo-de-cambio yen casa-de-cambio
+💲	dólar dolar dinero precio pesos lana
+⚕️	médico medico salud hospital farmacia enfermería enfermeria
+♻️	reciclaje reciclar basura ecología ecologia sustentable
+⚜️	flor-de-lis francia heráldica heraldica escudo realeza
+🔱	tridente neptuno mar diablo lanza
+📛	gafete nombre credencial escuela japonés japones
+🔰	principiante novato aprendiz wakaba hoja
+⭕	círculo circulo rojo correcto maru aro
+✅	palomita listo hecho verde correcto
+☑️	casilla palomita marcado lista seleccionado
+✔️	palomita visto correcto tick aprobado
+❌	tache equis error rechazado fallo
+❎	equis tache verde rechazar denegado
+➰	bucle rizo garabato espiral squiggle
+➿	voicemail contestadora bucles rizos garabato
+〽️	karaoke zigzag partitura canto
+✳️	asterisco radios ocho-puntas destello
+✴️	estrella destello ocho-picos chispa starburst
+❇️	brillo resplandor chispas centella
+©️	derechos-de-autor autor propiedad licencia
+®️	marca-registrada registro patente letra-r
+™️	marca comercial registrada brand
+🫟	salpicadura mancha pintura splash gotas
+#️⃣	gato numeral almohadilla tecla etiqueta
+*️⃣	asterisco estrellita tecla comodín comodin nota-al-pie
+0️⃣	cero nada nulo ninguno
+1️⃣	uno primero unidad primer-lugar
+2️⃣	dos segundo pareja par
+3️⃣	tres tercero trío trio triple
+4️⃣	cuatro cuarto cuarteto quad
+5️⃣	cinco quinto quinteto
+6️⃣	seis sexto media-docena
+7️⃣	siete séptimo septimo suerte lucky
+8️⃣	ocho octavo octeto
+9️⃣	nueve noveno novena
+🔟	diez décimo decimo decena perfecto
+🔠	mayúsculas mayusculas caps teclado bloq-mayus
+🔡	minúsculas minusculas letras teclado escribir
+🔢	números numeros dígitos digitos cifras teclado
+🔣	signos teclado ampersand porcentaje
+🔤	abecedario letras teclado texto
+🅰️	sangre tipo-a grupo-sanguíneo grupo-sanguineo letra-a
+🆎	sangre tipo-ab grupo-sanguíneo grupo-sanguineo donador
+🅱️	sangre tipo-b grupo-sanguíneo grupo-sanguineo letra-b
+🆑	borrar limpiar resetear cancelar
+🆒	chido padre genial buenísimo buenisimo
+🆓	gratuito sin-costo cortesía cortesia promo
+ℹ️	datos ayuda informes turismo
+🆔	credencial identificación identificacion ine usuario
+Ⓜ️	subterráneo subterraneo tren estación estacion eme
+🆕	nuevo estreno novedad lanzamiento
+🆖	mal error rechazado incorrecto
+🅾️	sangre tipo-o donador-universal grupo-sanguíneo grupo-sanguineo
+🆗	bien correcto listo vale
+🅿️	estacionamiento estacionar cochera parqueo
+🆘	auxilio socorro rescate ayuda
+🆙	subir arriba mejorar nivel
+🆚	contra duelo enfrentamiento reto
+🈁	aquí aqui acá aca ubicación ubicacion posición posicion
+🈂️	propina cobro extra recargo
+🈷️	mensual mes mensualidad cuota
+🈶	cobro costo cuesta de-paga
+🈯	apartado reservación reservacion designado ocupado
+🉐	ganga oferta barato provechoso
+🈹	descuento rebaja promoción promocion liquidación liquidacion
+🈚	gratis gratuito sin-costo cortesía cortesia
+🈲	prohibido vetado veto no-permitido
+🉑	aceptable permitido aprobado válido valido
+🈸	solicitud trámite tramite formulario solicitar
+🈴	aprobado aprobar examen admitido
+🈳	vacante disponible libre desocupado
+
+# --- Enrichment pass 2026-08-01: chunks 024, 025, 026, 027, 028, 029 ---
+㊗️	felicidades enhorabuena kanji japonés japones celebración celebracion
+㊙️	secreto privado oculto clasificado kanji
+🈺	abierto negocio tienda horario kanji
+🈵	lleno agotado cupo sin-lugar kanji
+🔴	rojo bolita grabando rec en-vivo
+🟠	naranja anaranjado bolita ámbar ambar redondel
+🟡	amarillo bolita dorado alerta redondel
+🟢	verde bolita activo online disponible
+🔵	azul bolita celeste redondel marino
+🟣	morado bolita violeta lila redondel
+🟤	café cafe bolita marrón marron chocolate redondel
+⚫	negro bolita punto relleno
+⚪	blanco bolita punto vacío vacio hueco
+🟥	rojo cuadro bloque pixel
+🟧	naranja cuadro bloque pixel ámbar ambar
+🟨	amarillo cuadro bloque pixel dorado
+🟩	verde cuadro bloque pixel wordle
+🟦	azul cuadro bloque pixel celeste
+🟪	morado cuadro bloque violeta lila
+🟫	café cafe cuadro bloque marrón marron chocolate
+⬛	negro cuadro bloque relleno
+⬜	blanco cuadro bloque vacío vacio hueco
+◼️	negro cuadro relleno mediano
+◻️	blanco cuadro vacío vacio contorno mediano
+◾	negro cuadrito relleno chico
+◽	blanco cuadrito vacío vacio chico
+▪️	negro cuadrito viñeta vineta relleno
+▫️	blanco cuadrito viñeta vineta vacío vacio
+🔶	rombo diamante naranja ámbar ambar
+🔷	rombo diamante celeste zafiro
+🔸	rombo diamante naranja chico
+🔹	rombo diamante celeste chico
+🔺	triángulo triangulo rojo alza subida aumento
+🔻	triángulo triangulo rojo baja caída caida descenso
+💠	rombo azul decorativo kawaii adorno
+🔘	botón boton formulario marcar encuesta
+🔳	blanco cuadro recuadro borde
+🔲	negro cuadro recuadro borde
+🏁	meta carrera fórmula1 formula1 nascar llegada
+🚩	bandera roja alerta marcador golf
+🎌	banderas japón japon nipón nipon hinomaru
+🏴	bandera negra oscura protesta
+🏳️	blanca rendirse me-rindo armisticio bandera
+🏳️‍🌈	arcoíris arcoiris bandera lgbt orgullo diversidad
+🏳️‍⚧️	bandera identidad género genero diversidad
+🏴‍☠️	bandera jolly-roger calavera corsario tesoro
+🇦🇨	ascensión isla atlántico atlantico georgetown británica britanica
+🇦🇩	andorrano pirineos andorra-la-vella europa
+🇦🇪	emiratos dubái dubai abu-dabi uae golfo
+🇦🇫	afganistán afganistan afgano kabul asia-central
+🇦🇬	caribe caribbean antillas saint-johns
+🇦🇮	anguila caribe antillas the-valley británica britanica
+🇦🇱	albanés albanes tirana balcanes shqiperia
+🇦🇲	armenio ereván erevan yerevan cáucaso caucaso
+🇦🇴	angoleño angoleno luanda kwanza lusófona lusofona
+🇦🇶	antártida antartida polo-sur hielo pingüinos pinguinos
+🇦🇷	argentino buenos-aires albiceleste sudamérica sudamerica tango
+🇦🇸	pago-pago polinesia pacífico pacifico samoana
+🇦🇹	austríaco austriaco viena alpes österreich osterreich
+🇦🇺	australiano canberra sydney aussie canguro
+🇦🇼	bandera caribe caribbean oranjestad arubeño arubeno antillas
+🇦🇽	bandera islas finlandia mariehamn nórdico nordico báltico baltico
+🇦🇿	bandera azerbaiyán azerbaiyan bakú baku cáucaso caucaso azerí azeri caspio
+🇧🇦	bandera sarajevo balcanes balkans bosnio yugoslavia
+🇧🇧	bandera caribe caribbean bridgetown antillas bajan
+🇧🇩	bandera daca dhaka bengalí bengali bengala bangladesí bangladesi
+🇧🇪	bandera bélgica belgica bruselas brussels belga flandes
+🇧🇫	bandera uagadugú uagadugu ouagadougou burkinés burkines sahel volta
+🇧🇬	bandera sofía sofia búlgaro bulgaro balcanes balkans
+🇧🇭	bandera baréin barein manama golfo pérsico persico
+🇧🇮	bandera buyumbura gitega burundés burundes kirundi
+🇧🇯	bandera benín porto-novo cotonú cotonu dahomey beninés benines
+🇧🇱	bandera saint-barth caribe gustavia francesa antillas
+🇧🇲	bandera hamilton atlántico atlantico británica britanica bermudeño bermudeno
+🇧🇳	bandera borneo sultanato bruneano bandar-seri-begawan
+🇧🇴	bandera la-paz sucre boliviano altiplano andes
+🇧🇶	bandera bonaire saba eustaquio caribe neerlandés neerlandes
+🇧🇷	bandera brasil brasilia brasileño brasileno amazonas samba
+🇧🇸	bandera nassau caribe caribbean bahameño bahameno atlántico atlantico
+🇧🇹	bandera bután butan thimphu himalaya dragón dragon butanés butanes
+🇧🇻	bandera isla noruega norway subantártico subantartico deshabitada
+🇧🇼	bandera gaborone kalahari okavango botsuana
+🇧🇾	bandera bielorrusia minsk bielorruso eslavo
+🇧🇿	bandera belmopán belmopan centroamérica centroamerica beliceño beliceno caribe
+🇨🇦	bandera ottawa maple hoja-de-arce canadiense quebec
+🇨🇨	bandera australia índico indico atolón atolon west-island
+🇨🇩	bandera rdc drc zaire congoleño congoleno democrática democratica
+🇨🇫	bandera centroafricana bangui rca sango
+🇨🇬	bandera congoleño congoleno república republica pointe-noire
+🇨🇭	bandera suiza berna alpes helvética helvetica cruz
+🇨🇮	bandera marfil costa abiyán abiyan yamusukro marfileño marfileno
+🇨🇰	bandera islas rarotonga polinesia avarua nueva-zelanda
+🇨🇱	bandera santiago chileno andes patagonia
+🇨🇲	bandera camerún camerun yaundé yaunde duala camerunés camerunes
+🇨🇳	bandera pekín pekin beijing chino estrellas mandarín mandarin
+🇨🇴	bandera bogotá bogota colombiano medellín medellin cafetero
+🇨🇵	bandera isla francia pacífico pacifico atolón atolon deshabitada
+🇨🇶	bandera sercq guernsey normandas británica britanica
+🇨🇷	bandera san-josé san-jose tico pura-vida centroamérica centroamerica
+🇨🇺	bandera habana cubano caribe antillas
+🇨🇻	bandera cabo praia atlántico atlantico caboverdiano islas
+🇨🇼	bandera willemstad caribe antillas neerlandés neerlandes curazao
+🇨🇽	bandera navidad australia índico indico cangrejos isla
+🇨🇾	bandera chipre nicosia mediterráneo mediterraneo chipriota isla
+🇨🇿	bandera chequia praga checo bohemia praha
+🇩🇪	bandera alemania berlín berlin alemán aleman deutschland germano
+🇩🇬	bandera chagos índico indico atolón atolon británica britanica base-militar
+🇩🇯	bandera yibuti cuerno-de-áfrica cuerno-de-africa mar-rojo yibutiano
+🇩🇰	bandera dinamarca copenhague danés danes nórdico nordico dannebrog
+🇩🇲	bandera roseau caribe antillas dominiqués dominiques
+🇩🇴	bandera dominicana santo-domingo caribe quisqueya antillas
+🇩🇿	bandera argelia argel magreb argelino
+🇪🇦	bandera españa espana marruecos mediterráneo mediterraneo autónomas autonomas
+🇪🇨	bandera quito ecuatoriano galápagos galapagos guayaquil andes
+🇪🇪	bandera tallin báltico baltico estonio nórdico nordico
+🇪🇬	bandera egipto cairo nilo pirámides piramides egipcio
+🇪🇭	bandera occidental saharaui aaiún aaiun polisario
+🇪🇷	bandera asmara mar-rojo eritreo cuerno-de-áfrica cuerno-de-africa
+🇪🇸	bandera españa espana madrid español espanol rojigualda ibérica iberica
+🇪🇹	bandera etiopía etiopia adís-abeba adis-abeba etíope etiope abisinia cuerno-de-áfrica cuerno-de-africa
+🇪🇺	ue bruselas euro eurozona schengen
+🇫🇮	finlandia helsinki finlandés finlandes suomi nórdico nordico
+🇫🇯	fiyi suva pacífico pacifico melanesia islas
+🇫🇰	malvinas stanley atlántico-sur atlantico-sur británico britanico islas
+🇫🇲	palikir pacífico pacifico islas estados-federados
+🇫🇴	feroe tórshavn torshavn dinamarca nórdico nordico islas
+🇫🇷	francia parís paris francés frances tricolor galia
+🇬🇦	libreville gabonés gabones áfrica-central africa-central golfo-guinea
+🇬🇧	reino-unido londres inglaterra union-jack gran-bretaña gran-bretana
+🇬🇩	granada caribe antillas nuez-moscada saint-georges
+🇬🇪	tiflis tbilisi cáucaso caucaso georgiano sakartvelo
+🇬🇫	guayana-francesa cayena sudamérica sudamerica kourou ultramar
+🇬🇬	islas-normandas saint-peter-port canal-mancha bailía bailia
+🇬🇭	acra accra ghanés ghanes costa-oro áfrica-occidental africa-occidental
+🇬🇮	peñón penon estrecho británico britanico ultramar roca
+🇬🇱	groenlandia nuuk ártico artico hielo kalaallit
+🇬🇲	banjul gambiano áfrica-occidental africa-occidental atlántico atlantico
+🇬🇳	conakry conakri guineano áfrica-occidental africa-occidental
+🇬🇵	guadalupe caribe antillas basse-terre francesa
+🇬🇶	guinea-ecuatorial malabo ecuatoguineano hispanohablante bata
+🇬🇷	grecia atenas griego heleno egeo
+🇬🇸	georgias-del-sur sandwich-del-sur grytviken atlántico-sur atlantico-sur británico britanico
+🇬🇹	guatemalteco chapín chapin centroamérica centroamerica quetzal maya
+🇬🇺	chamorro pacífico pacifico micronesia agaña agana isla
+🇬🇼	bisáu bisau áfrica-occidental africa-occidental lusófono lusofono atlántico atlantico
+🇬🇾	guayana georgetown guyanés guyanes sudamérica sudamerica caribe
+🇭🇰	hongkong bauhinia cantonés cantones hkg
+🇭🇲	subantártico subantartico australia océano-índico oceano-indico deshabitado volcán volcan
+🇭🇳	hondureño hondureno catracho tegucigalpa centroamérica centroamerica
+🇭🇷	croacia zagreb croata balcanes adriático adriatico
+🇭🇹	haitiano puerto-príncipe puerto-principe caribe hispaniola antillas
+🇭🇺	hungría hungria budapest húngaro hungaro magiar danubio
+🇮🇨	canarias tenerife gran-canaria españa espana canario
+🇮🇩	yakarta jakarta indonesio bali sudeste-asiático sudeste-asiatico
+🇮🇪	irlanda dublín dublin irlandés irlandes eire trébol trebol
+🇮🇱	israelí israeli jerusalén jerusalen tel-aviv estrella-david hebreo
+🇮🇲	douglas triskelion manx tres-piernas dependencia-corona
+🇮🇳	nueva-delhi indio bollywood chakra taj-mahal
+🇮🇴	chagos diego-garcia índico indico archipiélago archipielago ultramar
+🇮🇶	irak bagdad iraquí iraqui mesopotamia oriente-medio
+🇮🇷	teherán teheran persia persa iraní irani oriente-medio
+🇮🇸	islandia reikiavik reykjavik islandés islandes nórdico nordico
+🇮🇹	italia roma italiano tricolor mediterráneo mediterraneo
+🇯🇪	saint-helier islas-normandas canal-mancha dependencia-corona
+🇯🇲	kingston jamaicano caribe reggae antillas
+🇯🇴	jordania amán aman jordano petra oriente-medio
+🇯🇵	japón japon tokio japonés japones nipón nipon sol-naciente
+🇰🇪	nairobi keniano safari áfrica-oriental africa-oriental masái masai
+🇰🇬	kirguistán kirguistan biskek kirguís kirguis asia-central
+🇰🇭	camboya phnom-penh jemer angkor sudeste-asiático sudeste-asiatico
+🇰🇮	tarawa pacífico pacifico micronesia atolón atolon fragata
+🇰🇲	comoras moroni índico indico archipiélago archipielago creciente
+🇰🇳	san-cristóbal san-cristobal basseterre caribe antillas sotavento
+🇰🇵	corea-del-norte pionyang pyongyang norcoreano rpdc
+🇰🇷	corea-del-sur seúl seul surcoreano kpop taeguk
+🇰🇼	kuwaití kuwaiti golfo-pérsico golfo-persico oriente-medio petróleo petroleo árabe arabe
+🇰🇾	caimán caiman george-town caribe antillas offshore
+🇰🇿	kazajistán kazajistan astaná astana kazajo asia-central estepa
+🇱🇦	vientián vientian laosiano mekong sudeste-asiático sudeste-asiatico indochina
+🇱🇧	líbano libano beirut libanés libanes cedro oriente-medio
+🇱🇨	santa-lucía santa-lucia caribe caribbean castries antillas
+🇱🇮	vaduz alpes alps principado microestado
+🇱🇰	ceilán ceilan ceylon colombo srilanka isla
+🇱🇷	monrovia liberiano west-africa áfrica-occidental africa-occidental
+🇱🇸	maseru basotho enclave reino southern-africa
+🇱🇹	lituania vilnius báltico baltico baltic lituano
+🇱🇺	luxemburgo gran-ducado ducado benelux
+🇱🇻	letonia riga báltico baltico baltic letón leton
+🇱🇾	libia trípoli tripoli magreb maghreb sahara
+🇲🇦	marruecos rabat marrakech magreb marroquí marroqui
+🇲🇨	montecarlo principado casino f1 riviera
+🇲🇩	moldavia chisinau moldavo europa-del-este
+🇲🇪	podgorica balcanes balkans adriático adriatico montenegrino
+🇲🇫	san-martín san-martin caribe caribbean marigot antillas
+🇲🇬	antananarivo malgache isla océano-índico oceano-indico
+🇲🇭	islas-marshall majuro pacífico pacifico pacific micronesia
+🇲🇰	macedonia-del-norte skopje skopie balcanes balkans
+🇲🇱	bamako sahel tombuctú tombuctu timbuktu maliense
+🇲🇲	birmania naypyidaw yangon rangún rangun birmano
+🇲🇳	ulaanbaatar ulán-bator ulan-bator mongol estepa gengis-kan
+🇲🇴	casinos apuestas gambling cantonés cantones
+🇲🇵	marianas saipán saipan pacífico pacifico micronesia
+🇲🇶	martinica caribe caribbean antillas fort-de-france
+🇲🇷	nuakchot nouakchott sahara sahel magreb
+🇲🇸	caribe caribbean antillas volcán volcan plymouth
+🇲🇹	valletta valeta mediterráneo mediterraneo maltés maltes isla
+🇲🇺	mauricio port-louis océano-índico oceano-indico isla
+🇲🇻	maldivas malé male atolón atolon océano-índico oceano-indico islas
+🇲🇼	malaui lilongwe blantyre lago southern-africa
+🇲🇽	mexicano azteca tricolor águila aguila cdmx viva-méxico viva-mexico
+🇲🇾	malasia kuala-lumpur malayo borneo sudeste-asiático sudeste-asiatico
+🇲🇿	maputo mozambiqueño mozambiqueno lusófono lusofono océano-índico oceano-indico
+🇳🇦	windhoek namib desierto namibio southern-africa
+🇳🇨	nueva-caledonia numea noumea pacífico pacifico melanesia
+🇳🇪	niamey sahel sahara nigerino áfrica-occidental africa-occidental
+🇳🇫	isla-norfolk pacífico pacifico australia kingston
+🇳🇬	abuja lagos nigeriano naija áfrica-occidental africa-occidental
+🇳🇮	managua nica nicaragüense nicaraguense centroamérica centroamerica central-america
+🇳🇱	países-bajos paises-bajos holanda holland ámsterdam amsterdam neerlandés neerlandes dutch
+🇳🇴	noruega oslo escandinavia nórdico nordico fiordos
+🇳🇵	katmandú katmandu kathmandu himalaya everest nepalí nepali
+🇳🇷	pacífico pacifico micronesia isla yaren
+🇳🇺	pacífico pacifico polinesia isla alofi
+🇳🇿	nueva-zelanda aotearoa kiwi wellington maorí maori
+🇴🇲	mascate muscat omaní omani golfo-pérsico golfo-persico península-arábiga peninsula-arabiga
+🇵🇦	canal istmo centroamérica centroamerica panameño panameno central-america
+🇵🇪	lima peruano andes machu-picchu inca
+🇵🇫	polinesia-francesa tahití tahiti papeete bora-bora pacífico pacifico
+🇵🇬	nueva-guinea port-moresby melanesia pacífico pacifico
+🇵🇭	filipinas manila filipino pinoy sudeste-asiático sudeste-asiatico
+🇵🇰	islamabad karachi lahore paquistaní paquistani urdu
+🇵🇱	polonia varsovia warsaw polaco cracovia
+🇵🇲	san-pedro-y-miquelón san-pedro-y-miquelon francesa atlántico atlantico norteamérica norteamerica
+🇵🇳	bounty adamstown pacífico pacifico británica britanica isla
+🇵🇷	boricua borinquen san-juan caribe antillas
+🇵🇸	palestina gaza cisjordania ramala west-bank
+🇵🇹	lisboa lisbon portugués portugues luso oporto
+🇵🇼	palaos micronesia pacífico pacifico ngerulmud isla
+🇵🇾	asunción asuncion guaraní guarani paraguayo sudamérica sudamerica mercosur
+🇶🇦	catar doha golfo-pérsico golfo-persico catarí catari península-arábiga peninsula-arabiga
+🇷🇪	isla island francia french ultramar saint-denis
+🇷🇴	rumania rumano bucarest bucharest balcanes
+🇷🇸	serbio serbian belgrado belgrade balcanes
+🇷🇺	rusia ruso moscú moscu moscow kremlin
+🇷🇼	ruanda kigali ruandés ruandes rwandan
+🇸🇦	saudita riad riyadh meca golfo ksa
+🇸🇧	salomón salomon honiara islas pacífico pacifico melanesia
+🇸🇨	victoria islas índico indico archipiélago archipielago mahé mahe
+🇸🇩	jartum khartoum nilo sudanés sudanes sahel
+🇸🇪	suecia sueco estocolmo stockholm escandinavia
+🇸🇬	singapur merlion ciudad-estado singapurense sudeste-asiático sudeste-asiatico
+🇸🇭	santa-elena napoleón napoleon atlántico atlantico jamestown isla
+🇸🇮	eslovenia esloveno liubliana ljubljana alpes
+🇸🇯	noruega norway ártico artico spitsbergen longyearbyen
+🇸🇰	eslovaquia eslovaco bratislava slovak centroeuropa
+🇸🇱	freetown leona krio atlántico atlantico
+🇸🇲	sanmarinense italia microestado enclave titano
+🇸🇳	dakar senegalés senegales senegalese teranga sahel
+🇸🇴	somalí somali mogadiscio mogadishu cuerno
+🇸🇷	surinam paramaribo guayana sudamérica sudamerica neerlandés neerlandes
+🇸🇸	juba nilo sudán-del-sur sudan-del-sur sursudanés sursudanes
+🇸🇹	islas portugués portugues guinea archipiélago archipielago
+🇸🇻	salvadoreño salvadoreno centroamérica centroamerica san-salvador pulgarcito
+🇸🇽	caribe philipsburg neerlandés neerlandes antillas isla
+🇸🇾	siria damasco damascus sirio levante
+🇸🇿	suazilandia suazi mbabane lobamba
+🇹🇦	atlántico atlantico isla remota británico britanico
+🇹🇨	caribe islas cockburn británico britanico
+🇹🇩	chadiano yamena ndjamena sahel sahara
+🇹🇫	kerguelen taaf antártico antartico francia australes
+🇹🇬	lomé lome togolés togoles togolese guinea
+🇹🇭	tailandia tailandés tailandes bangkok siam sudeste-asiático sudeste-asiatico
+🇹🇯	tayikistán tayikistan tayiko dusambé dusambe dushanbe
+🇹🇰	polinesia nueva-zelanda atolón atolon pacífico pacifico islas
+🇹🇱	dili oriental portugués portugues isla
+🇹🇲	asgabat ashgabat turcomano caspio karakum
+🇹🇳	túnez tunez tunecino magreb cartago tunis
+🇹🇴	nukualofa polinesia pacífico pacifico islas reino
+🇹🇷	turquía turquia turkey ankara estambul turco
+🇹🇹	caribe puerto-españa puerto-espana islas antillas
+🇹🇻	funafuti polinesia atolón atolon pacífico pacifico islas
+🇹🇼	taipéi taipei formosa taiwanés taiwanes isla
+🇹🇿	dodoma kilimanjaro zanzíbar zanzibar tanzano safari
+🇺🇦	ucrania kiev kyiv ucraniano
+🇺🇬	kampala ugandés ugandes nilo victoria
+🇺🇲	islas midway wake menores pacífico pacifico
+🇺🇳	onu naciones-unidas azul internacional paz
+🇺🇸	estados-unidos usa eeuu eua gringo washington
+🇺🇾	montevideo uruguayo charrúa charrua sudamérica sudamerica
+🇺🇿	taskent tashkent samarcanda uzbeko
+🇻🇦	vaticano papa pope roma santa-sede
+🇻🇨	caribe kingstown granadinas islas antillas
+🇻🇪	caracas venezolano sudamérica sudamerica orinoco arepa
+🇻🇬	caribe road-town islas vírgenes virgenes
+🇻🇮	caribe charlotte-amalie islas vírgenes virgenes estadounidenses
+🇻🇳	hanói hanoi saigón saigon vietnamita indochina
+🇻🇺	port-vila melanesia pacífico pacifico islas
+🇼🇫	polinesia francia mata-utu pacífico pacifico islas
+🇼🇸	apia polinesia pacífico pacifico samoano islas
+🇽🇰	pristina prishtina balcanes kosovar
+🇾🇪	yemení yemeni saná sana sanaa oriente-medio middle-east península-arábiga peninsula-arabiga
+🇾🇹	mahorés mahores mamoudzou comoras francia océano-índico oceano-indico indian-ocean
+🇿🇦	sudáfrica sudafrica sudafricano pretoria johannesburgo ciudad-del-cabo cape-town
+🇿🇲	zambiano zambian lusaka zambeze cataratas-victoria áfrica-austral africa-austral
+🇿🇼	zimbabue zimbabuense harare rodesia rhodesia áfrica-austral africa-austral
+🏴󠁧󠁢󠁥󠁮󠁧󠁿	inglaterra londres inglés ingles reino-unido uk gran-bretaña gran-bretana
+🏴󠁧󠁢󠁳󠁣󠁴󠁿	escocia escocés escoces edimburgo san-andrés san-andres reino-unido uk
+🏴󠁧󠁢󠁷󠁬󠁳󠁿	gales galés cardiff cymru reino-unido uk

@@ -1,0 +1,180 @@
+// feature: bt
+// role:    style
+@keyframes bt-scan-pulse {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.25; }
+  100% { opacity: 1; }
+}
+
+@keyframes bt-dot-1 {
+  0%   { opacity: 0.2; }
+  16%  { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+@keyframes bt-dot-2 {
+  0%   { opacity: 0.2; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+@keyframes bt-dot-3 {
+  0%   { opacity: 0.2; }
+  83%  { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+// Circle trigger
+
+.bt-circle {
+  background: rgba(46, 52, 64, 0.99);
+  border: 1px solid #D08770;
+  border-radius: 32px;
+  min-width: 64px;
+  min-height: 64px;
+
+  &.connected {
+    border-color: #0082FC;
+  }
+
+  .bt-icon {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 30px;
+    color: #D8DEE9;
+
+    &.connected {
+      color: #0082FC;
+    }
+  }
+}
+
+// Popup window
+
+.bt-popup {
+  background: rgba(26, 31, 42, 0.99);
+  border: 1px solid #D08770;
+  border-radius: 16px;
+  min-width: 440px;
+  padding: 16px;
+
+  .bt-popup-header {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #3B4252;
+
+    .bt-popup-title {
+      font-size: 15px;
+      color: #ECEFF4;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .bt-popup-status {
+      color: #0082FC;
+      font-size: 11px;
+      margin-right: 10px;
+    }
+
+    .bt-scan-btn {
+      background: #3B4252;
+      color: #D8DEE9;
+      font-size: 11px;
+      border-radius: 6px;
+      padding: 4px 10px;
+      margin-right: 8px;
+
+      &.scanning {
+        background: #EBCB8B;
+        color: #2E3440;
+        animation: bt-scan-pulse 1.2s ease-in-out infinite;
+      }
+    }
+
+    .bt-close-btn {
+      background: transparent;
+      color: #4C566A;
+      font-size: 18px;
+      border-radius: 6px;
+      padding: 0 6px;
+
+      &:hover {
+        color: #BF616A;
+      }
+    }
+  }
+
+  .bt-device-scroll {
+    min-height: 240px;
+  }
+
+  .bt-section-title {
+    color: #4C566A;
+    font-size: 9px;
+    margin-top: 8px;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+
+  .bt-empty {
+    color: #4C566A;
+    font-size: 12px;
+    margin: 6px 0 8px;
+  }
+
+  .bt-scanning-row {
+    margin: 4px 0 8px;
+  }
+
+  .bt-scan-header-dots {
+    margin-right: 8px;
+  }
+
+  .bt-scan-dot-1 {
+    color: #88C0D0;
+    font-size: 8px;
+    animation: bt-dot-1 1.2s ease-in-out infinite;
+  }
+  .bt-scan-dot-2 {
+    color: #88C0D0;
+    font-size: 8px;
+    animation: bt-dot-2 1.2s ease-in-out infinite;
+  }
+  .bt-scan-dot-3 {
+    color: #88C0D0;
+    font-size: 8px;
+    animation: bt-dot-3 1.2s ease-in-out infinite;
+  }
+
+  .bt-device {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #3B4252;
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .bt-dev-name {
+      color: #D8DEE9;
+      font-size: 13px;
+      margin-right: 8px;
+
+      &.connected {
+        color: #A3BE8C;
+      }
+    }
+
+    .bt-action-btn {
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+
+    .connect-btn    { background: #5E81AC; color: #ECEFF4; }
+    .disconnect-btn { background: #EBCB8B; color: #2E3440; }
+    .forget-btn     { background: #BF616A; color: #ECEFF4; }
+    .pair-btn       { background: #A3BE8C; color: #2E3440; }
+    .op-pending-btn { background: #4C566A; color: #D8DEE9; }
+  }
+}

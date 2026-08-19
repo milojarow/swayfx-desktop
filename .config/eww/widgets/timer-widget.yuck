@@ -1,0 +1,119 @@
+; feature: timer
+; role:    window
+; ── Variables ─────────────────────────────────────────────────────────────────
+(defvar timer-h 0)
+(defvar timer-m 5)
+(defvar timer-s 0)
+
+(deflisten timer-state
+  :initial `{"status":"idle","remaining":0,"total":0,"display":"00:00:00"}`
+  "~/.config/eww/scripts/timer-subscribe.sh")
+
+; ── Widget ────────────────────────────────────────────────────────────────────
+(defwidget timer-widget []
+  (box :class "timer-widget"
+       :orientation "v"
+       :hexpand true
+       :space-evenly false
+    (box :class "timer-header")
+    (box :class "timer-body"
+         :orientation "v"
+         :space-evenly false
+
+      ; ── Countdown display (running / paused / finished) ──────────────────
+      (label :class "timer-display ${timer-state.status}"
+             :visible {timer-state.status != "idle"}
+             :halign "center"
+             :text {timer-state.display})
+
+      ; ── Time setter (idle only) ──────────────────────────────────────────
+      (box :class "timer-setter"
+           :visible {timer-state.status == "idle"}
+           :orientation "h"
+           :space-evenly true
+           :halign "center"
+
+        ; Hours
+        (box :class "timer-unit"
+             :orientation "v"
+             :space-evenly false
+             :halign "center"
+          (button :class "timer-adj"
+                  :onclick "eww update timer-h=${timer-h >= 23 ? 23 : timer-h + 1}"
+            (label :text "▲"))
+          (label :class "timer-unit-value"
+                 :halign "center"
+                 :text {timer-h < 10 ? "0${timer-h}" : "${timer-h}"})
+          (button :class "timer-adj"
+                  :onclick "eww update timer-h=${timer-h <= 0 ? 0 : timer-h - 1}"
+            (label :text "▼")))
+
+        (label :class "timer-colon" :valign "center" :text ":")
+
+        ; Minutes
+        (box :class "timer-unit"
+             :orientation "v"
+             :space-evenly false
+             :halign "center"
+          (button :class "timer-adj"
+                  :onclick "eww update timer-m=${timer-m >= 59 ? 59 : timer-m + 1}"
+            (label :text "▲"))
+          (label :class "timer-unit-value"
+                 :halign "center"
+                 :text {timer-m < 10 ? "0${timer-m}" : "${timer-m}"})
+          (button :class "timer-adj"
+                  :onclick "eww update timer-m=${timer-m <= 0 ? 0 : timer-m - 1}"
+            (label :text "▼")))
+
+        (label :class "timer-colon" :valign "center" :text ":")
+
+        ; Seconds
+        (box :class "timer-unit"
+             :orientation "v"
+             :space-evenly false
+             :halign "center"
+          (button :class "timer-adj"
+                  :onclick "eww update timer-s=${timer-s >= 59 ? 59 : timer-s + 1}"
+            (label :text "▲"))
+          (label :class "timer-unit-value"
+                 :halign "center"
+                 :text {timer-s < 10 ? "0${timer-s}" : "${timer-s}"})
+          (button :class "timer-adj"
+                  :onclick "eww update timer-s=${timer-s <= 0 ? 0 : timer-s - 1}"
+            (label :text "▼"))))
+
+      ; ── Action buttons ───────────────────────────────────────────────────
+      (box :class "timer-actions"
+           :orientation "h"
+           :space-evenly true
+
+        ; Play button: visible when not running (idle, paused, finished)
+        (button :class "action-btn play-btn"
+                :visible {timer-state.status != "running"}
+                :onclick {timer-state.status == "paused" ?
+                          "echo resume > /tmp/eww-timer" :
+                          "echo play:${timer-h}:${timer-m}:${timer-s} > /tmp/eww-timer"}
+          (label :text "play"))
+
+        ; Pause button: visible only when running
+        (button :class "action-btn pause-btn"
+                :visible {timer-state.status == "running"}
+                :onclick "echo pause > /tmp/eww-timer"
+          (label :text "pause"))
+
+        ; Reset button: visible when not idle
+        (button :class "action-btn reset-btn"
+                :visible {timer-state.status != "idle"}
+                :onclick "echo reset > /tmp/eww-timer"
+          (label :text "reset"))))))
+
+; ── Window ────────────────────────────────────────────────────────────────────
+(defwindow timer-widget
+  :monitor 0
+  :geometry (geometry :x "24px"
+                      :y "180px"
+                      :width "320px"
+                      :anchor "top right")
+  :stacking "bottom"
+  :focusable false
+  (timer-widget))

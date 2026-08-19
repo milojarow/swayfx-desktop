@@ -1,0 +1,15 @@
+# Lock screen after timeout
+timeout 300 'pgrep -x swaylock > /dev/null || $HOME/.config/sway/scripts/lock.sh'
+
+# Turn off displays after 2x timeout
+timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"'
+
+# Lock before sleep (skip if already locked)
+before-sleep 'pgrep -x swaylock > /dev/null || $HOME/.config/sway/scripts/lock.sh'
+
+# Make sure there's only one lock when the lock command is used
+lock 'pgrep -x swaylock > /dev/null || $HOME/.config/sway/scripts/lock.sh'
+
+# Restore display and keyboard backlight after system wake from suspend
+after-resume 'swaymsg "output * power on"'
+after-resume '$HOME/.config/sway/scripts/resume-handler.sh'

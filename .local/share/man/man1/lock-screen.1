@@ -1,0 +1,198 @@
+.TH LOCK-SCREEN 1 "2026-03-01" "sway dotfiles" "User Commands"
+.SH NAME
+lock-screen \- lock screen, idle timeout, and suspend coordination for sway
+.SH DESCRIPTION
+The Lock Screen & Idle functionality manages screen locking via
+.BR swaylock (1),
+idle timeout via
+.BR swayidle (1),
+and coordinated suspend locking via
+.BR secure-suspend.sh .
+.PP
+It consists of four core scripts:
+.TP
+.B lock.sh
+Captures a screenshot with
+.BR grim (1),
+blurs it with ImageMagick, then launches
+.BR swaylock (1).
+Uses a lockfile to prevent concurrent executions. On exit, resets the
+.BR swayidle (1)
+idle timer to prevent immediate re-lock after unlock.
+.TP
+.B auto-idle-timeout.sh
+Non-interactive startup script. Generates
+.I ~/.config/swayidle/config
+with a 5-minute default timeout, then starts the swayidle daemon.
+.TP
+.B idle-timeout.sh
+Interactive script. Presents a
+.BR rofi (1)
+dialog to enter a custom idle timeout in minutes. Validates input,
+regenerates
+.I ~/.config/swayidle/config
+with the new value, and restarts the swayidle daemon.
+.TP
+.B secure-suspend.sh
+Locks the screen first (so the screenshot is captured while the monitor
+is still on), waits for
+.BR swaylock (1)
+to start, then calls
+.BR "systemctl suspend" .
+Prevents a blank screenshot when suspending via the shutdown menu.
+.SH KEYBINDINGS
+.TP
+.B $mod+x
+Lock screen immediately (calls
+.IR lock.sh ).
+.TP
+.B $mod+Shift+e, then l
+Lock via the shutdown mode menu.
+.TP
+.B $mod+Shift+e, then u
+Secure suspend via the shutdown mode menu (calls
+.IR secure-suspend.sh ).
+.SH FILES
+.TP
+.I ~/.config/sway/scripts/lock.sh
+Main lock script: screenshot, blur, swaylock.
+.TP
+.I ~/.config/sway/scripts/idle-timeout.sh
+Interactive idle timeout dialog.
+.TP
+.I ~/.config/sway/scripts/auto-idle-timeout.sh
+Non-interactive startup init for swayidle.
+.TP
+.I ~/.config/sway/scripts/secure-suspend.sh
+Lock-then-suspend coordination script.
+.TP
+.I ~/.config/swaylock/config
+swaylock visual configuration (indicator radius, ring colors, font).
+.TP
+.I ~/.config/swayidle/config
+Generated swayidle configuration. Do not edit manually — overwritten by
+.I auto-idle-timeout.sh
+and
+.IR idle-timeout.sh .
+.TP
+.I ~/.config/sway/autostart
+Contains
+.I $initialize_idle_daemon
+which enables the swayidle systemd user service on startup.
+.TP
+.I ~/.config/sway/config.d/01-definitions.conf
+Defines
+.I $locking
+as the path to
+.IR lock.sh .
+.TP
+.I ~/.config/sway/modes/default
+Binds
+.B $mod+x
+to
+.IR $locking .
+.TP
+.I ~/.config/sway/modes/shutdown
+Binds
+.B l
+to lock and
+.B u
+to secure-suspend within the shutdown mode.
+.TP
+.I ~/.config/waybar/config.jsonc
+Contains the
+.B idle_inhibitor
+module which can temporarily disable idle timeout from the bar.
+.SH PROGRAMS
+.BR swaylock (1),
+.BR swayidle (1),
+.BR grim (1),
+.BR convert / magick
+(ImageMagick),
+.BR systemctl (1),
+.BR notify-send (1),
+.BR rofi (1)
+.SH DAEMON
+.BR swayidle (1)
+runs as a systemd user service. Its configuration lives at
+.IR ~/.config/swayidle/config ,
+which is generated and managed by
+.I auto-idle-timeout.sh
+and
+.IR idle-timeout.sh .
+The config defines:
+.RS
+.IP \(bu 2
+Lock after idle timeout
+.IP \(bu 2
+Turn off displays after 2\[tmu] the idle timeout
+.IP \(bu 2
+Lock before sleep (
+.BR before-sleep
+event)
+.IP \(bu 2
+Lock on explicit lock signal (
+.BR lock
+event)
+.RE
+.SH CONFIGURATION
+The swayidle timeout is configured by running
+.B idle-timeout.sh
+(via rofi dialog) or by editing the default in
+.I auto-idle-timeout.sh
+(variable
+.BR timeout_minutes ).
+The swaylock appearance is configured in
+.IR ~/.config/swaylock/config .
+.SH FLOW
+.SS Lock execution
+.nr step 1 1
+.IP \n[step]. 3
+.BR lock.sh :
+acquires lockfile, exits if swaylock is already running
+.IP \n+[step].
+Captures screen with
+.BR grim (1)
+to
+.I /tmp/swaylock-blur.png
+.IP \n+[step].
+Blurs the image with ImageMagick (
+.B magick
+or
+.BR convert )
+.IP \n+[step].
+Launches
+.BR swaylock (1)
+with the blurred image as background
+.IP \n+[step].
+On unlock exit, kills and restarts swayidle to reset the idle timer
+.SS Idle initialization (startup)
+.nr step 1 1
+.IP \n[step]. 3
+Sway autostart triggers
+.I $initialize_idle_daemon
+(enables swayidle systemd user service)
+.IP \n+[step].
+.I auto-idle-timeout.sh
+generates
+.I ~/.config/swayidle/config
+with 5-minute default and starts swayidle
+.SS Secure suspend
+.nr step 1 1
+.IP \n[step]. 3
+.BR secure-suspend.sh :
+acquires lockfile, calls
+.I lock.sh
+in the background
+.IP \n+[step].
+Polls until
+.BR swaylock (1)
+is running (screenshot taken, display still on)
+.IP \n+[step].
+Calls
+.B "systemctl suspend"
+— screen is already locked before display powers off
+.SH SEE ALSO
+.BR swaylock (1),
+.BR swayidle (1),
+.BR systemctl (1)

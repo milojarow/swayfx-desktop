@@ -1,0 +1,67 @@
+; feature: notes
+; role:    window
+; deps:    scripts/notes-{subscribe,add,delete,copy}.sh, styles/notes.scss
+;
+; Desktop sticky-notes widget: type in the input, Enter appends to
+; $(xdg-user-dir DOCUMENTS)/notes/notes.txt; list updates via inotify.
+;
+; The :onaccept heredoc is load-bearing: eww substitutes {} into the
+; command string RAW (no escaping — verified in eww source at the
+; installed commit 2c6523a), so quotes would break and $(...) would
+; execute. A quoted-delimiter heredoc is immune to everything except a
+; note that IS the sentinel line. Row buttons pass line NUMBERS only.
+
+(defvar notes-input "")
+
+(deflisten notes-data :initial `{"notes":[],"count":0}`
+  "~/.config/eww/scripts/notes-subscribe.sh")
+
+(defwidget notes-widget []
+  (box :class "notes" :orientation "v" :space-evenly false
+    (box :class "notes-header" :orientation "h" :space-evenly false
+      (label :class "notes-title" :text "✎ Notas"
+             :halign "start" :hexpand true)
+      (label :class "notes-count" :text {notes-data.count}))
+
+    (input :class "notes-input"
+           :value notes-input
+           :timeout "2s"
+           :onaccept "~/.config/eww/scripts/notes-accept.sh <<'EOF_EWW_NOTES_7C4A'
+{}
+EOF_EWW_NOTES_7C4A")
+
+    (label :class "notes-empty"
+           :visible {notes-data.count == 0}
+           :text "sin notas")
+
+    (scroll :vscroll true :hscroll false
+            :height 190
+            :class "notes-scroll"
+      (box :orientation "v" :space-evenly false
+        (for note in {notes-data.notes}
+          (box :class "notes-row" :orientation "h" :space-evenly false :spacing 6
+            (box :orientation "v" :space-evenly false :hexpand true
+              (label :class "notes-text" :text {note.text}
+                     :halign "start" :xalign 0 :wrap true)
+              (label :class "notes-time" :text {note.time}
+                     :halign "start" :visible {note.time != ""}))
+            (button :class "notes-btn" :valign "start"
+                    :tooltip "Copiar"
+                    :timeout "2s"
+                    :onclick "~/.config/eww/scripts/notes-copy.sh ${note.idx} &"
+              (label :text "⧉"))
+            (button :class "notes-btn delete" :valign "start"
+                    :tooltip "Borrar (va a archive.txt)"
+                    :timeout "2s"
+                    :onclick "~/.config/eww/scripts/notes-delete.sh ${note.idx} &"
+              (label :text "×"))))))))
+
+(defwindow notes-widget
+  :monitor 0
+  :geometry (geometry :x "1020px"
+                      :y "540px"
+                      :width "560px"
+                      :anchor "top left")
+  :stacking "bottom"
+  :focusable "ondemand"
+  (notes-widget))

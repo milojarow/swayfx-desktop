@@ -1,0 +1,217 @@
+.TH NOTES 1 "2026-07-11" "1.0" "sway dotfiles"
+.SH NAME
+notes \- desktop sticky-notes eww widget with plain-text storage
+.SH DESCRIPTION
+An
+.BR eww (1)
+widget resident on the desktop (wallpaper layer, bottom stacking): a text
+input on top, the saved notes below it, newest first. Typing a note and
+pressing Enter appends it to a plain text file; the list refreshes
+instantly through an
+.BR inotifywait (1)
+watch \[em] no polling. Each row carries two buttons: copy the note to the
+Wayland clipboard, and archive it (notes are never destroyed \[em] deleting
+moves the line to an archive file).
+.PP
+The storage is a human-readable text file, one note per line, safe to edit
+by hand; the widget picks up external edits immediately.
+.SH USAGE
+.nr step 1 1
+.IP \n[step]. 3
+Click into the input field (the window takes keyboard focus on demand) and
+type the note.
+.IP \n+[step].
+Press Enter \[em] the note lands in the file with a timestamp and the field
+clears.
+.IP \n+[step].
+Per row: the copy button puts the note text in the clipboard
+(a notification confirms); the \[lq]\[mu]\[rq] button archives the note.
+.PP
+From a shell:
+.PP
+.nf
+    ~/.config/eww/scripts/notes-add.sh "texto de la nota"
+.fi
+.PP
+or feed stdin. Editing
+.I notes.txt
+by hand also works; the widget refreshes on save.
+.SH FILES
+.SS Widget
+.TP
+.I $HOME/.config/eww/widgets/notes.yuck
+Window definition (feature: notes, role: window): input, scrollable list,
+per-row buttons. Geometry lives here.
+.TP
+.I $HOME/.config/eww/styles/notes.scss
+Style (catppuccin, house pattern).
+.SS Scripts
+.TP
+.I $HOME/.config/eww/scripts/notes-subscribe.sh
+deflisten source: emits the full list as JSON on start and on every file
+change (inotify on the parent directory).
+.TP
+.I $HOME/.config/eww/scripts/notes-accept.sh
+The input's accept flow: reads the note from stdin, then detaches
+(append + input clear run in the background) so eww's handler-command
+timeout can never kill the chain mid-flight.
+.TP
+.I $HOME/.config/eww/scripts/notes-add.sh
+Appends one timestamped note. Text arrives on stdin (heredoc from the
+widget) or as argv (CLI use). Serialized with
+.BR flock (1).
+.TP
+.I $HOME/.config/eww/scripts/notes-delete.sh
+Takes a 1-based line number: appends that line to the archive, then removes
+it.
+.TP
+.I $HOME/.config/eww/scripts/notes-copy.sh
+Takes a 1-based line number: pipes the note text to
+.BR wl-copy (1)
+and notifies.
+.SS Registration
+.TP
+.I $HOME/.config/eww/eww.yuck
+.RB ( include )
+entry for the widget.
+.TP
+.I $HOME/.config/eww/eww.scss
+.RB ( @import )
+entry for the style.
+.TP
+.I $HOME/.config/eww/scripts/open-windows.sh
+.B notes-widget
+entry in the WINDOWS array \[em] without it the widget vanishes on every
+reboot or eww.service restart.
+.SS Data
+.TP
+.I $HOME/documents/notes/notes.txt
+The notes. One per line: \[lq]YYYY-MM-DD HH:MM<TAB>text\[rq]. Hand-editable;
+lines without a tab are tolerated (shown with no timestamp).
+.TP
+.I $HOME/documents/notes/archive.txt
+Every deleted note, same format. Nothing is ever destroyed.
+.TP
+.I $HOME/documents/notes/.lock
+flock serialization for add/delete.
+.SH "DATA PIPELINE"
+.nr step 1 1
+.IP \n[step]. 3
+Enter in the input fires
+.B :onaccept
+\[->] the note text travels to
+.I notes-accept.sh
+through a quoted-delimiter heredoc on stdin (see GOTCHAS \[em] never
+argv), which reads it and detaches before appending via
+.IR notes-add.sh .
+.IP \n+[step].
+.I notes-add.sh
+appends \[lq]timestamp<TAB>text\[rq] under flock.
+.IP \n+[step].
+.BR inotifywait (1)
+(watching the
+.I directory
+) sees the write \[->]
+.I notes-subscribe.sh
+re-emits the JSON list.
+.IP \n+[step].
+The
+.B deflisten
+variable updates \[->] eww re-renders the rows (newest first; each row
+carries its original file line number).
+.IP \n+[step].
+Row buttons invoke copy/delete with that
+.I line number
+only \[em] note text never rides a shell command line.
+.SH PROGRAMS
+.BR eww (1),
+.BR inotifywait (1),
+.BR jq (1),
+.BR wl-copy (1),
+.BR notify-send (1),
+.BR flock (1),
+.BR xdg-user-dir (1)
+.SH DEPENDENCIES
+.TP
+.B eww
+Widget system (cargo install, managed by eww.service).
+.TP
+.B inotify-tools
+Event-driven file watch (no polling).
+.TP
+.B jq
+Builds the JSON the widget consumes (handles all escaping).
+.TP
+.B wl-clipboard
+Clipboard integration.
+.TP
+.B libnotify
+Copy confirmation toast.
+.TP
+.B xdg-user-dirs
+Resolves the documents directory (never hardcoded).
+.SH GOTCHAS
+.IP \[bu] 2
+eww substitutes the
+.B {}
+placeholder of \fB:onaccept\fR/\fB:onchange\fR into the command string
+.I raw
+and runs it with \fBsh \-c\fR (verified in eww source at the installed
+commit). A note passed as argv would break on quotes and
+.I execute
+things like $(...). That is why
+.B :onaccept
+feeds the text through a quoted-delimiter heredoc
+(\fIEOF_EWW_NOTES_7C4A\fR) \[em] immune to quotes, expansions and
+backticks. Theoretical limit: a note that IS the sentinel line gets
+swallowed.
+.IP \[bu] 2
+Never wire a note's
+.I text
+into a button command \[em] row actions pass the file
+.I line number
+only.
+.IP \[bu] 2
+.BR inotifywait (1)
+watches the parent
+.I directory
+, not the file:
+.B sed \-i
+(the delete path) replaces the file by rename, which kills an inode watch.
+.IP \[bu] 2
+The window needs
+.B :focusable \[lq]ondemand\[rq]
+\[em] click into the input first, then type. A bottom-layer surface does
+take keyboard focus on click (verified); without the property, typing goes
+to the focused application instead.
+.IP \[bu] 2
+The input clears after accept via a double update
+(\fBnotes-input=' '\fR then \fB''\fR): eww only redraws the field when the
+bound variable actually
+.I changes
+value.
+.IP \[bu] 2
+Any file save under
+.I ~/.config/eww
+makes eww auto-reload and re-open
+.I every
+window (\[ti]40\[en]70s of churn per save observed). Batch config edits;
+never save-per-tweak.
+.IP \[bu] 2
+Automation note: wtype's virtual-keyboard Return does
+.I not
+fire GTK's activate (onaccept); kernel-level input
+.RB ( ydotool )
+and a real keyboard do.
+.SH NOTES
+.IP \[bu] 2
+Persistent across reboots via the open-windows.sh entry; position is fixed
+in the defwindow geometry.
+.IP \[bu] 2
+The header shows the live note count; with zero notes the list shows
+\[lq]sin notas\[rq].
+.SH "SEE ALSO"
+.BR eww (1),
+.BR meeting-notes (1),
+.BR inotifywait (1),
+.BR memories (1)

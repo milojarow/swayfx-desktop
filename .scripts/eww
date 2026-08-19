@@ -1,0 +1,33 @@
+#!/bin/bash
+# eww client guard — every eww CLI call runs with --no-daemonize.
+#
+# Why: eww 0.6.0's client auto-forks a NEW daemon (after deleting the IPC
+# socket file) whenever the running daemon does not answer 5 pings within
+# ~1.5 s, or answers an `open` slower than its 100 ms read timeout. On this
+# machine the daemon is owned by eww.service, so that fork always produces a
+# rogue duplicate: it steals the socket, the real daemon keeps its windows
+# but nobody can reach it, and any popup it (or an earlier rogue) opened can
+# never be closed again ("wifi popup pegado", 2026-08-16). --no-daemonize
+# turns that fork into a plain "Failed to connect to daemon" exit 1.
+#
+# Layout: ~/.cargo/bin/eww -> ~/.scripts/eww (this file); the real binary
+# lives in ~/.local/lib/eww/eww — kept NAMED "eww" so its comm stays "eww"
+# and `pkill -x eww` (eww.service ExecStartPre) still finds every daemon.
+# `exec -a "$0"` preserves argv[0] so `pkill -f "^$HOME/.cargo/bin/eww "`
+# keeps matching too. Doc: man eww-guard.
+#
+# Upgrading eww: `cargo install ...` overwrites the symlink with a real binary
+# and disables the guard — move the new binary to ~/.local/lib/eww/eww and
+# recreate the symlink (eww-watchdog logs "rogue eww daemon" if you forget).
+
+REAL=$HOME/.local/lib/eww/eww
+
+for arg in "$@"; do
+    case $arg in
+        --no-daemonize) exec -a "$0" "$REAL" "$@" ;;   # already guarded (eww.service ExecStart)
+        daemon)         exec -a "$0" "$REAL" "$@" ;;   # explicit daemon start: leave semantics alone
+        --)             break ;;
+    esac
+done
+
+exec -a "$0" "$REAL" --no-daemonize "$@"

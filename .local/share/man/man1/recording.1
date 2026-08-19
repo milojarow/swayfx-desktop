@@ -1,0 +1,371 @@
+.TH RECORDING 1 "2026-06-07" "sway dotfiles" "User Commands"
+.SH NAME
+recording \- screen recording with region selection, microphone or system audio, and bar indicator for sway
+.SH DESCRIPTION
+The Recording functionality covers the full pipeline from region selection to file output:
+interactive window-snapping region selection via
+.BR slurp (1),
+an optional 3-second countdown, recording via
+.BR wf-recorder (1),
+and a bar indicator (eww or waybar) that appears while a recording is in progress.
+.PP
+A single script handles both starting and stopping:
+.TP
+.B recorder.sh
+Checks whether
+.BR wf-recorder (1)
+is already running via
+.BR pgrep (1).
+If not running, prompts for region selection, counts down, and starts the recorder.
+If already running, sends
+.B SIGINT
+to stop it gracefully.
+In both cases it signals both bars (eww via USR1, waybar via signal 8)
+to update the recording indicator.
+.SH KEYBINDINGS
+Enter recording mode by pressing
+.BR $mod+Shift+r .
+The sway bar displays a pango-markup label showing a video camera icon,
+the word
+.BR Record ,
+the key
+.BR (r) ,
+and notes that
+.B Shift
+adds microphone audio (microphone icon) and
+.B s
+adds system audio (speaker icon).
+Inside the mode:
+.TP
+.B r
+Select a region and start recording
+.B without
+audio. Output is a
+.B .webm
+file encoded with the VP8 codec (libvpx).
+.TP
+.B Shift+r
+Select a region and start recording
+.B with
+microphone audio. Output is a
+.B .mp4
+file.
+.TP
+.B s
+Select a region and start recording
+.B "with system audio"
+(the default sink's
+.IR .monitor ).
+Output is a
+.B -sysaudio.mp4
+file. It captures no microphone, and the recording level is independent
+of the master volume slider.
+.TP
+.B Escape
+Return to default mode without recording.
+.PP
+To stop an active recording from anywhere:
+.TP
+.B $mod+Escape
+Runs
+.I recorder.sh
+which detects
+.B wf-recorder
+is running and sends
+.B SIGINT
+to stop it gracefully.
+.SH SCRIPT BEHAVIOR
+.SS Starting a recording
+.nr step 1 1
+.IP \n[step]. 3
+.I recorder.sh
+runs
+.B pgrep -x wf-recorder
+to confirm no recording is active.
+.IP \n+[step].
+Output directory is resolved via
+.BR "xdg-user-dir VIDEOS" .
+A timestamped filename is built in the form
+.BR recording_YYYYMMDD-HHMMSS .
+.IP \n+[step].
+A
+.BR notify-send (1)
+notification "Select a region to record" appears (expires after 1 s).
+.IP \n+[step].
+Region selection runs via the pipeline
+.PP
+.RS
+.EX
+swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) |
+    .rect | "\e(.x),\e(.y) \e(.width)x\e(.height)"' | slurp
+.EE
+.RE
+.PP
+This offers visible windows as snap targets rather than a free-pixel selection.
+.IP \n+[step].
+Pressing
+.B Escape
+inside the
+.BR slurp (1)
+overlay \(em at any point, including mid-drag \(em cancels the whole intent:
+slurp exits non-zero with empty output, the script notifies
+"Recording cancelled" and exits before the countdown. Nothing is recorded.
+.IP \n+[step].
+A 3-second countdown fires three
+.BR notify-send (1)
+notifications ("Recording in 3 seconds", "Recording in 2 seconds",
+"Recording in 1 seconds"), one per second.
+.IP \n+[step].
+After 0.5 s,
+.B signal_bars
+is called in the background to signal both eww (USR1 to
+.IR recorder-subscribe.sh )
+and waybar (signal 8) so the bar indicator appears
+before the first frame is captured.
+.IP \n+[step].
+.BR wf-recorder (1)
+is launched with the selected geometry:
+.RS
+.TP
+.B Without audio (-r)
+.EX
+wf-recorder -g "$area" -c libvpx \e
+    --codec-param="qmin=0" --codec-param="qmax=25" \e
+    --codec-param="crf=4" --codec-param="b:v=1M" \e
+    --file="$target_path/$timestamp.webm"
+.EE
+.TP
+.B With microphone audio (Shift+r)
+.EX
+wf-recorder --audio -g "$area" --file="$target_path/$timestamp.mp4"
+.EE
+.TP
+.B With system audio (s)
+.EX
+wf-recorder --audio="$(pactl get-default-sink).monitor" -g "$area" --file="$target_path/$timestamp-sysaudio.mp4"
+.EE
+.RE
+.IP \n+[step].
+When
+.BR wf-recorder (1)
+exits,
+.B signal_bars
+is called again to hide the bar indicators, and a
+.BR notify-send (1)
+notification "Finished recording \fI<path>\fP" is shown.
+.SS Stopping a recording
+.nr step 1 1
+.IP \n[step]. 3
+.BR pkill (1)
+sends
+.B SIGINT
+to the
+.B wf-recorder
+process:
+.PP
+.RS
+.EX
+pkill -x --signal SIGINT wf-recorder
+.EE
+.RE
+.IP \n+[step].
+The notification and bar signaling are handled by the first instance of
+.I recorder.sh
+(the one that started the recording), which continues executing after
+.B wf-recorder
+exits.
+.PP
+Stopping can be triggered in three ways: the
+.B $mod+Escape
+keybinding, clicking the eww or waybar indicator, or by
+.I recorder.sh
+itself when it detects
+.B wf-recorder
+is already running.
+.SH EWW INDICATOR (DEFAULT)
+The eww bar shows a recording indicator in the
+.B center zone
+(replacing the window title) while a recording is active.
+It displays a red pulsating record icon with a
+.B REC
+label.
+.TP
+.B Visibility
+Controlled by a
+.BR deflisten
+variable fed by
+.IR recorder-subscribe.sh ,
+which checks
+.BR "pgrep -x wf-recorder" .
+The indicator is invisible when no recording is in progress.
+.TP
+.B Update mechanism
+.I recorder.sh
+sends
+.B USR1
+to the
+.I recorder-subscribe.sh
+process after starting or stopping a recording.
+.TP
+.B Click
+Left-click writes to the named pipe
+.I /tmp/eww-recorder
+which triggers
+.B pkill -x --signal SIGINT wf-recorder
+to stop the recording.
+.SH WAYBAR INDICATOR (FALLBACK)
+The
+.B custom/wf-recorder
+module in waybar shows a recording icon (nf-md-record_circle) in
+.B @error_color
+(red) while a recording is active.
+.TP
+.B Visibility
+Controlled by
+.B exec-if
+which runs
+.BR "pgrep wf-recorder" .
+The module is invisible when no recording is in progress.
+.TP
+.B Signal
+8 (
+.BR SIGRTMIN+8 ).
+Both
+.I recorder.sh
+and the
+.B $mod+Escape
+binding send this signal after changing the recorder state.
+.TP
+.B Tooltip
+"press $mod+Esc to stop recording"
+.TP
+.B Click
+Left-click runs
+.B pkill -SIGINT wf-recorder && waybar-signal recorder
+to stop the recording and refresh the indicator.
+.SH FILES
+.TP
+.I ~/.config/sway/scripts/recorder.sh
+Main script: starts or stops the recording, handles countdown, region selection,
+dual-bar signaling (eww + waybar), and notifications.
+.TP
+.I ~/.config/sway/modes/recording
+Sway mode configuration: defines
+.IR $mode_recording ,
+.IR $recorder ,
+all in-mode keybindings, and the
+.B $mod+Shift+r
+entry binding and the
+.B $mod+Escape
+stop binding.
+.TP
+.I ~/.config/eww/scripts/recorder-subscribe.sh
+Eww deflisten script: emits JSON recording state, receives USR1 signals
+from recorder.sh and stop commands via named pipe
+.IR /tmp/eww-recorder .
+.TP
+.I ~/.config/eww/styles/recorder.scss
+Eww SCSS: red pulsating animation for the recording indicator.
+.TP
+.I ~/.config/sway/config.d/01-definitions.conf
+Defines the
+.I $recorder
+variable pointing to
+.IR recorder.sh .
+.TP
+.I ~/.config/sway/themes/<name>/theme.conf
+Defines the
+.I $colorN
+variables (e.g.\&
+.IR $color5 ,
+.IR $color10 )
+referenced in the pango markup of
+.IR $mode_recording .
+The active theme is symlinked at runtime to
+.I ~/.config/sway/definitions.d/theme.conf
+(generated \(em not tracked in git).
+See
+.BR palette-theming (1)
+for the full theming system.
+.TP
+.I ~/.config/waybar/config.jsonc
+Defines the
+.B custom/wf-recorder
+module (signal 8, exec-if, on-click).
+.TP
+.I ~/.config/waybar/style.css
+CSS for
+.BR #custom-wf-recorder :
+colors the recording icon with
+.IR @error_color .
+.SH PROGRAMS
+.BR wf-recorder (1),
+.BR slurp (1),
+.BR swaymsg (1),
+.BR jq (1),
+.BR pgrep (1),
+.BR pkill (1),
+.BR notify-send (1),
+.BR xdg-user-dir (1),
+.BR pactl (1)
+.SH STORAGE
+Recordings are saved to
+.I ~/Videos/
+by default, as resolved by
+.BR "xdg-user-dir VIDEOS" .
+Override by setting
+.B XDG_VIDEOS_DIR
+in your environment before starting sway.
+.PP
+Filenames follow the format:
+.RS
+.TP
+.B recording_YYYYMMDD-HHMMSS.webm
+Region recording without audio (VP8 codec).
+.TP
+.B recording_YYYYMMDD-HHMMSS.mp4
+Region recording with microphone audio.
+.TP
+.B recording_YYYYMMDD-HHMMSS-sysaudio.mp4
+Region recording with system audio (the default sink's monitor).
+.RE
+.SH GOTCHAS
+.TP
+.B System audio is the default sink's monitor, resolved at record time
+The
+.B s
+variant records
+.BR "$(pactl get-default-sink).monitor" .
+Because the default sink is resolved when recording starts, the capture
+always follows the current default sink. If a USB audio device has hijacked
+the default sink (a known WirePlumber behavior on this machine), the
+recording captures that device's output instead of the built-in. Check
+.B "wpctl status"
+to confirm the default sink before recording.
+.TP
+.B Recording level is independent of the volume slider
+The PipeWire monitor is pre-fader
+.RB ( monitor.channel-volumes=false ,
+the default), so the captured level does
+.B not
+follow the master volume slider \(em recording at 33% master volume
+produces the same level as at 100% (measured identical). You can even
+record system audio with the speakers muted.
+.B Per-application
+stream volume (e.g.\& a browser tab's own volume) is upstream of the
+monitor tap and
+.B does
+affect the recording \(em that is expected.
+.TP
+.B The two audio modes never mix
+.B Shift+r
+captures the microphone only (the default source);
+.B s
+captures system audio only (the sink monitor). Neither variant captures both.
+.SH SEE ALSO
+.BR wf-recorder (1),
+.BR slurp (1),
+.BR swaymsg (1),
+.BR notify-send (1),
+.BR pactl (1),
+.BR wpctl (1)

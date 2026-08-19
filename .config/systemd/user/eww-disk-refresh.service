@@ -1,0 +1,8 @@
+[Unit]
+Description=Refresh eww disk-widget usage cache (du outside eww cgroup)
+
+[Service]
+Type=oneshot
+ExecStart=%h/.config/eww/scripts/disk-usage-refresh.sh
+Nice=19
+IOSchedulingClass=idle

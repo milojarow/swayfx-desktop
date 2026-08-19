@@ -1,0 +1,29 @@
+// feature: screenshot-mode
+// role:    style
+
+.screenshot-mode-circle {
+  background: rgba(46, 52, 64, 0.99);
+  border: 1px solid #D08770;
+  border-radius: 32px;
+  min-width: 64px;
+  min-height: 64px;
+
+  &.aggressive {
+    border-color: #EBCB8B;
+    box-shadow: 0 0 10px rgba(235, 203, 139, 0.45);
+  }
+
+  .screenshot-mode-icon {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 30px;
+    color: #D8DEE9;
+    // Optical centering: at 30px the U+F0104 ink is 25px wide inside an 18px
+    // pango advance box (7px right overflow; GTK centers the advance, not the
+    // ink). padding-right == overflow makes the ink span symmetric -> exact.
+    padding-right: 7px;
+
+    &.aggressive {
+      color: #EBCB8B;
+    }
+  }
+}

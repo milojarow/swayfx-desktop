@@ -1,0 +1,523 @@
+.TH SCREENSHOTS 1 "2026-07-18" "sway dotfiles" "User Commands"
+.SH NAME
+screenshots \- screenshot capture, editing, and notification system for sway
+.SH DESCRIPTION
+The Screenshots functionality covers the full pipeline from capture to notification:
+interactive region or output capture, annotation via
+.BR swappy (1),
+and two background daemons that fire desktop notifications when a screenshot is
+saved to disk or copied to the clipboard.
+.PP
+The
+.B Print
+key is served by a dispatcher with two capture modes, toggled from an eww
+desktop widget (circle button, camera icon, left of the bluetooth widget):
+.TP
+.B traditional
+.B Print
+enters the sway screenshot binding mode (menu: p / o / Shift+p / Shift+o) and
+captures flow into
+.BR swappy (1)
+for annotation. The original behavior.
+.TP
+.B aggressive
+.B Print
+launches frozen region selection immediately and the selected area lands
+straight in the Wayland clipboard. No menu, no editor, nothing written to
+disk. Built for capture-heavy work sessions. The widget turns yellow
+(border, icon, glow) while this mode is active.
+.PP
+The active mode lives in
+.IR ~/.local/state/screenshot-mode/mode ;
+clicking the widget flips it and a notification confirms the new mode.
+.PP
+Four scripts handle the distinct roles:
+.TP
+.B screenshot-dispatch.sh
+Bound to
+.BR Print .
+Reads the state file and routes: traditional \[->] enters the screenshot
+binding mode (its pango name is resolved live from
+.BR "swaymsg \-t get_binding_modes" ,
+the only mode containing \(lqPick\(rq); aggressive \[->] runs
+.I screenshot-frozen.sh
+and pipes the cropped PNG to
+.BR wl-copy (1).
+.TP
+.B screenshot-frozen.sh
+Used for region capture. Captures a full-screen PNG with
+.BR grim (1),
+displays it fullscreen with
+.BR swayimg (1)
+to produce a "frozen" visual, then launches
+.BR slurp (1)
+for interactive area selection. After selection, crops the chosen region out of
+the frozen PNG using ImageMagick and writes the result to stdout. The caller
+(the
+.I $pipe_selection
+variable) pipes this output directly into
+.BR swappy (1).
+.TP
+.B screenshot-notify.sh
+Daemon. Monitors
+.I ~/Screenshots
+(or
+.IR $XDG_SCREENSHOTS_DIR )
+using
+.BR inotifywait (1).
+When a PNG file is written (
+.B close_write
+event), fires a
+.BR notify-send (1)
+notification. Uses a lockfile and debounce logic to prevent duplicate
+notifications. Managed by
+.IR screenshot-notify.service .
+.TP
+.B screenshot-clipboard-notify.sh
+Daemon. Uses
+.B wl-paste --watch
+to monitor the Wayland clipboard. When the clipboard contains a PNG image,
+fires a
+.BR notify-send (1)
+notification. Uses a lockfile and debounce (500 ms) to prevent duplicates
+when multiple clipboard events fire in quick succession. Managed by
+.IR screenshot-clipboard-notify.service .
+.SH KEYBINDINGS
+.B Print
+dispatches according to the capture mode. In
+.B aggressive
+mode it goes straight to frozen region selection and copies the area to the
+clipboard. In
+.B traditional
+mode it enters the screenshot binding mode:
+.TP
+.B p
+Pick region \(em launches
+.I screenshot-frozen.sh
+(frozen screen + slurp selection), pipes result into
+.BR swappy (1).
+.TP
+.B o
+Output \(em captures the current monitor with
+.BR grimshot (1),
+pipes into
+.BR swappy (1).
+.TP
+.B Shift+p
+Pick region and upload the PNG to x0.at; URL copied to clipboard and shown in a notification.
+.TP
+.B Shift+o
+Output capture and upload to x0.at; URL copied to clipboard and shown in a notification.
+.TP
+.B Escape
+Return to default mode without capturing.
+.SH FILES
+.TP
+.I ~/.config/sway/scripts/screenshot-dispatch.sh
+Print-key dispatcher; routes to the binding mode (traditional) or frozen
+region \[->] clipboard (aggressive) based on the state file.
+.TP
+.I ~/.local/state/screenshot-mode/mode
+Capture-mode state file, contents
+.B traditional
+or
+.BR aggressive .
+Shared source of truth between the dispatcher and the eww widget. Created on
+demand; missing file means traditional.
+.TP
+.I ~/.config/eww/widgets/screenshot-mode.yuck
+Desktop toggle widget (window
+.BR screenshot-mode-widget ,
+BT-circle style, geometry x 1320 y 910 anchor bottom-left, left of
+.BR bt-widget ).
+Pure ASCII \(em the nerd-font camera icon travels inside the subscribe
+script's JSON, dnd-style.
+.TP
+.I ~/.config/eww/scripts/screenshot-mode-subscribe.sh
+eww deflisten feed; emits mode+icon JSON at start and on every state-file
+change via
+.BR inotifywait (1)
+on the dedicated state directory (no polling).
+.TP
+.I ~/.config/eww/scripts/screenshot-mode-toggle.sh
+Widget click action: flips the state file atomically (tmp + rename) and
+fires a confirmation notification.
+.TP
+.I ~/.config/sway/scripts/screenshot-frozen.sh
+Frozen-screen region capture; outputs cropped PNG to stdout.
+.TP
+.I ~/.config/sway/scripts/screenshot-notify.sh
+Daemon: save-to-disk notification via
+.BR inotifywait (1).
+.TP
+.I ~/.config/sway/scripts/screenshot-clipboard-notify.sh
+Daemon: clipboard PNG notification via
+.BR wl-paste (1)
+--watch.
+.TP
+.I ~/.config/swappy/config
+swappy editor configuration: save directory, filename format, panel defaults.
+.TP
+.I ~/.config/systemd/user/screenshot-notify.service
+Systemd user unit for the save-notification daemon. Enabled for
+.IR sway-session.target .
+.TP
+.I ~/.config/systemd/user/screenshot-clipboard-notify.service
+Systemd user unit for the clipboard-notification daemon. Enabled for
+.IR sway-session.target .
+.TP
+.I ~/.config/sway/modes/screenshot
+Sway mode configuration: defines
+.I $mode_screenshot
+and all keybindings, including the
+.B Print
+entry binding.
+.TP
+.I ~/.config/sway/config.d/01-definitions.conf
+Defines
+.IR $grimshot ,
+.IR $pipe_output ,
+.IR $pipe_selection ,
+.IR $swappy ,
+.IR $upload_pipe ,
+the composite
+.I $screenshot_screen
+/
+.I $screenshot_selection
+(with optional upload variants), and
+.I $screenshot_dispatch
+(the Print-key entry point).
+.TP
+.I ~/.config/sway/autostart
+Defines
+.I $swappy_notify
+and
+.I $screenshot_clipboard_notify
+variables (daemon restart commands).
+.TP
+.I ~/.config/sway/config.d/99-autostart-applications.conf
+Calls
+.I $swappy_notify
+and
+.I $screenshot_clipboard_notify
+inside
+.B exec_always
+so both daemons restart on every sway reload.
+.TP
+.I ~/.config/sway/themes/<name>/theme.conf
+Defines the
+.I $colorN
+variables (e.g.\&
+.IR $color5 ,
+.IR $color7 ,
+.IR $color10 )
+referenced in the pango markup of
+.IR $mode_screenshot .
+The active theme is symlinked at runtime to
+.I ~/.config/sway/definitions.d/theme.conf
+(generated \(em not tracked in git).
+See
+.BR palette-theming (1)
+for the full theming system.
+.SH PROGRAMS
+.BR grim (1),
+.BR slurp (1),
+.BR swayimg (1)
+.RB "(\(>= 5.5 \(em " screenshot\-frozen.sh
+uses the field-assignment Lua API introduced in 5.5),
+.BR magick / convert
+(ImageMagick),
+.BR swappy (1),
+.BR inotifywait (1),
+.BR notify-send (1),
+.BR wl-paste (1),
+.BR wl-copy (1),
+.BR jq (1)
+(dispatcher mode-name lookup),
+.BR curl (1)
+(upload to x0.at)
+.SH DAEMONS
+Both notification daemons run as systemd user services under
+.IR sway-session.target .
+They are started (or restarted) every time sway reloads, via
+.B exec_always
+in
+.IR 99-autostart-applications.conf .
+.TP
+.B screenshot-notify.service
+Wraps
+.IR screenshot-notify.sh .
+The unit clears
+.I /tmp/screenshot-notify.lock
+via
+.B ExecStartPre
+before each start to prevent stale lockfile issues.
+.TP
+.B screenshot-clipboard-notify.service
+Wraps
+.IR screenshot-clipboard-notify.sh .
+.SH FLOW
+.SS Capture flow (traditional, region example)
+.nr step 1 1
+.IP \n[step]. 3
+User presses
+.B Print
+\[->]
+.I screenshot-dispatch.sh
+reads the state file (traditional) \[->] sway enters
+.I $mode_screenshot
+.IP \n+[step].
+User presses
+.B p
+\[->] sway exits mode and executes
+.I $screenshot_selection
+.IP \n+[step].
+.I $screenshot_selection
+=
+.I $pipe_selection
+|
+.I $swappy
+: runs
+.I screenshot-frozen.sh
+piped into
+.B swappy -f -
+.IP \n+[step].
+.I screenshot-frozen.sh
+captures full screen \[->] displays it with
+.BR swayimg (1)
+under a dedicated app_id, forced tiled so the fullscreen covers the whole output
+\[->] user draws selection with
+.BR slurp (1)
+.IP \n+[step].
+Crops region from frozen PNG using ImageMagick \[->] writes PNG bytes to stdout
+.IP \n+[step].
+.BR swappy (1)
+receives PNG on stdin, opens editor with annotation tools
+.IP \n+[step].
+User saves or copies; swappy exits
+.SS Capture flow (aggressive)
+.nr step 1 1
+.IP \n[step]. 3
+User presses
+.B Print
+\[->] dispatcher sees
+.B aggressive
+\[->] runs
+.I screenshot-frozen.sh
+directly (frozen screen + slurp selection, same freeze mechanics as
+traditional)
+.IP \n+[step].
+Cropped PNG lands in a private temp file; on a cancelled selection (Escape)
+nothing is copied \(em the clipboard is never clobbered with an empty PNG
+.IP \n+[step].
+.BR wl-copy (1)
+places the PNG in the Wayland clipboard; the temp file is removed
+.IP \n+[step].
+.I screenshot-clipboard-notify.sh
+fires the \(lqScreenshot copied to clipboard\(rq toast \(em the aggressive
+path has no notification of its own
+.SS Notification flow (save)
+.nr step 1 1
+.IP \n[step]. 3
+swappy saves PNG to
+.I ~/Screenshots/
+.IP \n+[step].
+.I screenshot-notify.sh
+detects
+.B close_write
+on the directory via
+.BR inotifywait (1)
+.IP \n+[step].
+Debounce check (100 ms) prevents duplicate events
+.IP \n+[step].
+.BR notify-send (1)
+fires "Screenshot saved" notification with an explicit
+.B "\-t 5000"
+so it auto-dismisses after 5 s
+.SS Notification flow (clipboard copy)
+.nr step 1 1
+.IP \n[step]. 3
+swappy copies PNG to Wayland clipboard
+.IP \n+[step].
+.B wl-paste --watch
+in
+.I screenshot-clipboard-notify.sh
+fires callback script
+.IP \n+[step].
+Callback checks MIME type; if
+.BR image/png ,
+debounce check (500 ms) runs under
+.BR flock (1)
+.IP \n+[step].
+.BR notify-send (1)
+fires "Screenshot copied to clipboard" notification with an explicit
+.B "\-t 5000"
+so it auto-dismisses after 5 s
+.SH STORAGE
+Screenshots are saved to
+.I ~/Screenshots/
+by default. Override by setting
+.B XDG_SCREENSHOTS_DIR
+in your environment before starting sway.
+.PP
+The swappy filename format is configured in
+.I ~/.config/swappy/config
+as
+.BR save_filename_format=%Y-%m-%d-%H%M%S_swappy.png .
+.SH GOTCHAS
+.TP
+.B The freeze overlay must be tiled, not floating
+.I screenshot-frozen.sh
+launches the
+.BR swayimg (1)
+freeze under a dedicated app_id
+.RB ( screenshot-freeze )
+and forces it tiled
+.RB ( "floating disable" )
+before
+.BR slurp (1)
+runs. On SwayFX a floating window that requests fullscreen keeps the offset the
+.I floating-placer.py
+/
+.I floating-memory.py
+daemons assign it, so its rect lands at e.g.\& 952,43 instead of 0,0 and no
+longer covers the output \(em the live desktop bleeds through the uncovered area
+(the "glitch" symptom). A tiled fullscreen window always covers the output at
+0,0. Keep the freeze out of the generic
+.RB ' swayimg '
+floating rule in
+.IR 98-application-defaults.conf .
+.TP
+.B swayimg 5.x renders the frozen image scaled-down by default
+swayimg 5.0 and newer default to
+.B optimal
+scale (not 1:1, even when image and window dimensions match). The
+.B \-e
+flag is a Lua script as of 5.0 (formerly a plain command API); set
+.B "swayimg.viewer.default_scale = 'real'"
+in it or the frozen capture is visibly scaled. The setter functions this
+originally used still exist \(em the breakage was never the API.
+.TP
+.B swayimg 5.5 deprecated the Lua setters in favor of plain fields
+Up to swayimg 5.4 the freeze passed
+.BR swayimg.text.hide ()
+and
+.BR swayimg.viewer.set_default_scale ().
+Both still work in 5.5, but each one prints
+.B "WARNING: Function ... is deprecated and will be removed in a future release"
+\(em and swayimg does not confine that warning to stderr: it renders it as a
+status overlay
+.I inside
+the frozen image (measured: a 798x26 band at y=1039 on a 1920x1080 output). So
+the warning was visible on screen during every capture and could land inside the
+crop. Redirecting stderr does not suppress it. The 5.5 form is
+field assignment:
+.B "swayimg.text.visible = false"
+and
+.BR "swayimg.viewer.default_scale = 'real'" .
+Verified silent on swayimg 5.5 (2026-08-11). Both fields are documented
+"Since 5.5", so the script now has a hard floor of swayimg 5.5 \(em a downgrade
+below that needs the setter form back. Valid scale names are
+.BR optimal ", " width ", " height ", " fit ", " fill ", " real " and " keep ;
+see
+.I /usr/share/doc/swayimg/CONFIG.md
+for the full 5.5 Lua API.
+.TP
+.B swayimg renames CLI flags between minor releases
+swayimg 5.3 (released 2026-06-18) removed
+.B \-\-class
+in favor of
+.BR \-\-appid =ID
+for setting the Wayland app_id. The freeze launch in
+.I screenshot-frozen.sh
+passed
+.BR \-\-class ,
+so under 5.3 swayimg aborts at startup (unrecognized option) and the overlay
+never maps. Because the script runs under
+.B set \-e
+and the following
+.BR swaymsg (1)
+floating-disable returns exit 2 (\(lqNo matching node\(rq) when the window is
+absent, the whole script aborts there \(em before
+.BR slurp (1)
+\(em so nothing reaches
+.BR swappy (1):
+the screenshot mode menu shows but no capture happens. Fix: use
+.B \-\-appid
+and append
+.B "|| true"
+to that
+.BR swaymsg
+call so a swayimg-launch failure degrades to a non-frozen capture instead of
+total silence. The Lua API was unchanged in 5.3 \(em that breakage was the CLI,
+not the API. (5.5 did change the API: see the deprecation entry above.)
+.TP
+.B Wait for the overlay to map, not a blind sleep
+The script polls the sway tree until the freeze window appears before forcing it
+tiled; a fixed
+.B sleep
+races swayimg's map and paint on a busy system.
+.TP
+.B Screenshot notifications need an explicit timeout
+mako runs with
+.B default-timeout=0
+in
+.IR ~/.config/mako/config ,
+so every notification persists until clicked (intentional \(em chat messages
+must not be missed). The two screenshot daemons therefore pass an explicit
+.B "\-t 5000"
+to
+.BR notify-send (1)
+so the "Screenshot saved" and "Screenshot copied to clipboard" confirmations
+auto-dismiss after 5 s without touching the global policy. mako honors a
+per-notification timeout over
+.B default-timeout
+only while
+.B ignore-timeout=0
+(its default); flipping that to 1 would make mako ignore the
+.B "\-t"
+and the confirmations would linger again.
+.TP
+.B The screenshot binding mode's name is a ~300-char pango string
+Theme colors are expanded into the mode name when sway parses the config, so
+the name changes with the active palette. Never hardcode it.
+.I screenshot-dispatch.sh
+resolves it live: the only entry of
+.B swaymsg \-t get_binding_modes
+containing \(lqPick\(rq, passed back wrapped in double quotes inside the
+command string (the name contains spaces and single quotes; double quotes
+inside survive because pango markup only uses single quotes).
+.TP
+.B Aggressive mode's toast comes from the clipboard daemon
+The dispatcher never calls
+.BR notify-send (1)
+on success; if
+.B screenshot-clipboard-notify.service
+is down, aggressive captures still work but confirm silently.
+.TP
+.B The eww toggle widget stays ASCII on purpose
+The camera glyph (U+F0104, PUA) is emitted by
+.I screenshot-mode-subscribe.sh
+as escaped bytes inside the JSON payload \(em same pattern as the dnd
+subscribe script \(em so no PUA character ever lives in a yuck file where a
+Write-style rewrite could silently destroy it.
+.TP
+.B Nerd-font icons render right-shifted in GTK labels
+In \(lqJetBrainsMono Nerd Font\(rq (non-Mono) the U+F0104 glyph's ink at
+30px is 25px wide inside an 18px pango advance box \(em 7px of right
+overflow. GTK centers the advance box, not the ink, so the icon sat
++3.5px right of the circle's center. Fix in
+.IR screenshot-mode.scss :
+.B "padding-right: 7px"
+on the icon label \(em exactly the overflow \(em makes the ink span
+symmetric (correct in both the fill and centered label layout models).
+Measure the overflow with pango directly,
+.B layout.get_pixel_extents()
+via python3-gi (ink vs logical extents); do not eyeball the padding. This
+applies to any eww widget using nf-md glyphs.
+.SH SEE ALSO
+.BR grim (1),
+.BR slurp (1),
+.BR swappy (1),
+.BR inotifywait (1),
+.BR systemctl (1)

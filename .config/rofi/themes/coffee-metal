@@ -1,0 +1,190 @@
+// ── Clipboard Functionality ──────────────────────────────────────────────────
+// Role:     Rofi theme for the clipboard history picker and deletion dialogs
+// Used by:  clipboard-manager.sh · $clipboard-del (01-definitions.conf)
+// ─────────────────────────────────────────────────────────────────────────────
+
+* {
+    /* Coffee color palette */
+    espresso:        #2C1C0D;
+    dark-roast:      #4A3520;
+    mocha:           #7D5A3C;
+    latte:           #C7A17A;
+    cream:           #F0E4D4;
+    
+    /* Metallic accents */
+    bronze:          #CD7F32;
+    copper:          #B87333;
+    gold:            #D4AF37;
+    silver:          #C0C0C0;
+    
+    background-color:    @espresso;
+    text-color:          @cream;
+    
+    border-color:        @mocha;
+    separatorcolor:      @bronze;
+    
+    normal-background:   @espresso;
+    normal-foreground:   @cream;
+    alternate-normal-background: @dark-roast;
+    alternate-normal-foreground: @cream;
+    
+    selected-normal-background:  @bronze;
+    selected-normal-foreground:  @espresso;
+    
+    active-background:   @mocha;
+    active-foreground:   @cream;
+    alternate-active-background: @mocha;
+    alternate-active-foreground: @cream;
+    selected-active-background:  @copper;
+    selected-active-foreground:  @cream;
+    
+    urgent-background:   @copper;
+    urgent-foreground:   @cream;
+    alternate-urgent-background: @copper;
+    alternate-urgent-foreground: @cream;
+    selected-urgent-background:  @gold;
+    selected-urgent-foreground:  @espresso;
+}
+
+window {
+    background-color: @espresso;
+    border:           3px;
+    border-color:     @bronze;
+    border-radius:    10px;
+    padding:          12px;
+}
+
+mainbox {
+    border:  0;
+    padding: 0;
+}
+
+message {
+    border:       2px solid 0px 0px;
+    border-color: @separatorcolor;
+    padding:      10px;
+}
+
+textbox {
+    text-color: @text-color;
+}
+
+listview {
+    fixed-height: 0;
+    border:       2px solid 0px 0px;
+    border-color: @separatorcolor;
+    spacing:      5px;
+    scrollbar:    true;
+    padding:      5px 0px 0px;
+}
+
+element {
+    border:  0;
+    padding: 6px;
+    border-radius: 5px;
+}
+
+element-text {
+    background-color: inherit;
+    text-color:       inherit;
+}
+
+element-icon {
+    background-color: inherit;
+    size: 24px;
+    margin: 0 8px 0 0;
+}
+
+element.normal.normal {
+    background-color: @normal-background;
+    text-color:       @normal-foreground;
+}
+
+element.normal.urgent {
+    background-color: @urgent-background;
+    text-color:       @urgent-foreground;
+}
+
+element.normal.active {
+    background-color: @active-background;
+    text-color:       @active-foreground;
+}
+
+element.selected.normal {
+    background-color: @selected-normal-background;
+    text-color:       @selected-normal-foreground;
+}
+
+element.selected.urgent {
+    background-color: @selected-urgent-background;
+    text-color:       @selected-urgent-foreground;
+}
+
+element.selected.active {
+    background-color: @selected-active-background;
+    text-color:       @selected-active-foreground;
+}
+
+element.alternate.normal {
+    background-color: @alternate-normal-background;
+    text-color:       @alternate-normal-foreground;
+}
+
+element.alternate.urgent {
+    background-color: @alternate-urgent-background;
+    text-color:       @alternate-urgent-foreground;
+}
+
+element.alternate.active {
+    background-color: @alternate-active-background;
+    text-color:       @alternate-active-foreground;
+}
+
+scrollbar {
+    width:        4px;
+    border:       0;
+    handle-color: @mocha;
+    handle-width: 8px;
+    padding:      0;
+}
+
+sidebar {
+    border:       2px solid 0px 0px;
+    border-color: @separatorcolor;
+}
+
+button {
+    spacing:    0;
+    text-color: @normal-foreground;
+}
+
+button.selected {
+    background-color: @selected-normal-background;
+    text-color:       @selected-normal-foreground;
+}
+
+inputbar {
+    spacing:    0;
+    text-color: @normal-foreground;
+    padding:    10px;
+    border:     0 0 2px 0;
+    border-color: @bronze;
+}
+
+case-indicator {
+    spacing:    0;
+    text-color: @normal-foreground;
+}
+
+entry {
+    spacing:    0;
+    text-color: @cream;
+    placeholder: "Type to filter";
+    placeholder-color: @mocha;
+}
+
+prompt {
+    spacing:    0;
+    text-color: @gold;
+    margin:     0 8px 0 0;
+}

@@ -1,0 +1,37 @@
+// feature: gamma
+// role:    style
+@import "./theme";
+
+// ── Bar gamma correction button ───────────────────────────────────────────────
+.bar-gamma {
+  padding: 0 8px;
+  font-size: 18px;
+  border-radius: 6px;
+  color: mix($theme-fg, $theme-bg, 50%);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.bar-gamma:hover {
+  background-color: $theme-selection;
+  color: $theme-fg;
+}
+
+// Active: accent color — auto schedule on
+.bar-gamma.active {
+  color: $color2;
+}
+
+.bar-gamma.active:hover {
+  background-color: $theme-selection;
+  color: $color2;
+}
+
+// Warm: forced warm temperature, ignore schedule
+.bar-gamma.warm {
+  color: #e0af68;
+}
+
+.bar-gamma.warm:hover {
+  background-color: $theme-selection;
+  color: #e0af68;
+}

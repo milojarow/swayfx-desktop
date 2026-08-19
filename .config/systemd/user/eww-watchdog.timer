@@ -1,0 +1,11 @@
+[Unit]
+Description=Probe eww IPC every minute and revive a zombie daemon
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1min
+AccuracySec=10s
+Unit=eww-watchdog.service
+
+[Install]
+WantedBy=timers.target

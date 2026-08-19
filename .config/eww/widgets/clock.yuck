@@ -1,0 +1,37 @@
+; feature: clock
+; role:    window
+; deps:    styles/clock.scss
+;
+; Two zones at once: home time (Nuevo Laredo -> America/Matamoros) big on the
+; left, Monterrey (America/Monterrey) small on the right.
+;
+; They are NOT the same time half the year: the Tamaulipas border municipalities
+; kept DST when Mexico abolished it in 2022, so Nuevo Laredo runs UTC-5 in
+; summer and UTC-6 in winter, while Monterrey stays on UTC-6 year-round. From
+; mid-March to early November the two differ by one hour; the rest of the year
+; they read identical. Never hardcode an offset -- always the zone name.
+;
+; Why a defpoll and not formattime(): this eww build (0.6.0) has neither
+; EWW_TIME nor the timezone argument of formattime -- chrono-tz is not compiled
+; in, verified against the binary. Both values are derived from the SAME epoch
+; so the two clocks can never disagree across a minute rollover.
+(defpoll clock-times :interval "10s"
+                     :initial '{"nld":"00:00","mty":"00:00"}'
+  `now=$(date +%s); printf '{"nld":"%s","mty":"%s"}' "$(date -d @$now +%H:%M)" "$(TZ=America/Monterrey date -d @$now +%H:%M)"`)
+
+(defwidget clock []
+  (box :class "clock-box" :orientation "h" :space-evenly false
+    (label :class "clock-time"     :text {clock-times?.nld ?: "--:--"})
+    (label :class "clock-city"     :text "NLD" :valign "end")
+    (box   :class "clock-sep")
+    (label :class "clock-time-alt" :text {clock-times?.mty ?: "--:--"} :valign "end")
+    (label :class "clock-city-alt" :text "MTY" :valign "end")))
+
+(defwindow clock
+  :monitor 0
+  :geometry (geometry :x "24px"
+                      :y "24px"
+                      :anchor "top right")
+  :stacking "bottom"
+  :focusable false
+  (clock))

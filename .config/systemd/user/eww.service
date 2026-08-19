@@ -1,0 +1,33 @@
+[Unit]
+Description=eww widgets daemon
+PartOf=graphical-session.target
+After=graphical-session.target
+# If the daemon segfaults in a tight loop (e.g. libdbusmenu crash from a
+# malformed tray icon), stop retrying after 5 failures in 60s. Without this
+# systemd would keep restarting forever, accumulating orphan layer-shell
+# surfaces and rogue daemons.
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Environment="PATH=%h/.cargo/bin:/usr/local/bin:/usr/bin:/bin"
+# Kill BOTH the daemon (matched by exact name 'eww') AND any 'eww open|close|
+# update' CLI processes that may have hung from a previous run. pkill -x only
+# matches the truncated 15-char comm field; we add -f with the absolute path
+# so long argv processes (CLIs) can't escape the cleanup.
+ExecStartPre=-/bin/sh -c 'pkill -x eww 2>/dev/null; pkill -f "^%h/.cargo/bin/eww " 2>/dev/null; sleep 2; pkill -KILL -x eww 2>/dev/null; pkill -KILL -f "^%h/.cargo/bin/eww " 2>/dev/null; sleep 0.5'
+ExecStart=%h/.cargo/bin/eww daemon --no-daemonize
+ExecStartPost=/bin/sh -c 'elapsed=0; until %h/.cargo/bin/eww ping 2>/dev/null; do sleep 0.1; elapsed=$((elapsed+1)); [ $elapsed -ge 100 ] && exit 1; done; %h/.config/eww/scripts/open-windows.sh'
+ExecStop=%h/.cargo/bin/eww kill
+Restart=always
+RestartSec=3
+# Memory leak guard: baseline ~290 MB. After many reloads the daemon
+# bloats and its IPC socket stops responding ("zombie daemon"), leaving
+# popups stuck on screen. MemoryHigh applies soft pressure; MemoryMax is
+# the hard ceiling that triggers an OOM kill — Restart=always then revives.
+MemoryHigh=1G
+MemoryMax=1500M
+
+[Install]
+WantedBy=graphical-session.target

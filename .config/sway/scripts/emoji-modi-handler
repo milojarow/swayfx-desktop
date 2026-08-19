@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# Rofi script-mode handler for the emoji picker.
+# Usage: emoji-modi-handler <category>
+# Called by rofi for each tab (faces, people, animals, etc.)
+
+CATEGORY="$1"
+CATEGORY_DIR="$HOME/.local/share/bemoji/categories"
+HISTORY_FILE="$HOME/.local/state/bemoji-history.txt"
+ALIASES_FILE="$HOME/.config/sway/scripts/emoji-aliases.txt"
+KEYWORDS_FILE="$HOME/.config/sway/scripts/emoji-keywords.txt"
+SELECTION_FILE="/tmp/emoji-picker-selection"
+MAX_RECENT=50
+
+# On selection (ROFI_RETV=1 or 2): save selection and output nothing to close rofi
+if [[ "$ROFI_RETV" == "1" || "$ROFI_RETV" == "2" ]]; then
+    # $@ contains the selected text (e.g., "😀 grinning face")
+    shift  # Remove category arg, rest is the selected line
+    echo "$*" > "$SELECTION_FILE"
+    exit 0
+fi
+
+# Inject rofi-script meta keywords onto each emoji line.
+# Two source files contribute, both TAB-separated, # comments allowed:
+#   ALIASES_FILE  cluster format: keyword<TAB>emoji emoji emoji ...
+#   KEYWORDS_FILE per-emoji form: emoji<TAB>kw1 kw2 kw3 ...
+# Both feed the same emoji→keywords map; matches merge.
+# Output per line: <display>\0meta\x1f<space-separated keywords>
+# Lines without a known emoji pass through unchanged.
+inject_meta() {
+    awk -v aliases="$ALIASES_FILE" -v keywords="$KEYWORDS_FILE" '
+        function add(e, kw,    _) {
+            if (e == "" || kw == "") return
+            if (!(e in map)) map[e] = kw
+            else map[e] = map[e] " " kw
+        }
+        BEGIN {
+            NUL = sprintf("%c", 0)
+            US  = sprintf("%c", 31)
+            # Cluster aliases: invert keyword→emojis to emoji→keyword
+            while ((getline line < aliases) > 0) {
+                if (line ~ /^[[:space:]]*#([[:space:]]|$)/ || line ~ /^[[:space:]]*$/) continue
+                n = split(line, parts, "\t")
+                if (n < 2) continue
+                kw = parts[1]
+                m = split(parts[2], emojis, " ")
+                for (i = 1; i <= m; i++) add(emojis[i], kw)
+            }
+            close(aliases)
+            # Per-emoji keywords: append directly
+            while ((getline line < keywords) > 0) {
+                if (line ~ /^[[:space:]]*#([[:space:]]|$)/ || line ~ /^[[:space:]]*$/) continue
+                n = split(line, parts, "\t")
+                if (n < 2) continue
+                add(parts[1], parts[2])
+            }
+            close(keywords)
+        }
+        {
+            emoji = $1
+            if (emoji in map) print $0 NUL "meta" US map[emoji]
+            else print $0
+        }
+    '
+}
+
+# Initial call (ROFI_RETV=0): output the emoji list for this category
+case "$CATEGORY" in
+    recent)
+        # Recent items first, then ALL emojis (except kaomoji) for search.
+        # awk deduplicates so recent items don't repeat in the full list.
+        {
+            if [[ -f "$HISTORY_FILE" ]]; then
+                tac "$HISTORY_FILE" | head -n "$MAX_RECENT"
+            fi
+            cat "$CATEGORY_DIR"/{faces,people,animals,food,travel,activities,objects,symbols,flags}.txt 2>/dev/null
+        } | awk '!seen[$0]++' | inject_meta
+        ;;
+    *)
+        cat "$CATEGORY_DIR/$CATEGORY.txt" 2>/dev/null | inject_meta
+        ;;
+esac

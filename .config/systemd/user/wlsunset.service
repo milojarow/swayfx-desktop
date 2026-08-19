@@ -1,0 +1,19 @@
+[Unit]
+Description=wlsunset — automatic gamma correction by sunrise/sunset
+PartOf=graphical-session.target
+After=graphical-session.target
+Conflicts=wlsunset-warm.service
+
+[Service]
+Type=simple
+ExecStart=%h/.config/sway/scripts/wlsunset-launch.sh
+Restart=on-failure
+RestartSec=5
+# SIGKILL on stop so wlsunset can't run its gamma-restore cleanup, which
+# would briefly set gamma to identity (6500K) and flash blue light during
+# the Conflicts= switch to wlsunset-warm.service.
+KillMode=process
+KillSignal=SIGKILL
+
+[Install]
+WantedBy=graphical-session.target
