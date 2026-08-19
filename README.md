@@ -169,6 +169,26 @@ so it is instant. Twelve palettes ship: catppuccin ×4 (frappe, latte, macchiato
 mocha), matcha ×4 (blue, green, leaf, red), dracula, gruvbox-dark, nordic-bluish-accent
 and tokyo-night. Each carries a `theme.conf` and a `foot-theme.ini`.
 
+`theme.conf` stores colours indirectly — `$accent-color` points at `$cyan`, which
+points at a hex value — so opening the file does not hand you the palette. Resolve
+them with `python3 tools/palettes.py` (add `--md` for markdown, or a theme name for
+every variable of that one). The table below is that script's output:
+
+| theme | bg | text | accent | selection | mode |
+|---|---|---|---|---|---|
+| catppuccin-frappe | `#303446` | `#c6d0f5` | `#00ecec` | `#51576d` | prefer-dark |
+| catppuccin-latte | `#eff1f5` | `#4c4f69` | `#1e66f5` | `#bcc0cc` | prefer-light |
+| catppuccin-macchiato | `#24273a` | `#cad3f5` | `#f5a97f` | `#494d64` | prefer-dark |
+| catppuccin-mocha | `#1e1e2e` | `#cdd6f4` | `#94e2d5` | `#45475a` | prefer-dark |
+| dracula | `#141a1b` | `#f8f8f2` | `#bd93f9` | `#282a2b` | prefer-dark |
+| gruvbox-dark | `#1d2021` | `#ebdbb2` | `#fabd2f` | `#3c3836` | prefer-dark |
+| matcha-blue | `#14161b` | `#eeeeee` | `#3498db` | `#282a2b` | prefer-dark |
+| matcha-green | `#141a1b` | `#eeeeee` | `#16a085` | `#282a2b` | prefer-dark |
+| matcha-leaf | `#141a1b` | `#eeeeee` | `#88ad62` | `#282a2b` | prefer-dark |
+| matcha-red | `#222222` | `#eeeeee` | `#e44138` | `#282a2b` | prefer-dark |
+| nordic-bluish-accent | `#2E3440` | `#E5E9F0` | `#81A1C1` | `#3B4252` | prefer-dark |
+| tokyo-night | `#1a1b26` | `#c0caf5` | `#7aa2f7` | `#292e42` | prefer-dark |
+
 **The palettes are complete; the GTK/Qt/cursor themes they point at are not in this
 repo.** Every `theme.conf` names a GTK theme, an icon theme, a cursor theme and a
 Kvantum theme, and those are separate packages. What the repo generates — sway
