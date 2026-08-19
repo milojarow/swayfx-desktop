@@ -165,8 +165,23 @@ lines from `.config/sway/modes/default`.
 
 `$mod+t` swaps the palette across sway borders, foot, waybar, rofi, wofi, eww, GTK,
 Qt and the cursor in one shot — it is a symlink swap against a pre-generated cache,
-so it is instant. Twelve palettes ship (catppuccin ×4, dracula, gruvbox, tokyo-night,
-nordic, matcha ×5).
+so it is instant. Twelve palettes ship: catppuccin ×4 (frappe, latte, macchiato,
+mocha), matcha ×4 (blue, green, leaf, red), dracula, gruvbox-dark, nordic-bluish-accent
+and tokyo-night. Each carries a `theme.conf` and a `foot-theme.ini`.
+
+**The palettes are complete; the GTK/Qt/cursor themes they point at are not in this
+repo.** Every `theme.conf` names a GTK theme, an icon theme, a cursor theme and a
+Kvantum theme, and those are separate packages. What the repo generates — sway
+borders, foot, waybar, rofi, wofi, eww — recolors regardless; the GTK, Qt and cursor
+side silently falls back to defaults until those packages are installed. Each theme
+directory has a `packages` file naming them (Arch/AUR names; on other distros expect
+to hunt). Between them the twelve want:
+
+- `papirus-icon-theme` — the icon theme for 8 of the 12
+- the catppuccin GTK, cursor and Kvantum themes — 4 palettes
+- Dracula, Gruvbox, Nordic/Nordzy, Tokyonight, Matcha/Matchama GTK sets — one each
+- `breeze-cursor-theme` for the four matcha palettes. It comes from KDE, so if you
+  are stripping a KDE install off this machine, keep that one package.
 
 Adding your own: drop a directory under `.config/sway/themes/<name>/` with a
 `theme.conf` and a `foot-theme.ini`, then run `theme-cache-regen.sh <name>`.

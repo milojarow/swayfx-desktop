@@ -10,7 +10,16 @@ sworkstyle          # app icons next to workspace numbers
 poweralertd         # battery warnings
 flashfocus          # focus flash
 kvantum             # Qt side of the palette theming (see man palette-theming)
-papirus-icon-theme  # icon colour switching in the palette theming
+papirus-icon-theme  # the icon theme 8 of the 12 palettes ask for
+
+# The GTK / icon / cursor / Kvantum themes each palette names are NOT in this repo
+# and NOT in this list — there are ~15 of them across the twelve palettes. Every
+# theme directory carries its own `packages` file naming what it needs, e.g.
+#   cat .config/sway/themes/catppuccin-frappe/packages
+# Install only the ones for palettes you actually use. Without them $mod+t still
+# recolors sway, foot, waybar, rofi and eww; GTK, Qt and the cursor fall back.
+breeze-cursor-theme # cursor for the four matcha palettes. Ships with KDE — if you
+                    # are removing a KDE install, keep this one package.
 valent              # phone integration, used by scripts/valent.py
 github-cli          # waybar notifications module
 
