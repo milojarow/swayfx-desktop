@@ -51,17 +51,6 @@ if ! flock -w 10 9; then
 fi
 
 WINDOWS=(
-    disk-widget
-    activate-linux
-    sysmonitor-window
-    temps-window
-    usb-widget
-    bt-widget
-    timer-widget
-    clock
-    battery-window
-    wallpaper-cycle
-    notes-widget
     screenshot-mode-widget
 )
 

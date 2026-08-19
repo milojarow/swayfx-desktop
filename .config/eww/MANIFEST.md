@@ -6,90 +6,10 @@ Each section lists every file declaring `feature: <name>` in its header,
 grouped and ordered by role. Container files (today `bar.yuck`) cross-reference
 their inline modules to the corresponding feature.
 
-## activate-linux
-
-- `styles/activate-linux.scss`  *(style)*
-- `widgets/activate-linux.yuck`  *(window)*
-
-## bar
-
-- `styles/bar.scss`  *(style)*
-
-## battery
-
-- `styles/battery.scss`  *(style)*
-- `scripts/battery-subscribe.sh`  *(subscribe)*
-- `widgets/battery.yuck`  *(window)*
-
-## brightness
-
-- `scripts/brightness-subscribe.sh`  *(subscribe)*
-
-## bt
-
-- `scripts/bt-close-popup.sh`  *(action)*
-- `scripts/bt-connect.sh`  *(action)*
-- `scripts/bt-disconnect.sh`  *(action)*
-- `scripts/bt-pair.sh`  *(action)*
-- `scripts/bt-remove.sh`  *(action)*
-- `scripts/bt-scan.sh`  *(action)*
-- `scripts/bt-toggle-popup.sh`  *(action)*
-- `styles/bt-widget.scss`  *(style)*
-- `scripts/bt-monitor.sh`  *(subscribe)*
-- `widgets/bt-widget.yuck`  *(window)*
-
 ## cheatsheet
 
 - `styles/cheatsheet.scss`  *(style)*
 - `widgets/cheatsheet.yuck`  *(window)*
-
-## clipboard
-
-- `styles/clipboard.scss`  *(style)*
-- `scripts/clipboard-subscribe.sh`  *(subscribe)*
-
-## clock
-
-- `styles/clock.scss`  *(style)*
-- `widgets/clock.yuck`  *(window)*
-
-## cpu-gauge
-
-- `styles/cpu-gauge.scss`  *(style)*
-- `widgets/cpu-gauge.yuck`  *(window)*
-
-## cpu-temp
-
-- `styles/cpu-temp.scss`  *(style)*
-- `widgets/cpu-temp.yuck`  *(window)*
-
-## disk
-
-- `scripts/disk-other-breakdown.sh`  *(helper)*
-- `scripts/disk-usage-refresh.sh`  *(helper)*
-- `scripts/disk-usage.sh`  *(helper)*
-- `styles/disk-widget.scss`  *(style)*
-- `widgets/disk-widget.yuck`  *(window)*
-
-## dnd
-
-- `styles/dnd.scss`  *(style)*
-- `scripts/dnd-subscribe.sh`  *(subscribe)*
-
-## experiment
-
-- `styles/experiment.scss`  *(style)*
-- `widgets/experiment.yuck`  *(window)*
-
-## gamma
-
-- `styles/gamma.scss`  *(style)*
-- `scripts/gamma-subscribe.sh`  *(subscribe)*
-
-## idle-inhibitor
-
-- `styles/idle-inhibitor.scss`  *(style)*
-- `scripts/idle-inhibitor-subscribe.sh`  *(subscribe)*
 
 ## meeting-notes
 
@@ -100,73 +20,12 @@ their inline modules to the corresponding feature.
 
 - `scripts/mem-pressure-watch.py`  *(subscribe)*
 
-## notes
-
-- `scripts/notes-accept.sh`  *(action)*
-- `scripts/notes-add.sh`  *(action)*
-- `scripts/notes-copy.sh`  *(action)*
-- `scripts/notes-delete.sh`  *(action)*
-- `styles/notes.scss`  *(style)*
-- `scripts/notes-subscribe.sh`  *(subscribe)*
-- `widgets/notes.yuck`  *(window)*
-
-## recorder
-
-- `styles/recorder.scss`  *(style)*
-- `scripts/recorder-subscribe.sh`  *(subscribe)*
-
 ## screenshot-mode
 
 - `scripts/screenshot-mode-toggle.sh`  *(action)*
 - `styles/screenshot-mode.scss`  *(style)*
 - `scripts/screenshot-mode-subscribe.sh`  *(subscribe)*
 - `widgets/screenshot-mode.yuck`  *(window)*
-
-## sway-mode
-
-- `scripts/sway-mode-subscribe.py`  *(subscribe)*
-
-## sysmonitor
-
-- `styles/sysmonitor.scss`  *(style)*
-- `widgets/sysmonitor.yuck`  *(window)*
-
-## temps
-
-- `scripts/gpu-temp.sh`  *(helper)*
-- `styles/temps.scss`  *(style)*
-- `widgets/temps.yuck`  *(window)*
-
-## timer
-
-- `styles/timer-widget.scss`  *(style)*
-- `scripts/timer-subscribe.sh`  *(subscribe)*
-- `widgets/timer-widget.yuck`  *(window)*
-
-## usb
-
-- `scripts/usb-eject.sh`  *(action)*
-- `scripts/usb-mount.sh`  *(action)*
-- `scripts/usb-umount.sh`  *(action)*
-- `styles/usb-widget.scss`  *(style)*
-- `scripts/usb-monitor.sh`  *(subscribe)*
-- `widgets/usb-widget.yuck`  *(window)*
-
-## volume
-
-- `scripts/volume-scroll.sh`  *(action)*
-- `styles/volume.scss`  *(style)*
-- `scripts/volume-subscribe.py`  *(subscribe)*
-
-## wallpaper-cycle
-
-- `scripts/wallpaper-cycle.sh`  *(helper)*
-- `styles/wallpaper-cycle.scss`  *(style)*
-- `widgets/wallpaper-cycle.yuck`  *(window)*
-
-## widget-de-las-flechas
-
-- `widgets/widget-de-las-flechas.yuck`  *(window)*
 
 ## wifi
 
@@ -187,27 +46,12 @@ their inline modules to the corresponding feature.
 - `scripts/wifi-subscribe.py`  *(subscribe)*
 - `widgets/wifi-popup.yuck`  *(window)*
 
-## window-title
-
-- `scripts/window-title-click-eww.sh`  *(action)*
-- `scripts/window-title-rename-eww.sh`  *(action)*
-- `scripts/window-title-flash-watch.sh`  *(subscribe)*
-- `scripts/window-title-subscribe.py`  *(subscribe)*
-
-## workspaces
-
-- `scripts/workspaces-subscribe.py`  *(subscribe)*
-
 ## _shared
 
 - `scripts/_manifest.sh`  *(shared)*
 - `scripts/move-widget.sh`  *(shared)*
 - `scripts/open-windows.sh`  *(shared)*
 
-## ⚠ Naming dissonances (filename does not start with declared feature)
-
-- `scripts/gpu-temp.sh` declares feature `temps` but filename does not start with `temps-`
-
 ---
 
-**Summary:** 102 tagged files across 32 features. 0 orphans.
+**Summary:** 28 tagged files across 6 features. 0 orphans.

@@ -1,8 +1,16 @@
 # swayfx-desktop
 
-A complete SwayFX desktop — compositor config, keybindings, binding modes, waybar,
-eww widgets, rofi, screenshots, screen recording, clipboard manager, emoji picker,
-and a live palette-theming system that recolors everything at once.
+A complete SwayFX desktop — compositor config, keybindings, binding modes, waybar
+exactly as it is configured on the source machine, rofi, screenshots, screen
+recording, clipboard manager, emoji picker, and a live palette-theming system that
+recolors everything at once.
+
+eww ships as **plumbing, not as a widget collection**: only the three widgets that
+sway and waybar actually call survive — the `$mod+slash` cheatsheet, the screenshot
+capture-mode indicator, and the wifi popup that waybar's network module opens. The
+personal desktop widgets (floating clock, notes, timers, gauges, USB and bluetooth
+panels, disk meter) were left behind. The framework is wired up and working, so
+build your own.
 
 Exported from a machine where this is the daily driver, so it is a working setup
 rather than a starter kit. Everything personal to that machine was stripped;
@@ -166,15 +174,16 @@ Full documentation: `man palette-theming`.
 
 ## Documentation
 
-Around twenty man pages ship with the config and install to `~/.local/share/man`.
+21 man pages ship with the config and install to `~/.local/share/man`.
 After copying, run `mandb ~/.local/share/man` once, then:
 
 ```
 man screenshots · man recording · man swap · man resize · man scratchpad
-man palette-theming · man clipboard-functionality · man emoji-picker
-man cheatsheet · man notes · man lock-screen · man idle-inhibitor
-man usb-management · man window-title · man screensharing · man eww-guard
-man gamma-correction · man do-not-disturb · man lid-handling · man peek
+man shutdown · man lock-screen · man idle-inhibitor · man lid-handling
+man clipboard-functionality · man clipardo · man emoji-picker · man peek
+man palette-theming · man gamma-correction · man do-not-disturb
+man cheatsheet · man usb-management · man window-title
+man screensharing · man eww-guard
 ```
 
 ---
@@ -185,12 +194,18 @@ This was carved out of a personal dotfiles repo. Removed on the way out:
 
 - **the git history** — this repo starts at commit one; nothing from the original
   bare repo travels with it
-- **three eww widgets** tied to a specific VPS (remote disk usage, SSH tunnel
-  toggle, remote tmux sessions) and the host config they read
+- **26 of the 32 eww features** — the whole personal widget collection (clock,
+  battery, notes, timer, sysmonitor and CPU gauges, temps, disk meter, USB and
+  bluetooth panels, wallpaper cycler, activate-linux) plus the legacy scripts left
+  over from before the bar moved to waybar, plus three widgets tied to a specific
+  VPS (remote disk usage, SSH tunnel toggle, remote tmux sessions) and the host
+  config they read. `man notes` went with them
 - **two keybindings** that called scripts belonging to a business workflow
   (`$mod+Shift+v`, `$mod+o` — both free again)
 - **shell, editor, browser and file-manager configs**, MIME defaults, and every
   service unrelated to the desktop session
+- **the Arch logo** — waybar's leftmost button (`custom/menu`, opens the launcher)
+  used the Arch glyph `U+F303`; it is a distro-neutral menu glyph now
 
 Also absent by nature: monitor layout and input tuning. `.config/sway/inputs/`
 holds generic `type:keyboard` / `type:touchpad` blocks, and there are no `output`

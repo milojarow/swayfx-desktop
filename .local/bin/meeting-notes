@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+# meeting-notes — Record and transcribe meetings with speaker diarization.
+# See man meeting-notes(1) for full documentation.
+
+set -euo pipefail
+
+APPDIR="$HOME/.local/share/meeting-notes"
+VENV="$APPDIR/venv"
+RECORDINGS_DIR="$HOME/recordings/meetings"
+HF_TOKEN_FILE="$HOME/.config/huggingface/token"
+
+# --- Subcommand: record ---
+
+cmd_record() {
+    local name="${1:-meeting}"
+    local timestamp
+    timestamp="$(date +%Y-%m-%d_%H%M)"
+    local outfile="$RECORDINGS_DIR/${timestamp}_${name}.wav"
+    local tmp_sink="/tmp/meeting-sink-$$.wav"
+    local tmp_mic="/tmp/meeting-mic-$$.wav"
+
+    mkdir -p "$RECORDINGS_DIR"
+
+    local sink_id
+    sink_id="$(pw-dump | jq -r '.[] | select(.info.props."media.class"=="Audio/Sink") | .id' | head -1)"
+
+    if [[ -z "$sink_id" ]]; then
+        echo "Error: no PipeWire audio sink found"
+        exit 1
+    fi
+
+    local sink_name
+    sink_name="$(pw-dump | jq -r ".[] | select(.id==$sink_id) | .info.props.\"node.description\"" 2>/dev/null)"
+
+    echo "Recording meeting: $name"
+    echo "  System audio: $sink_name (sink $sink_id)"
+    echo "  Microphone:   default source"
+    echo "  Output:       $outfile"
+    echo ""
+    echo "Press Ctrl+C to stop and save."
+    echo ""
+
+    cleanup() {
+        echo ""
+        echo "Stopping recording..."
+
+        kill "$pid_sink" "$pid_mic" 2>/dev/null || true
+        wait "$pid_sink" "$pid_mic" 2>/dev/null || true
+        sleep 0.5
+
+        if [[ -f "$tmp_sink" && -f "$tmp_mic" ]]; then
+            echo "Merging audio streams..."
+            ffmpeg -y -i "$tmp_sink" -i "$tmp_mic" \
+                -filter_complex "[0:a][1:a]amix=inputs=2:duration=longest:normalize=0[out]" \
+                -map "[out]" -ac 1 -ar 16000 "$outfile" 2>/dev/null
+
+            if [[ -f "$outfile" ]]; then
+                local duration size
+                duration="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$outfile" 2>/dev/null | cut -d. -f1)"
+                size="$(du -h "$outfile" | cut -f1)"
+                echo "Saved: $outfile ($size, ${duration}s)"
+                echo ""
+                echo "To transcribe with diarization:"
+                echo "  meeting-notes transcribe \"$outfile\""
+            else
+                echo "Error: merge failed. Raw files kept at $tmp_sink and $tmp_mic"
+                exit 1
+            fi
+        else
+            echo "Error: recording files missing"
+            exit 1
+        fi
+
+        rm -f "$tmp_sink" "$tmp_mic"
+    }
+
+    trap cleanup EXIT INT TERM
+
+    pw-record --target "$sink_id" "$tmp_sink" &
+    pid_sink=$!
+
+    pw-record "$tmp_mic" &
+    pid_mic=$!
+
+    echo "Recording started at $(date +%H:%M:%S)..."
+    wait
+}
+
+# --- Subcommand: transcribe ---
+
+cmd_transcribe() {
+    local audio="${1:?Usage: meeting-notes transcribe <audio-file> [language]}"
+    local lang="${2:-es}"
+
+    if [[ ! -f "$audio" ]]; then
+        echo "Error: file not found: $audio"
+        exit 1
+    fi
+
+    if [[ ! -f "$VENV/bin/whisperx" ]]; then
+        echo "Error: whisperX venv not found at $VENV"
+        exit 1
+    fi
+
+    local outdir
+    outdir="$(dirname "$audio")"
+
+    echo "Transcribing: $audio"
+    echo "  Language: $lang"
+    echo ""
+
+    "$VENV/bin/whisperx" \
+        "$audio" \
+        --model large-v3 \
+        --language "$lang" \
+        --diarize \
+        --min_speakers 2 \
+        --hf_token "$(cat "$HF_TOKEN_FILE" 2>/dev/null)" \
+        --output_dir "$outdir" \
+        --output_format txt \
+        --compute_type float16
+
+    echo ""
+    echo "Done. Transcript saved in: $outdir"
+}
+
+# --- Subcommand: help ---
+
+cmd_help() {
+    cat <<'EOF'
+meeting-notes — Record and transcribe meetings with speaker diarization.
+
+Usage:
+  meeting-notes record [name]              Start recording (Ctrl+C to stop)
+  meeting-notes transcribe <file> [lang]   Transcribe with speaker diarization
+  meeting-notes help                       Show this help
+
+Examples:
+  meeting-notes record cliente-acme
+  meeting-notes transcribe ~/recordings/meetings/2026-04-10_1430_cliente-acme.wav
+  meeting-notes transcribe recording.wav en
+
+See man meeting-notes(1) for full documentation.
+EOF
+}
+
+# --- Main ---
+
+case "${1:-}" in
+    record)     shift; cmd_record "$@" ;;
+    transcribe) shift; cmd_transcribe "$@" ;;
+    help|--help|-h) cmd_help ;;
+    *)          cmd_help; exit 1 ;;
+esac
