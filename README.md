@@ -86,9 +86,11 @@ Back up anything you care about first — this overwrites same-named files.
 
 It expands `__HOME__` in the three config formats that cannot use `$HOME`, makes the
 scripts executable, bootstraps the theme, and enables the systemd user units. Safe
-to re-run. Skipping it gets you a desktop with **no colors at all** — around twenty
-eww stylesheets, waybar's `style.css` and rofi's `config.rasi` all `@import` files
-that the theming system *generates*.
+to re-run. Skipping it gets you a desktop with **no colors at all**: sway's own
+config `include`s a `theme.conf` that defines every colour and font variable the
+rest of it uses, and waybar's `style.css`, rofi's `config.rasi`, foot's theme and two
+eww stylesheets each `@import` a file by name. The theming system *generates* all of
+them; none is in the repo.
 
 Then log out and pick the Sway session.
 
