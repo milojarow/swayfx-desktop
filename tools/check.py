@@ -27,7 +27,12 @@ def ok(m):   print(f"  {m}")
 # What ships is what git tracks. Checking the working tree instead would flag
 # gitignored operator files (CLAUDE.md, .claude/) that never leave this machine.
 def shipped():
-    r = subprocess.run(["git", "ls-files", "-z"], capture_output=True, cwd=ROOT)
+    # --cached --others --exclude-standard = lo que se publicaría si commiteas
+    # AHORA: lo trackeado más lo nuevo que no está gitignoreado. Con solo
+    # --cached, un archivo recién agregado al árbol no se revisa hasta después
+    # del commit, que es cuando la compuerta ya no puede detener nada.
+    r = subprocess.run(["git", "ls-files", "-z", "--cached", "--others",
+                        "--exclude-standard"], capture_output=True, cwd=ROOT)
     if r.returncode == 0 and r.stdout:
         return [ROOT / f for f in r.stdout.decode().split("\0") if f]
     skip = {".git", ".claude", "__pycache__"}
@@ -98,6 +103,7 @@ RUNTIME = re.compile(r"""^(
   | projects | pond | documents | downloads | media | pictures
   | recordings | Screenshots | Videos
   | \.local/auto-theme-toggle | \.local/share/clipboard-pins
+  | \.local/share/meeting-notes | \.config/huggingface
 )""", re.X)
 COMMENT = re.compile(r"^\s*([#;]|//|\.\\\")")
 REF = re.compile(r"(?:\$HOME|~)/[A-Za-z0-9_.@/\\-]+")
